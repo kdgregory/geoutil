@@ -96,6 +96,7 @@ public class GPXCleanup
         logger.info("deleted {} timestamp nodes", nodesDeleted);
     }
 
+
     private static void mergeTracks(Document dom)
     {
         List<Node> trackNodes = xpath("//ns:trk").evaluate(dom);
