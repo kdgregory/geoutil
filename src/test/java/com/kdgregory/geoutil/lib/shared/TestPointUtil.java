@@ -14,11 +14,13 @@
 
 package com.kdgregory.geoutil.lib.shared;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
-public class TestPointUtil extends TestCase
+public class TestPointUtil
 {
+    @Test
     public void testCorrectedLongitude() throws Exception
     {
         // note: 100,000 chosen to be in same scale as base degree length on Earth
@@ -33,6 +35,7 @@ public class TestPointUtil extends TestCase
     }
 
 
+    @Test
     public void testPythagoreanDistance() throws Exception
     {
         // verify the base calculation: as long as this is right any values should work
@@ -49,6 +52,7 @@ public class TestPointUtil extends TestCase
     }
 
 
+    @Test
     public void testGreatCircleDistance() throws Exception
     {
         // rather than work through the calculation for arbitrary radius (and likely making
@@ -62,6 +66,7 @@ public class TestPointUtil extends TestCase
     }
 
 
+    @Test
     public void testVelocity() throws Exception
     {
         TimestampedPoint p1 = new TimestampedPoint(0, 45, 75);
@@ -71,6 +76,7 @@ public class TestPointUtil extends TestCase
     }
 
 
+    @Test
     public void testMidpoint() throws Exception
     {
         Point p1 = new Point(-1,  1);
@@ -86,5 +92,4 @@ public class TestPointUtil extends TestCase
         assertEquals("mixed",           new Point(0, 0), PointUtil.midpoint(p1, p4));
         assertEquals("mixed, reversed", new Point(0, 0), PointUtil.midpoint(p4, p1));
     }
-
 }

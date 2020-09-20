@@ -19,13 +19,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import net.sf.kdgcommons.test.StringAsserts;
 
 
-public class TestPoint extends TestCase
+public class TestPoint
 {
+    @Test
     public void testConstructor() throws Exception
     {
         Point p1 = new Point(39.95229, -75.1657517);
@@ -78,6 +80,7 @@ public class TestPoint extends TestCase
     }
 
 
+    @Test
     public void testHashcodeAndEquals() throws Exception
     {
         Point p1 = new Point(39.95229, -75.1657517);
@@ -97,6 +100,7 @@ public class TestPoint extends TestCase
     }
 
 
+    @Test
     public void testToString() throws Exception
     {
         Point p = new Point(39.95229, -75.1657517);
@@ -106,6 +110,7 @@ public class TestPoint extends TestCase
     }
 
 
+    @Test
     public void testComparable() throws Exception
     {
         // rather than individually test points, I'll put all possibilities in a list

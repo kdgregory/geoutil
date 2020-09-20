@@ -18,11 +18,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 
-public class TestSegmentUtil extends TestCase
+public class TestSegmentUtil
 {
+    @Test
     public void testPythagoreanDistance() throws Exception
     {
         assertEquals("null segment", 0.0, SegmentUtil.distance(null), 0.0);
@@ -39,6 +41,7 @@ public class TestSegmentUtil extends TestCase
     }
 
 
+    @Test
     public void testSimplify() throws Exception
     {
         Point p1 = new Point(39.95237, -75.16358);
@@ -70,6 +73,7 @@ public class TestSegmentUtil extends TestCase
     }
 
 
+    @Test
     public void testAlignSimple() throws Exception
     {
         // in this test, the "B" points vary by a few meters from the "A" points
@@ -116,6 +120,7 @@ public class TestSegmentUtil extends TestCase
     }
 
 
+    @Test
     public void testFirstSegmentShorter() throws Exception
     {
         // in this test, the "B" segment has excess points, which are ignored
@@ -147,6 +152,7 @@ public class TestSegmentUtil extends TestCase
     }
 
 
+    @Test
     public void testSecondSegmentShorter() throws Exception
     {
         // in this test, the "A" segment has excess points, which are ignored
@@ -178,6 +184,7 @@ public class TestSegmentUtil extends TestCase
     }
 
 
+    @Test
     public void testFindStart1() throws Exception
     {
         // in this test, the 1st "A" point corresponds to the 4th "B" point
@@ -209,6 +216,7 @@ public class TestSegmentUtil extends TestCase
     }
 
 
+    @Test
     public void testFindStart2() throws Exception
     {
         // in this test, the 4th "A" point corresponds to the 1st "B" point
@@ -240,6 +248,7 @@ public class TestSegmentUtil extends TestCase
     }
 
 
+    @Test
     public void testMinimumIncrement() throws Exception
     {
         // in this test every "A" point has a friend that's less than the
@@ -282,6 +291,7 @@ public class TestSegmentUtil extends TestCase
     }
 
 
+    @Test
     public void testClosestPartner() throws Exception
     {
         // in this test there are two "B" points for each "A", and one of them
@@ -324,6 +334,7 @@ public class TestSegmentUtil extends TestCase
     }
 
 
+    @Test
     public void testDivergenceSimple() throws Exception
     {
         // P4 A/B diverge by less than 100 meters, P5 by more, and P6 rejoin but should

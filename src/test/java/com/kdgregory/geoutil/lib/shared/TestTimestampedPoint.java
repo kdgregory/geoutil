@@ -19,13 +19,15 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 import net.sf.kdgcommons.test.StringAsserts;
 
 
-public class TestTimestampedPoint extends TestCase
+public class TestTimestampedPoint
 {
+    @Test
     public void testConstructor() throws Exception
     {
         TimestampedPoint p1 = new TimestampedPoint(123456789012L, 39.95229, -75.1657517);
@@ -45,6 +47,7 @@ public class TestTimestampedPoint extends TestCase
     }
 
 
+    @Test
     public void testHashcodeAndEquals() throws Exception
     {
         TimestampedPoint p1 = new TimestampedPoint(123456789012L, 39.95229, -75.1657517);
@@ -64,6 +67,7 @@ public class TestTimestampedPoint extends TestCase
     }
 
 
+    @Test
     public void testToString() throws Exception
     {
         TimestampedPoint p = new TimestampedPoint(123456789012L, 39.95229, -75.1657517);
@@ -73,6 +77,7 @@ public class TestTimestampedPoint extends TestCase
     }
 
 
+    @Test
     public void testComparable() throws Exception
     {
         // rather than individually test points, I'll put all possibilities in a list
