@@ -14,6 +14,10 @@
 
 package com.kdgregory.geoutil.lib.shared;
 
+import java.time.DateTimeException;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+
 
 /**
  *  An extension of {@link Point} that adds a timestamp.
@@ -24,6 +28,9 @@ extends Point
     private long timestamp;
 
 
+    /**
+     *  Constructs an instance using timestamp expressed as milliseconds since epoch.
+     */
     public TimestampedPoint(long timestamp, double lat, double lon)
     {
         super(lat, lon);
@@ -34,6 +41,31 @@ extends Point
     }
 
 
+
+    /**
+     *  Constructs an instance using timestamp expressed as an ISO-8601 date string.
+     *  Zone offset may be expressed as either "Z", "+HH:MM", or "-HH:MM".
+     */
+    public TimestampedPoint(String timestamp, double lat, double lon)
+    {
+        super(lat, lon);
+
+        try
+        {
+            this.timestamp = (timestamp.endsWith("Z"))
+                           ? Instant.parse(timestamp).toEpochMilli()
+                           : Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(timestamp)).toEpochMilli();
+        }
+        catch (DateTimeException ex)
+        {
+            throw new IllegalArgumentException("invalid timestamp: " + timestamp);
+        }
+    }
+
+
+    /**
+     *  Returns the timestamp, as milliseconds since epoch.
+     */
     public long getTimestamp()
     {
         return timestamp;

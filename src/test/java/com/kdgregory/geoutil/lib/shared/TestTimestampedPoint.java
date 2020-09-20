@@ -28,7 +28,7 @@ import net.sf.kdgcommons.test.StringAsserts;
 public class TestTimestampedPoint
 {
     @Test
-    public void testConstructor() throws Exception
+    public void testConstructWithEpochMillis() throws Exception
     {
         TimestampedPoint p1 = new TimestampedPoint(123456789012L, 39.95229, -75.1657517);
         assertEquals("timestamp", 123456789012L, p1.getTimestamp());
@@ -43,6 +43,31 @@ public class TestTimestampedPoint
         catch (IllegalArgumentException ex)
         {
             StringAsserts.assertRegex("invalid timestamp.*-1.*", ex.getMessage());
+        }
+    }
+
+
+    @Test
+    public void testConstructWithDateString() throws Exception
+    {
+        TimestampedPoint p1 = new TimestampedPoint("2019-12-28T15:43:48Z", 40.036694, -75.928012);
+        assertEquals("timestamp", 1577547828000L, p1.getTimestamp());
+        assertEquals("lat",        40.036694,     p1.getLat(), 0.00001);
+        assertEquals("lon",       -75.928012,     p1.getLon(), 0.00001);
+
+        TimestampedPoint p2 = new TimestampedPoint("2019-12-28T11:43:48-04:00", 40.036694, -75.928012);
+        assertEquals("timestamp", 1577547828000L, p2.getTimestamp());
+        assertEquals("lat",        40.036694,     p2.getLat(), 0.00001);
+        assertEquals("lon",       -75.928012,     p2.getLon(), 0.00001);
+
+        try
+        {
+            new TimestampedPoint("2019-12-28T11:43:48", 0, 0);
+            fail("accepted timestamp without zone offset");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            StringAsserts.assertRegex("invalid timestamp.*2019-12-28T11:43:48", ex.getMessage());
         }
     }
 
