@@ -28,20 +28,29 @@ public class Constants
     public final static String E_GPX                    = "gpx";
     
     
+    /** container: track */
+    public final static String  E_TRK                   = "trk";
+    
+    /** trkType data field: name */
+    public final static String  E_TRK_NAME              = "name";
+    
+    /** trkType data field: name */
+    public final static String  E_TRK_DESCRIPTION       = "desc";
+    
+    
+    /** container: track segment */
+    public final static String  E_TRKSEG                = "trkseg";
+    
+    
+    /** container: trackpoint */
+    public final static String  E_TRKPOINT              = "trkpt";
+    
     /** wtpType attribute: latitude */
     public final static String A_WPT_LAT                = "lat";
     
     /** wptType attribute: longitude */
     public final static String A_WPT_LON                = "lon";
     
-    
-    /** container: track segment */
-    public final static String  E_TRKSEG                = "trkseg";
-    
-    /** container: track point */
-    public final static String  E_TRKPOINT              = "trkpt";
-    
-
     /** wptType data field: elevation */
     public final static String E_WPT_ELEVATION          = "ele";
 
