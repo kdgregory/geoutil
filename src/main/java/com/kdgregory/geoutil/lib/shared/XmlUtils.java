@@ -17,14 +17,17 @@ package com.kdgregory.geoutil.lib.shared;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.w3c.dom.Element;
 
+import net.sf.kdgcommons.lang.StringUtil;
 import net.sf.practicalxml.DomUtil;
 
+
 /**
- *  A temporary class containing XML utility methods. These should be
- *  moved to the PracticalXML library.
+ *  Helper methods for dealing with the XML representation of an object. Most
+ *  if not all belong in Practical XML.
  */
 public class XmlUtils
 {
@@ -54,5 +57,83 @@ public class XmlUtils
             result.put(DomUtil.getLocalName(child), child);
         }
         return result;
+    }
+
+
+    /**
+     *  Retrieves and parses an attribute containg a double value.
+     */
+    public static double getAttributeAsDouble(Element elem, String name)
+    {
+        String value = elem.getAttribute(name);
+        if (StringUtil.isEmpty(value))
+            throw new IllegalArgumentException("missing attribute: " + name);
+        try
+        {
+            return Double.parseDouble(value);
+        }
+        catch (NumberFormatException ex)
+        {
+            throw new IllegalArgumentException("attribute " + name + " has unparseable value: " + value);
+        }
+    }
+
+//----------------------------------------------------------------------------
+//  These can't be moved to PracticalXML until it supports Java 8
+//----------------------------------------------------------------------------
+
+    /**
+     *  If passed a not-null Element, validates its namespace, attempts to parse
+     *  its text as a Double, and invokes the passed setter object.
+     *  <p>
+     *  If passed a null Element, does nothing.
+     */
+    public static void optSetDouble(Element elem, String namespace, Consumer<Double> setter)
+    {
+        if (elem == null)
+            return;
+
+        String elemNS = elem.getNamespaceURI();
+        if (! StringUtil.equalOrEmpty(namespace, elemNS))
+            throw new IllegalArgumentException(elem.getNodeName() + " has an invalid namespace: " + elemNS);
+
+        String text = DomUtil.getText(elem);
+        if (StringUtil.isBlank(text))
+            throw new IllegalArgumentException(elem.getNodeName() + " has blank content");
+
+        double value = 0.0;
+        try
+        {
+            value = Double.parseDouble(text);
+        }
+        catch (NumberFormatException ex)
+        {
+            throw new IllegalArgumentException(elem.getNodeName() + " has invalid content: " + text);
+        }
+
+        setter.accept(Double.valueOf(value));
+    }
+
+
+    /**
+     *  If passed a not-null Element, validates its namespace and invokes the passed setter
+     *  object on its text content.
+     *  <p>
+     *  If passed a null Element, does nothing.
+     */
+    public static void optSetString(Element elem, String namespace, Consumer<String> setter)
+    {
+        if (elem == null)
+            return;
+
+        String elemNS = elem.getNamespaceURI();
+        if (! StringUtil.equalOrEmpty(namespace, elemNS))
+            throw new IllegalArgumentException(elem.getNodeName() + " has an invalid namespace: " + elemNS);
+
+        String text = DomUtil.getText(elem);
+        if (StringUtil.isBlank(text))
+            throw new IllegalArgumentException(elem.getNodeName() + " has blank content");
+
+        setter.accept(text);
     }
 }
