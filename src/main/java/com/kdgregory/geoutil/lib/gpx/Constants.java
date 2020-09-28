@@ -33,6 +33,14 @@ public class Constants
     
     /** wptType attribute: longitude */
     public final static String A_WPT_LON                = "lon";
+    
+    
+    /** container: track segment */
+    public final static String  E_TRKSEG                = "trkseg";
+    
+    /** container: track point */
+    public final static String  E_TRKPOINT              = "trkpt";
+    
 
     /** wptType data field: elevation */
     public final static String E_WPT_ELEVATION          = "ele";
