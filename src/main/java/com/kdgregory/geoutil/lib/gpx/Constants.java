@@ -26,31 +26,37 @@ public class Constants
 
     /** The top-level GPX element */
     public final static String E_GPX                    = "gpx";
-    
-    
+
+    /** gpxType attribute: version */
+    public final static String  A_GPX_VERSION           = "version";
+
+    /** gpxType attribute: creator */
+    public final static String  A_GPX_CREATOR           = "creator";
+
+
     /** container: track */
     public final static String  E_TRK                   = "trk";
-    
+
     /** trkType data field: name */
     public final static String  E_TRK_NAME              = "name";
-    
+
     /** trkType data field: name */
     public final static String  E_TRK_DESCRIPTION       = "desc";
-    
-    
+
+
     /** container: track segment */
     public final static String  E_TRKSEG                = "trkseg";
-    
-    
+
+
     /** container: trackpoint */
     public final static String  E_TRKPOINT              = "trkpt";
-    
+
     /** wtpType attribute: latitude */
     public final static String A_WPT_LAT                = "lat";
-    
+
     /** wptType attribute: longitude */
     public final static String A_WPT_LON                = "lon";
-    
+
     /** wptType data field: elevation */
     public final static String E_WPT_ELEVATION          = "ele";
 
