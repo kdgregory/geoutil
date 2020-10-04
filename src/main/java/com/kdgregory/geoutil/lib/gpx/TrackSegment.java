@@ -13,10 +13,13 @@
 
 package com.kdgregory.geoutil.lib.gpx;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.w3c.dom.Element;
 
@@ -58,6 +61,15 @@ public class TrackSegment
 //----------------------------------------------------------------------------
 //  Accessors
 //----------------------------------------------------------------------------
+
+    /**
+     *  Returns whether or not this segment has any points.
+     */
+    public boolean isEmpty()
+    {
+        return points.isEmpty();
+    }
+
 
     /**
      *  Returns the list of points, as an immutable list.
@@ -115,5 +127,24 @@ public class TrackSegment
         }
     }
 
-    // TODO: filter
+
+    /**
+     *  Filters all points in this segment, using a Java8 predicate.
+     */
+    public void filter(Predicate<Point> pred)
+    {
+        List<Point> filtered = points.stream()
+                               .filter(pred)
+                               .collect(Collectors.toList());
+        points = new ArrayList<>(filtered);
+    }
+
+
+    /**
+     *  Filters all points in this segment by inclusive timestamp.
+     */
+    public void filter(Instant start, Instant finish)
+    {
+        filter(p -> p.isBetween(start, finish));
+    }
 }

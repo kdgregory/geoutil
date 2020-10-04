@@ -13,6 +13,7 @@
 
 package com.kdgregory.geoutil.lib.gpx;
 
+import java.time.Instant;
 import java.util.Arrays;
 
 import org.w3c.dom.Document;
@@ -33,6 +34,7 @@ public class TestTrackSegment
         TrackSegment seg = new TrackSegment();
 
         assertTrue("after construction, list exists and is empty", seg.getPoints().isEmpty());
+        assertTrue("after construction, segment reports empty",    seg.isEmpty());
 
         Point p1 = new Point(12,34);
         Point p2 = new Point(23,45);
@@ -56,6 +58,25 @@ public class TestTrackSegment
 
         seg.clear();
         assertTrue("after clear, list exists and is empty", seg.getPoints().isEmpty());
+        assertTrue("after clear, segment reports empty",    seg.isEmpty());
+    }
+
+
+    @Test
+    public void testFilter() throws Exception
+    {
+        Point p1 = new Point(12,34).setTimestampMillis(1577547825000L);
+        Point p2 = new Point(12,34).setTimestampMillis(1577547826000L);
+        Point p3 = new Point(12,34).setTimestampMillis(1577547827000L);
+        Point p4 = new Point(12,34).setTimestampMillis(1577547828000L);
+
+        TrackSegment seg = new TrackSegment().addAll(Arrays.asList(p1, p2, p3, p4));
+        assertEquals("before filter", Arrays.asList(p1, p2, p3, p4), seg.getPoints());
+
+        // using a date filter provides full coverage
+        seg.filter(Instant.ofEpochMilli(1577547826000L), Instant.ofEpochMilli(1577547827000L));
+
+        assertEquals("after filter", Arrays.asList(p2, p3), seg.getPoints());
     }
 
 
