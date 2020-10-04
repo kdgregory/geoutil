@@ -201,5 +201,18 @@ public class Track
         filter(p -> p.isBetween(start, finish));
     }
 
-    // TODO: combineSegments
+
+    /**
+     *  Combines all existing segments into a single segment.
+     */
+    public void combineSegments()
+    {
+        TrackSegment seg = new TrackSegment();
+        for (TrackSegment old : segments)
+        {
+            seg.addAll(old.getPoints());
+        }
+        segments.clear();
+        segments.add(seg);
+    }
 }

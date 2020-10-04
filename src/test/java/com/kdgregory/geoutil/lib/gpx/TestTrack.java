@@ -58,11 +58,11 @@ public class TestTrack
     @Test
     public void testFilter() throws Exception
     {
-        Point p1 = new Point(12,34).setTimestampMillis(1577547825000L);
-        Point p2 = new Point(12,34).setTimestampMillis(1577547826000L);
-        Point p3 = new Point(12,34).setTimestampMillis(1577547827000L);
-        Point p4 = new Point(12,34).setTimestampMillis(1577547828000L);
-        Point p5 = new Point(12,34).setTimestampMillis(1577547829000L);
+        Point p1 = new Point(12,35).setTimestampMillis(1577547825000L);
+        Point p2 = new Point(12,36).setTimestampMillis(1577547826000L);
+        Point p3 = new Point(12,37).setTimestampMillis(1577547827000L);
+        Point p4 = new Point(12,38).setTimestampMillis(1577547828000L);
+        Point p5 = new Point(12,39).setTimestampMillis(1577547829000L);
 
         TrackSegment s1 = new TrackSegment().addAll(Arrays.asList(p1, p2));
         TrackSegment s2 = new TrackSegment().addAll(Arrays.asList(p3, p4));
@@ -78,6 +78,31 @@ public class TestTrack
         assertEquals("segment 1 points after filter", Arrays.asList(p2),     track.getSegments().get(0).getPoints());
         assertEquals("segment 2 points after filter", Arrays.asList(p3),     track.getSegments().get(1).getPoints());
     }
+
+
+    @Test
+    public void testCombine() throws Exception
+    {
+        Point p1 = new Point(12,35).setTimestampMillis(1577547825000L);
+        Point p2 = new Point(12,36).setTimestampMillis(1577547826000L);
+        Point p3 = new Point(12,37).setTimestampMillis(1577547827000L);
+        Point p4 = new Point(12,38).setTimestampMillis(1577547828000L);
+        Point p5 = new Point(12,39).setTimestampMillis(1577547829000L);
+
+        TrackSegment s1 = new TrackSegment().addAll(Arrays.asList(p1, p2));
+        TrackSegment s2 = new TrackSegment().addAll(Arrays.asList(p3, p4));
+        TrackSegment s3 = new TrackSegment().addAll(Arrays.asList(p5));
+
+        Track track = new Track().setSegments(Arrays.asList(s1, s2, s3));
+        assertEquals("segments before combine", Arrays.asList(s1, s2, s3), track.getSegments());
+
+        track.combineSegments();
+        assertEquals("number of segments after combine", 1, track.getSegments().size());
+        assertEquals("all points accounted-for",
+                     Arrays.asList(p1, p2, p3, p4, p5),
+                     track.getSegments().get(0).getPoints());
+    }
+
 
 
     @Test
