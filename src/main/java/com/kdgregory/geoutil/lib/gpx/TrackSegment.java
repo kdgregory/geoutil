@@ -147,4 +147,14 @@ public class TrackSegment
     {
         filter(p -> p.isBetween(start, finish));
     }
+
+
+    /**
+     *  Sorts the points in this segment by timestamp. This is primarily used
+     *  when combining segments from different tracks.
+     */
+    public void sortPoints()
+    {
+        Collections.sort(points);
+    }
 }

@@ -81,6 +81,22 @@ public class TestTrackSegment
 
 
     @Test
+    public void testSort() throws Exception
+    {
+        Point p1 = new Point(12,34).setTimestampMillis(1577547825000L);
+        Point p2 = new Point(12,34).setTimestampMillis(1577547826000L);
+        Point p3 = new Point(12,34).setTimestampMillis(1577547827000L);
+        Point p4 = new Point(12,34).setTimestampMillis(1577547828000L);
+
+        TrackSegment seg = new TrackSegment().addAll(Arrays.asList(p3, p2, p4, p1));
+        seg.sortPoints();
+
+        assertEquals("points are sorted", Arrays.asList(p1, p2, p3, p4), seg.getPoints());
+    }
+
+
+
+    @Test
     public void testConvertToXml() throws Exception
     {
         Element root = DomUtil.newDocument("irrelevant");
