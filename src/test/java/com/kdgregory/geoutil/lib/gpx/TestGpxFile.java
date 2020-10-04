@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.geoutil.lib.gpx.model;
+package com.kdgregory.geoutil.lib.gpx;
 
 import java.io.File;
 import java.util.Arrays;

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.geoutil.lib.gpx.model;
+package com.kdgregory.geoutil.lib.gpx;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,8 +29,6 @@ import org.w3c.dom.Element;
 import net.sf.practicalxml.DomUtil;
 import net.sf.practicalxml.OutputUtil;
 import net.sf.practicalxml.ParseUtil;
-
-import com.kdgregory.geoutil.lib.gpx.Constants;
 
 /**
  *  Top-level clsss for reading and writing GPX files, as defined by

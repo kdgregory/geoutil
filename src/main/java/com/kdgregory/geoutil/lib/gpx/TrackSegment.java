@@ -11,7 +11,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.geoutil.lib.gpx.model;
+package com.kdgregory.geoutil.lib.gpx;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,8 +22,6 @@ import org.w3c.dom.Element;
 
 import net.sf.practicalxml.DomUtil;
 
-import com.kdgregory.geoutil.lib.gpx.Constants;
-
 
 /**
  *  A list of points within a track.
@@ -31,17 +29,17 @@ import com.kdgregory.geoutil.lib.gpx.Constants;
 public class TrackSegment
 {
     private List<Point> points = new ArrayList<>();
-    
+
 
     /**
-     *  Base constructor.  
+     *  Base constructor.
      */
     public TrackSegment()
     {
         // nothing happening here
     }
-    
-    
+
+
     /**
      *  Constructs an instance from an XML node tree structured as a trksegType
      *  per https://www.topografix.com/GPX/1/1/.
@@ -53,7 +51,7 @@ public class TrackSegment
             add(new Point(ePoint));
         }
     }
-    
+
 //----------------------------------------------------------------------------
 //  Accessors
 //----------------------------------------------------------------------------
@@ -98,7 +96,7 @@ public class TrackSegment
 //----------------------------------------------------------------------------
 //  Other Public Methods
 //----------------------------------------------------------------------------
-    
+
     /**
      *  Appends this segment to a parent element, IFF it contains points.
      */
@@ -113,6 +111,6 @@ public class TrackSegment
             p.appendAsXml(eSeg, Constants.E_TRKPOINT);
         }
     }
-    
+
     // TODO: filter
 }
