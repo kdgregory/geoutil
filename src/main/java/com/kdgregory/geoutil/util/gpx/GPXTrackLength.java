@@ -15,18 +15,16 @@
 package com.kdgregory.geoutil.util.gpx;
 
 import java.io.File;
-import java.util.List;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-
-import net.sf.practicalxml.ParseUtil;
-import net.sf.practicalxml.xpath.XPathWrapper;
+import com.kdgregory.geoutil.lib.gpx.GpxFile;
+import com.kdgregory.geoutil.lib.gpx.Track;
+import com.kdgregory.geoutil.lib.gpx.TrackSegment;
+import com.kdgregory.geoutil.lib.shared.SegmentUtil;
 
 
 /**
- *  Calculates the length of all tracks in a set of GPX files.
+ *  Calculates the length of all tracks in a set of GPX files, using latitude-adjusted
+ *  Pythagorean distance between successive points.
  *  <p>
  *  Invocation:
  *
@@ -46,55 +44,24 @@ public class GPXTrackLength
 
     private static void describeTracks(File file)
     {
-        Document dom = ParseUtil.parse(file);
-
-        List<Node> tracks = xpath("//ns:trk").evaluate(dom);
-        for (Node track : tracks)
+        GpxFile gpx = new GpxFile(file);
+        for (Track track : gpx.getTracks())
         {
-            String date = xpath("ns:trkseg/ns:trkpt/ns:time").evaluateAsString(track).replaceAll("T.*", "");
-            String trackName = xpath("ns:name").evaluateAsString(track);
             double trackLength = calculateTrackLength(track);
-            System.out.println(String.format("%s: %-60s %8.2f", date, trackName, trackLength));
+            System.out.println(String.format("%s: %-60s %8.2f", file, track.getName(), trackLength));
         }
     }
 
 
-    private static double calculateTrackLength(Node track)
+    private static double calculateTrackLength(Track track)
     {
-        double trackLength = 0.0;
-        double lastLat = -1;
-        double lastLon = -1;
+        track.combineSegments();
+        if (track.getSegments().size() == 0)
+            return 0;
 
-        List<Node> trackpoints = xpath("ns:trkseg/ns:trkpt").evaluate(track);
-        for (Node trackpoint : trackpoints)
-        {
-            double lat = Double.parseDouble(((Element)trackpoint).getAttribute("lat"));
-            double lon = Double.parseDouble(((Element)trackpoint).getAttribute("lon"));
-            if (lastLat < 0)
-            {
-                lastLat = lat;
-                lastLon = lon;
-            }
-            else
-            {
-                double milesPerDegreeLat = 69;
-                double milesPerDegreeLon = milesPerDegreeLat * Math.cos(Math.toRadians(lat));
-                double deltaLonLenth = milesPerDegreeLon * (lon - lastLon);
-                double deltaLatLenth = milesPerDegreeLat * (lat - lastLat);
-                double segmentLength = Math.sqrt(deltaLonLenth * deltaLonLenth + deltaLatLenth * deltaLatLenth);
-                trackLength += segmentLength;
-                lastLon = lon;
-                lastLat = lat;
-            }
-        }
+        TrackSegment seg = track.getSegments().get(0);
+        seg.sortPoints();
 
-        return trackLength;
-    }
-
-
-    private static XPathWrapper xpath(String path)
-    {
-         return new XPathWrapper(path)
-                .bindNamespace("ns", "http://www.topografix.com/GPX/1/1");
+        return SegmentUtil.distance(seg.getPoints()) / 1609.34;
     }
 }
