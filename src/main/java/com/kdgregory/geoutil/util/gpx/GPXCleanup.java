@@ -15,26 +15,29 @@
 package com.kdgregory.geoutil.util.gpx;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
 import java.util.List;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.kdgcommons.lang.StringUtil;
-import net.sf.practicalxml.DomUtil;
-import net.sf.practicalxml.OutputUtil;
-import net.sf.practicalxml.ParseUtil;
-import net.sf.practicalxml.xpath.XPathWrapper;
+import net.sf.kdgcommons.collections.CollectionUtil;
+
+import com.kdgregory.geoutil.lib.gpx.GpxFile;
+import com.kdgregory.geoutil.lib.gpx.Point;
+import com.kdgregory.geoutil.lib.gpx.Track;
+import com.kdgregory.geoutil.lib.gpx.TrackSegment;
+
 
 /**
- *  Removes all tracks from a GPX file other than those belonging to a
- *  specific date (used to cleanup a Garmin GPX file when the track log
- *  wasn't reset).
+ *  Removes all points from a GPX file that don't match a specific date (expressed
+ *  as a local date in the format YYYY-MM-DD), combines all track segments into a
+ *  single track, and sets the name of that track.
  *  <p>
  *  Invocation:
  *
@@ -49,100 +52,67 @@ public class GPXCleanup
     throws Exception
     {
         File file = new File(argv[0]);
-        String desiredDate = argv[1];
+        Instant startTimestamp = parseProvidedDate(argv[1]);
+        Instant finishTimestamp = ChronoUnit.DAYS.addTo(startTimestamp, 1).minusMillis(1);
         String trackName = argv[2];
 
-        Document dom = ParseUtil.parse(file);
+        logger.info("processing file: {}", file);
+        GpxFile gpx = new GpxFile(file);
 
-        deletePointsWithUndesiredDate(dom, desiredDate);
-        // TODO - delete points at end of track that don't show movement
-        deleteEmptyNodes(dom, "//ns:trkseg", "ns:trkpt", "segment");
-        mergeTracks(dom);
-        deleteEmptyNodes(dom, "//ns:trk", "ns:trkseg", "track");
-        updateTrackTitle(dom, trackName);
-
-        try (FileOutputStream out = new FileOutputStream(file))
+        Track newTrack = new Track().setName(trackName);
+        for (Track oldTrack : gpx.getTracks())
         {
-            OutputUtil.compactStream(dom, out);
-        }
-    }
-
-
-    private static XPathWrapper xpath(String path)
-    {
-         return new XPathWrapper(path)
-                .bindNamespace("ns", "http://www.topografix.com/GPX/1/1");
-    }
-
-
-    private static void deletePointsWithUndesiredDate(Document dom, String desiredDate)
-    {
-        int nodesDeleted = 0;
-
-        List<Node> timeNodes = xpath("//ns:trkseg/ns:trkpt/ns:time").evaluate(dom);
-        logger.info("examining {} timestamp nodes", timeNodes.size());
-
-        for (Node node : timeNodes)
-        {
-            String timestamp = DomUtil.getText((Element)node);
-            if (! StringUtil.isBlank(timestamp) && timestamp.startsWith(desiredDate))
-                continue;
-
-            Node trkptNode = node.getParentNode();
-            Node segmentNode = trkptNode.getParentNode();
-            segmentNode.removeChild(trkptNode);
-            nodesDeleted++;
-        }
-        logger.info("deleted {} timestamp nodes", nodesDeleted);
-    }
-
-
-    private static void mergeTracks(Document dom)
-    {
-        List<Node> trackNodes = xpath("//ns:trk").evaluate(dom);
-        if (trackNodes.size() < 2)
-            return;
-
-        logger.info("merging {} tracks", trackNodes.size());
-        Node firstTrack = trackNodes.get(0);
-        trackNodes.remove(0);
-
-        for (Node trackNode : trackNodes)
-        {
-            List<Node> segmentNodes = xpath("ns:trkseg").evaluate(trackNode);
-            for (Node segmentNode : segmentNodes)
+            for (TrackSegment seg : oldTrack.getSegments())
             {
-                firstTrack.appendChild(segmentNode);
+                logger.debug("loaded segment with {} points from track {}", seg.getPoints().size(), oldTrack.getName());
+                newTrack.addSegment(seg);
             }
         }
-    }
 
+        newTrack.combineSegments();
+        TrackSegment newSeg = newTrack.getSegments().get(0);
 
-    private static void deleteEmptyNodes(Document dom, String nodeSelector, String childSelector, String type)
-    {
-        int nodesDeleted = 0;
+        List<Point> tmpPoints = newSeg.getPoints();
+        logger.info("combined track has {} points, from {} to {}",
+                    tmpPoints.size(),
+                    CollectionUtil.first(tmpPoints).getTimestamp(),
+                    CollectionUtil.last(tmpPoints).getTimestamp());
 
-        List<Node> nodes = xpath(nodeSelector).evaluate(dom);
-        logger.info("examining {} {} nodes", nodes.size(), type);
+        newSeg.sortPoints();
+        newSeg.filter(startTimestamp, finishTimestamp);
 
-        for (Node node : nodes)
+        tmpPoints = newSeg.getPoints();
+
+        if (tmpPoints.size() == 0)
         {
-            List<Node> childNodes = xpath(childSelector).evaluate(node);
-            if (childNodes.size() > 0)
-                continue;
-
-            Node parent = node.getParentNode();
-            parent.removeChild(node);
-            nodesDeleted++;
+            logger.warn("all points removed; not overwriting file");
+            System.exit(2);
         }
-        logger.info("deleted {} empty {}s", nodesDeleted, type);
+
+        logger.info("filtered track has {} points, from {} to {}",
+                    tmpPoints.size(),
+                    CollectionUtil.first(tmpPoints).getTimestamp(),
+                    CollectionUtil.last(tmpPoints).getTimestamp());
+
+        gpx.setTracks(Arrays.asList(newTrack));
+        gpx.write(file);
+        logger.info("file overwritten");
     }
 
 
-    private static void updateTrackTitle(Document dom, String trackName)
+    private static Instant parseProvidedDate(String date)
     {
-        logger.info("setting track name to \"{}\"", trackName);
-        Element nameNode = xpath("//ns:trk[1]/ns:name").evaluateAsElement(dom);
-        DomUtil.setText(nameNode, trackName);
+        try
+        {
+            return Instant.from(
+                    LocalDate.parse(date)
+                        .atStartOfDay(ZoneId.systemDefault()));
+        }
+        catch (DateTimeParseException ex)
+        {
+            System.out.println("unable to parse date: " + date);
+            System.exit(1);
+            return null; // because compiler doesn't know what exit() does
+        }
     }
 }

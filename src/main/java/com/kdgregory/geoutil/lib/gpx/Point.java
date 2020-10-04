@@ -396,4 +396,18 @@ extends com.kdgregory.geoutil.lib.shared.Point
 
         return elem;
     }
+
+
+    /**
+     *  Determines whether this point is in an inclusive range of timestamps.
+     *  If the point does not have a timestamp, this is always false.
+     */
+    public boolean isBetween(Instant start, Instant finish)
+    {
+        if (timestamp == null)
+            return false;
+
+        return timestamp.compareTo(start) >= 0
+            && timestamp.compareTo(finish) <= 0;
+    }
 }

@@ -45,8 +45,8 @@ public class PointUtil
 
 
     /**
-     *  Calculates the Pythagorean distance between two points, with arbitrary
-     *  base degree length.
+     *  Calculates the Pythagorean distance (in meters) between two points, 
+     *  with arbitrary base degree length.
      */
     public static double pythagorean(double lat1, double lon1, double lat2, double lon2, double baseDegreeLength)
     {
@@ -57,7 +57,7 @@ public class PointUtil
 
 
     /**
-     *  Calculates the Pythagorean distance between two points on Earth.
+     *  Calculates the Pythagorean distance (in meters) between two points on Earth.
      */
     public static double pythagorean(double lat1, double lon1, double lat2, double lon2)
     {

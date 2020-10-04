@@ -25,7 +25,8 @@ import java.util.List;
 public class SegmentUtil
 {
     /**
-     *  Computes and sums the Pythagorean distance between the points in a segment.
+     *  Computes and sums the Pythagorean distance (in meters) between the points
+     *  in a segment.
      */
     public static double distance(List<? extends Point> segment)
     {
