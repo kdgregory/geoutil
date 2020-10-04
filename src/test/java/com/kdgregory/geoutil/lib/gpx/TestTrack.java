@@ -13,6 +13,7 @@
 
 package com.kdgregory.geoutil.lib.gpx;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -51,6 +52,31 @@ public class TestTrack
 
         track.setSegments(Arrays.asList(segment));
         assertEquals("after adding list of segments", Arrays.asList(segment), track.getSegments());
+    }
+
+
+    @Test
+    public void testFilter() throws Exception
+    {
+        Point p1 = new Point(12,34).setTimestampMillis(1577547825000L);
+        Point p2 = new Point(12,34).setTimestampMillis(1577547826000L);
+        Point p3 = new Point(12,34).setTimestampMillis(1577547827000L);
+        Point p4 = new Point(12,34).setTimestampMillis(1577547828000L);
+        Point p5 = new Point(12,34).setTimestampMillis(1577547829000L);
+
+        TrackSegment s1 = new TrackSegment().addAll(Arrays.asList(p1, p2));
+        TrackSegment s2 = new TrackSegment().addAll(Arrays.asList(p3, p4));
+        TrackSegment s3 = new TrackSegment().addAll(Arrays.asList(p5));
+
+        Track track = new Track().setSegments(Arrays.asList(s1, s2, s3));
+        assertEquals("segments before filter", Arrays.asList(s1, s2, s3), track.getSegments());
+
+        // using a date filter provides full coverage
+        track.filter(Instant.ofEpochMilli(1577547826000L), Instant.ofEpochMilli(1577547827000L));
+
+        assertEquals("segments after filter",         Arrays.asList(s1, s2), track.getSegments());
+        assertEquals("segment 1 points after filter", Arrays.asList(p2),     track.getSegments().get(0).getPoints());
+        assertEquals("segment 2 points after filter", Arrays.asList(p3),     track.getSegments().get(1).getPoints());
     }
 
 
