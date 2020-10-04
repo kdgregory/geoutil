@@ -53,6 +53,9 @@ public class Track
     /**
      *  Constructs an instance from an XML node tree structured as a trkType
      *  per https://www.topografix.com/GPX/1/1/.
+     *
+     *  Does not validate the provided element's name or namespace, or whether
+     *  it contains unexpected content.
      */
     public Track(Element elem)
     {
@@ -67,8 +70,17 @@ public class Track
     }
 
 //----------------------------------------------------------------------------
-// Setters
+// Accessors
 //----------------------------------------------------------------------------
+
+    /**
+     *  Returns the name of this track. May be null.
+     */
+    public String getName()
+    {
+        return name;
+    }
+
 
     /**
      *  Sets the name of this track.
@@ -81,12 +93,32 @@ public class Track
 
 
     /**
+     *  Returns the description of this track. May be null.
+     */
+    public String getDescription()
+    {
+        return description;
+    }
+
+
+    /**
      *  Sets the description of this track.
      */
     public Track setDescription(String value)
     {
         description = value;
         return this;
+    }
+
+
+    /**
+     *  Returns an unmodifiable list of the segments that comprise this track.
+     *  May be empty, but will never be null. Note that the segments in this
+     *  list are modifiable.
+     */
+    public List<TrackSegment> getSegments()
+    {
+        return Collections.unmodifiableList(segments);
     }
 
 
@@ -119,38 +151,6 @@ public class Track
     }
 
 //----------------------------------------------------------------------------
-// Getters
-//----------------------------------------------------------------------------
-
-    /**
-     *  Returns the name of this track. May be null.
-     */
-    public String getName()
-    {
-        return name;
-    }
-
-
-    /**
-     *  Returns the description of this track. May be null.
-     */
-    public String getDescription()
-    {
-        return description;
-    }
-
-
-    /**
-     *  Returns an unmodifiable list of the segments that comprise this track.
-     *  May be empty, but will never be null. Note that the segments in this
-     *  list are modifiable.
-     */
-    public List<TrackSegment> getSegments()
-    {
-        return Collections.unmodifiableList(segments);
-    }
-
-//----------------------------------------------------------------------------
 //  Other Public Methods
 //----------------------------------------------------------------------------
 
@@ -167,7 +167,7 @@ public class Track
         XmlUtils.optAppendDataElement(elem, Constants.NAMESPACE, Constants.E_TRK_NAME,          getName());
         XmlUtils.optAppendDataElement(elem, Constants.NAMESPACE, Constants.E_TRK_DESCRIPTION,   getDescription());
 
-        for (TrackSegment seg : getSegments())
+        for (TrackSegment seg : segments)
         {
             seg.appendAsXml(elem);
         }

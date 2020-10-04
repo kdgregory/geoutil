@@ -158,7 +158,7 @@ public class GpxFile
         Element eGpx = DomUtil.newDocument(Constants.NAMESPACE, Constants.E_GPX);
         eGpx.setAttribute(Constants.A_GPX_VERSION, getVersion());
         eGpx.setAttribute(Constants.A_GPX_CREATOR, getCreator());
-        for (Track track : getTracks())
+        for (Track track : tracks)
         {
             track.appendAsXml(eGpx);
         }

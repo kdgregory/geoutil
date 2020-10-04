@@ -43,6 +43,9 @@ public class TrackSegment
     /**
      *  Constructs an instance from an XML node tree structured as a trksegType
      *  per https://www.topografix.com/GPX/1/1/.
+     *
+     *  Does not validate the provided element's name or namespace, or whether
+     *  it contains unexpected content.
      */
     public TrackSegment(Element elem)
     {

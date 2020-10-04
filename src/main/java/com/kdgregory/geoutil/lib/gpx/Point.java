@@ -64,6 +64,9 @@ extends com.kdgregory.geoutil.lib.shared.Point
     /**
      *  Constructs an instance from an XML node tree structured as a wptType
      *  per https://www.topografix.com/GPX/1/1/.
+     *
+     *  Does not validate the provided element's name or namespace, or whether
+     *  it contains unexpected content.
      */
     public Point(Element elem)
     {
@@ -81,8 +84,22 @@ extends com.kdgregory.geoutil.lib.shared.Point
     }
 
 //----------------------------------------------------------------------------
-//  Setters
+//  Accessors
 //----------------------------------------------------------------------------
+
+    /**
+     *  Returns the point's timestamp, as a Java 8 Instant. May be null.
+     *  <p>
+     *  Note: there are three ways to set/retrieve a point's timestamp: as an
+     *  Instant (internal format), milliseconds since epoch, or IS-8601 string.
+     *  Each of these mechanisms has separate getters and setters, to avoid
+     *  confusing bean introspectors.
+     */
+    public Instant getTimestamp()
+    {
+        return timestamp;
+    }
+
 
     /**
      *  Sets the point's timestamp, as a Java 8 Instant.
@@ -96,6 +113,23 @@ extends com.kdgregory.geoutil.lib.shared.Point
     {
         this.timestamp = timestamp;
         return this;
+    }
+
+
+    /**
+     *  Returns the point's timestamp, as an ISO-8601 string with "Zulu" offset.
+     *  May be null.
+     *  <p>
+     *  Note: there are three ways to set/retrieve a point's timestamp: as an
+     *  Instant (internal format), milliseconds since epoch, or IS-8601 string.
+     *  Each of these mechanisms has separate getters and setters, to avoid
+     *  confusing bean introspectors.
+     */
+    public String getTimestampString()
+    {
+        return (timestamp == null)
+             ? null
+             : timestamp.toString();
     }
 
 
@@ -118,119 +152,6 @@ extends com.kdgregory.geoutil.lib.shared.Point
 
 
     /**
-     *  Sets the point's timestamp, as milliseconds since epoch
-     *  <p>
-     *  Note: there are three ways to set/retrieve a point's timestamp: as an
-     *  Instant (internal format), milliseconds since epoch, or ISO-8601 string.
-     *  Each of these mechanisms has separate getters and setters, to avoid
-     *  confusing bean introspectors.
-     */
-    public Point setTimestampMillis(long timestamp)
-    {
-        this.timestamp = Instant.ofEpochMilli(timestamp);
-        return this;
-    }
-
-
-    /**
-     *  Sets the point's elevation, in meters.
-     */
-    public Point setElevation(Double value)
-    {
-        this.elevation = value;
-        return this;
-    }
-
-
-    /**
-     *  Sets the point's magnetic variance, in degrees (0 ... 360).
-     */
-    public Point setMagneticVariance(Double value)
-    {
-        if ((value < 0) || (value > 360))
-            throw new IllegalArgumentException("magnetic variance must be 0..360; was " + value);
-
-        this.variance = value;
-        return this;
-    }
-
-
-    /**
-     *  Sets the point's geoid height, in meters.
-     */
-    public Point setGeoidHeight(Double value)
-    {
-        this.geoidHeight = value;
-        return this;
-    }
-
-
-    /**
-     *  Sets the point's name.
-     */
-    public Point setName(String value)
-    {
-        this.name = value;
-        return this;
-    }
-
-
-    /**
-     *  Sets a comment on the point.
-     */
-    public Point setComment(String value)
-    {
-        this.comment = value;
-        return this;
-    }
-
-
-    /**
-     *  Sets the point's description.
-     */
-    public Point setDescription(String value)
-    {
-        this.description = value;
-        return this;
-    }
-
-
-//----------------------------------------------------------------------------
-//  Getters
-//----------------------------------------------------------------------------
-
-    /**
-     *  Returns the point's timestamp, as a Java 8 Instant. May be null.
-     *  <p>
-     *  Note: there are three ways to set/retrieve a point's timestamp: as an
-     *  Instant (internal format), milliseconds since epoch, or IS-8601 string.
-     *  Each of these mechanisms has separate getters and setters, to avoid
-     *  confusing bean introspectors.
-     */
-    public Instant getTimestamp()
-    {
-        return timestamp;
-    }
-
-
-    /**
-     *  Returns the point's timestamp, as an ISO-8601 string with "Zulu" offset.
-     *  May be null.
-     *  <p>
-     *  Note: there are three ways to set/retrieve a point's timestamp: as an
-     *  Instant (internal format), milliseconds since epoch, or IS-8601 string.
-     *  Each of these mechanisms has separate getters and setters, to avoid
-     *  confusing bean introspectors.
-     */
-    public String getTimestampString()
-    {
-        return (timestamp == null)
-             ? null
-             : timestamp.toString();
-    }
-
-
-    /**
      *  Returns the point's timestamp, as milliseconds since epoch. Returns 0
      *  if the object's timestamp is missing.
      *  <p>
@@ -248,11 +169,36 @@ extends com.kdgregory.geoutil.lib.shared.Point
 
 
     /**
+     *  Sets the point's timestamp, as milliseconds since epoch
+     *  <p>
+     *  Note: there are three ways to set/retrieve a point's timestamp: as an
+     *  Instant (internal format), milliseconds since epoch, or ISO-8601 string.
+     *  Each of these mechanisms has separate getters and setters, to avoid
+     *  confusing bean introspectors.
+     */
+    public Point setTimestampMillis(long timestamp)
+    {
+        this.timestamp = Instant.ofEpochMilli(timestamp);
+        return this;
+    }
+
+
+    /**
      *  Returns the point's elevation, in meters. May be null.
      */
     public Double getElevation()
     {
         return elevation;
+    }
+
+
+    /**
+     *  Sets the point's elevation, in meters.
+     */
+    public Point setElevation(Double value)
+    {
+        this.elevation = value;
+        return this;
     }
 
 
@@ -266,11 +212,34 @@ extends com.kdgregory.geoutil.lib.shared.Point
 
 
     /**
+     *  Sets the point's magnetic variance, in degrees (0 ... 360).
+     */
+    public Point setMagneticVariance(Double value)
+    {
+        if ((value < 0) || (value > 360))
+            throw new IllegalArgumentException("magnetic variance must be 0..360; was " + value);
+
+        this.variance = value;
+        return this;
+    }
+
+
+    /**
      *  Returns the point's geoid height, in meters. May be null.
      */
     public Double getGeoidHeight()
     {
         return geoidHeight;
+    }
+
+
+    /**
+     *  Sets the point's geoid height, in meters.
+     */
+    public Point setGeoidHeight(Double value)
+    {
+        this.geoidHeight = value;
+        return this;
     }
 
 
@@ -284,6 +253,16 @@ extends com.kdgregory.geoutil.lib.shared.Point
 
 
     /**
+     *  Sets the point's name.
+     */
+    public Point setName(String value)
+    {
+        this.name = value;
+        return this;
+    }
+
+
+    /**
      *  Returns the comment attached to the point. May be null.
      */
     public String getComment()
@@ -293,11 +272,31 @@ extends com.kdgregory.geoutil.lib.shared.Point
 
 
     /**
+     *  Sets a comment on the point.
+     */
+    public Point setComment(String value)
+    {
+        this.comment = value;
+        return this;
+    }
+
+
+    /**
      *  Returns the point's description. May be null.
      */
     public String getDescription()
     {
         return description;
+    }
+
+
+    /**
+     *  Sets the point's description.
+     */
+    public Point setDescription(String value)
+    {
+        this.description = value;
+        return this;
     }
 
 //----------------------------------------------------------------------------
@@ -358,7 +357,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
     }
 
 //----------------------------------------------------------------------------
-//  Other Public Functions
+//  Other Public Methods
 //----------------------------------------------------------------------------
 
     /**
