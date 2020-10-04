@@ -178,6 +178,20 @@ public class TestPoint
 
 
     @Test
+    public void testIsBetween() throws Exception
+    {
+        Point p = new Point(12,34).setTimestampMillis(1577547827000L);
+
+        assertTrue("in middle of range", p.isBetween(Instant.ofEpochMilli(1577547825000L), Instant.ofEpochMilli(1577547829000L)));
+        assertTrue("at start range",     p.isBetween(Instant.ofEpochMilli(1577547827000L), Instant.ofEpochMilli(1577547829000L)));
+        assertTrue("at end of range",    p.isBetween(Instant.ofEpochMilli(1577547825000L), Instant.ofEpochMilli(1577547827000L)));
+
+        assertFalse("below range",       p.isBetween(Instant.ofEpochMilli(1577547828000L), Instant.ofEpochMilli(1577547829000L)));
+        assertFalse("above range",       p.isBetween(Instant.ofEpochMilli(1577547828000L), Instant.ofEpochMilli(1577547827000L)));
+    }
+
+
+    @Test
     public void testConvertToTimestampedPoint() throws Exception
     {
         Point p1 = new Point(12,34).setTimestampMillis(1577547828000L);
