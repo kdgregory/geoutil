@@ -63,10 +63,10 @@ public class Track
     public Track(Element elem)
     {
         Map<String,Element> children = XmlUtils.listToMap(DomUtil.getChildren(elem));
-        XmlUtils.optSetString(children.get(Constants.E_TRK_NAME),           Constants.NAMESPACE, this::setName);
-        XmlUtils.optSetString(children.get(Constants.E_TRK_DESCRIPTION),    Constants.NAMESPACE, this::setDescription);
+        XmlUtils.optSetString(children.get(GpxConstants.E_TRK_NAME),           GpxConstants.NAMESPACE, this::setName);
+        XmlUtils.optSetString(children.get(GpxConstants.E_TRK_DESCRIPTION),    GpxConstants.NAMESPACE, this::setDescription);
 
-        for (Element eSeg : DomUtil.getChildren(elem, Constants.NAMESPACE, Constants.E_TRKSEG))
+        for (Element eSeg : DomUtil.getChildren(elem, GpxConstants.NAMESPACE, GpxConstants.E_TRKSEG))
         {
             addSegment(new TrackSegment(eSeg));
         }
@@ -165,10 +165,10 @@ public class Track
      */
     public Element appendAsXml(Element parent)
     {
-        Element elem = DomUtil.appendChild(parent, Constants.NAMESPACE, Constants.E_TRK);
+        Element elem = DomUtil.appendChild(parent, GpxConstants.NAMESPACE, GpxConstants.E_TRK);
 
-        XmlUtils.optAppendDataElement(elem, Constants.NAMESPACE, Constants.E_TRK_NAME,          getName());
-        XmlUtils.optAppendDataElement(elem, Constants.NAMESPACE, Constants.E_TRK_DESCRIPTION,   getDescription());
+        XmlUtils.optAppendDataElement(elem, GpxConstants.NAMESPACE, GpxConstants.E_TRK_NAME,          getName());
+        XmlUtils.optAppendDataElement(elem, GpxConstants.NAMESPACE, GpxConstants.E_TRK_DESCRIPTION,   getDescription());
 
         for (TrackSegment seg : segments)
         {
@@ -183,7 +183,7 @@ public class Track
      *  Filters the points of all segments in this track, using a Java8 predicate.
      *  Segments that have no points after filtering are removed.
      */
-    public void filter(Predicate<Point> pred)
+    public void filter(Predicate<GpxPoint> pred)
     {
         segments.stream().forEach(seg -> seg.filter(pred));
         List<TrackSegment> filtered = segments.stream()

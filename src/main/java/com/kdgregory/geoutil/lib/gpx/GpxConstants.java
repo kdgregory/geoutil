@@ -18,7 +18,7 @@ package com.kdgregory.geoutil.lib.gpx;
 /**
  *  Defines strings holding the GPX namespace and element names, to avoid typos.
  */
-public class Constants
+public class GpxConstants
 {
     /** The GPX namespace */
     public final static String NAMESPACE    = "http://www.topografix.com/GPX/1/1";

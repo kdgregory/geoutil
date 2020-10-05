@@ -29,12 +29,12 @@ import net.sf.practicalxml.builder.XmlBuilder;
 import com.kdgregory.geoutil.lib.shared.TimestampedPoint;
 
 
-public class TestPoint
+public class TestGpxPoint
 {
     @Test
     public void testConstructor() throws Exception
     {
-        Point p = new Point(12.34, 45.67);
+        GpxPoint p = new GpxPoint(12.34, 45.67);
 
         assertEquals("lat", 12.34, p.getLat(), 0.01);
         assertEquals("lon", 45.67, p.getLon(), 0.01);
@@ -59,7 +59,7 @@ public class TestPoint
     @Test
     public void testGettersAndSetters() throws Exception
     {
-        Point p = new Point(12.34, 45.67)
+        GpxPoint p = new GpxPoint(12.34, 45.67)
                   .setTimestamp(Instant.ofEpochMilli(1577547828000L))
                   .setElevation(12345.0)
                   .setMagneticVariance(15.2)
@@ -92,19 +92,19 @@ public class TestPoint
     @Test
     public void testAlternativeTimestampFormats() throws Exception
     {
-        Point p1 = new Point(0,0).setTimestampMillis(1577547828000L);
+        GpxPoint p1 = new GpxPoint(0,0).setTimestampMillis(1577547828000L);
 
         assertEquals("timestamp",               Instant.ofEpochMilli(1577547828000L),   p1.getTimestamp());
         assertEquals("timestamp as string",     "2019-12-28T15:43:48Z",                 p1.getTimestampString());
         assertEquals("timestamp as millies",    1577547828000L,                         p1.getTimestampMillis());
 
-        Point p2 = new Point(0,0).setTimestampString("2019-12-28T15:43:48Z");
+        GpxPoint p2 = new GpxPoint(0,0).setTimestampString("2019-12-28T15:43:48Z");
 
         assertEquals("timestamp",               Instant.ofEpochMilli(1577547828000L),   p2.getTimestamp());
         assertEquals("timestamp as string",     "2019-12-28T15:43:48Z",                 p2.getTimestampString());
         assertEquals("timestamp as millies",    1577547828000L,                         p2.getTimestampMillis());
 
-        Point p3 = new Point(0,0).setTimestampString("2019-12-28T10:43:48-05:00");
+        GpxPoint p3 = new GpxPoint(0,0).setTimestampString("2019-12-28T10:43:48-05:00");
 
         assertEquals("timestamp",               Instant.ofEpochMilli(1577547828000L),   p3.getTimestamp());
         assertEquals("timestamp as string",     "2019-12-28T15:43:48Z",                 p3.getTimestampString());
@@ -115,21 +115,21 @@ public class TestPoint
     @Test
     public void testEqualsAndHashcode() throws Exception
     {
-        Point p1a = new Point(12,34);
-        Point p1b = new Point(12,34);
-        Point p2a = new Point(12,34).setTimestampMillis(1577547828000L);
-        Point p2b = new Point(12,34).setTimestampMillis(1577547828000L);
-        Point p2c = new Point(12,34).setTimestampMillis(1577547829000L);
-        Point p3a = new Point(12,34).setTimestampMillis(1577547828000L)
+        GpxPoint p1a = new GpxPoint(12,34);
+        GpxPoint p1b = new GpxPoint(12,34);
+        GpxPoint p2a = new GpxPoint(12,34).setTimestampMillis(1577547828000L);
+        GpxPoint p2b = new GpxPoint(12,34).setTimestampMillis(1577547828000L);
+        GpxPoint p2c = new GpxPoint(12,34).setTimestampMillis(1577547829000L);
+        GpxPoint p3a = new GpxPoint(12,34).setTimestampMillis(1577547828000L)
                                     .setElevation(123.45)
                                     .setMagneticVariance(15.5)
                                     .setGeoidHeight(123.0);
-        Point p3b = new Point(12,34).setTimestampMillis(1577547828000L)
+        GpxPoint p3b = new GpxPoint(12,34).setTimestampMillis(1577547828000L)
                                     .setElevation(123.45)
                                     .setMagneticVariance(15.5)
                                     .setGeoidHeight(123.0);
 
-        Point p4  = new Point(34,56);
+        GpxPoint p4  = new GpxPoint(34,56);
 
         assertTrue("equal, identity",                       p1a.equals(p1a));
         assertTrue("equal, lat/lon",                        p1a.equals(p1b));
@@ -152,11 +152,11 @@ public class TestPoint
     @Test
     public void testCompare() throws Exception
     {
-        Point p1 = new Point(12,34);
-        Point p2 = new Point(12,34).setTimestampMillis(1577547827000L);
-        Point p3 = new Point(12,34).setTimestampMillis(1577547828000L);
-        Point p5 = new Point(56,78);
-        Point p6 = new Point(56,78).setTimestampMillis(1577547828000L);
+        GpxPoint p1 = new GpxPoint(12,34);
+        GpxPoint p2 = new GpxPoint(12,34).setTimestampMillis(1577547827000L);
+        GpxPoint p3 = new GpxPoint(12,34).setTimestampMillis(1577547828000L);
+        GpxPoint p5 = new GpxPoint(56,78);
+        GpxPoint p6 = new GpxPoint(56,78).setTimestampMillis(1577547828000L);
 
         com.kdgregory.geoutil.lib.shared.Point x1 = new com.kdgregory.geoutil.lib.shared.Point(12,34);
         com.kdgregory.geoutil.lib.shared.Point x2 = new com.kdgregory.geoutil.lib.shared.Point(56,78);
@@ -180,7 +180,7 @@ public class TestPoint
     @Test
     public void testIsBetween() throws Exception
     {
-        Point p = new Point(12,34).setTimestampMillis(1577547827000L);
+        GpxPoint p = new GpxPoint(12,34).setTimestampMillis(1577547827000L);
 
         assertTrue("in middle of range", p.isBetween(Instant.ofEpochMilli(1577547825000L), Instant.ofEpochMilli(1577547829000L)));
         assertTrue("at start range",     p.isBetween(Instant.ofEpochMilli(1577547827000L), Instant.ofEpochMilli(1577547829000L)));
@@ -194,14 +194,14 @@ public class TestPoint
     @Test
     public void testConvertToTimestampedPoint() throws Exception
     {
-        Point p1 = new Point(12,34).setTimestampMillis(1577547828000L);
+        GpxPoint p1 = new GpxPoint(12,34).setTimestampMillis(1577547828000L);
         TimestampedPoint tp1 = p1.toTimestampedPoint();
 
         assertEquals("timestamp",   1577547828000L,     tp1.getTimestamp());
         assertEquals("lat",         12,                 tp1.getLat(), 0.0);
         assertEquals("lon",         34,                 tp1.getLon(), 0.0);
 
-        Point p2 = new Point(12,34);
+        GpxPoint p2 = new GpxPoint(12,34);
         TimestampedPoint tp2 = p2.toTimestampedPoint();
 
         assertEquals("timestamp",   0,                  tp2.getTimestamp());
@@ -214,7 +214,7 @@ public class TestPoint
     public void testConvertToXmlBasic() throws Exception
     {
         // this point contains no child elements
-        Point p = new Point(12,34);
+        GpxPoint p = new GpxPoint(12,34);
 
         Element parent = DomUtil.newDocument("bogus");  // not a real name, and no namespace!
         p.appendAsXml(parent, "p1");
@@ -231,7 +231,7 @@ public class TestPoint
     public void testConvertToXmlComplete() throws Exception
     {
         // this point contains all allowed elements
-        Point p = new Point(34,56)
+        GpxPoint p = new GpxPoint(34,56)
                    .setElevation(123.0)
                    .setTimestampMillis(1577547828000L)
                    .setMagneticVariance(15.2)
@@ -294,7 +294,7 @@ public class TestPoint
                             XmlBuilder.attribute("lon", "34.0"))
                        .toDOM();
 
-        Point p = new Point(dom.getDocumentElement());
+        GpxPoint p = new GpxPoint(dom.getDocumentElement());
 
         assertEquals("latitude",  12.0, p.getLat(), 0.0);
         assertEquals("longitude", 34.0, p.getLon(), 0.0);
@@ -316,7 +316,7 @@ public class TestPoint
                             XmlBuilder.element("http://www.topografix.com/GPX/1/1", "desc",         XmlBuilder.text("a description")))
                        .toDOM();
 
-        Point p = new Point(dom.getDocumentElement());
+        GpxPoint p = new GpxPoint(dom.getDocumentElement());
 
         assertEquals("latitude",            12.0,                                   p.getLat(), 0.0);
         assertEquals("longitude",           34.0,                                   p.getLon(), 0.0);
