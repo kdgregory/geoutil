@@ -31,7 +31,7 @@ import net.sf.practicalxml.DomUtil;
  */
 public class TrackSegment
 {
-    private List<Point> points = new ArrayList<>();
+    private List<GpxPoint> points = new ArrayList<>();
 
 
     /**
@@ -52,9 +52,9 @@ public class TrackSegment
      */
     public TrackSegment(Element elem)
     {
-        for (Element ePoint : DomUtil.getChildren(elem, Constants.NAMESPACE, Constants.E_TRKPOINT))
+        for (Element ePoint : DomUtil.getChildren(elem, GpxConstants.NAMESPACE, GpxConstants.E_TRKPOINT))
         {
-            add(new Point(ePoint));
+            add(new GpxPoint(ePoint));
         }
     }
 
@@ -74,7 +74,7 @@ public class TrackSegment
     /**
      *  Returns the list of points, as an immutable list.
      */
-    public List<Point> getPoints()
+    public List<GpxPoint> getPoints()
     {
         return Collections.unmodifiableList(points);
     }
@@ -83,7 +83,7 @@ public class TrackSegment
     /**
      *  Adds a single point to the end of the list.
      */
-    public TrackSegment add(Point p)
+    public TrackSegment add(GpxPoint p)
     {
         points.add(p);
         return this;
@@ -93,7 +93,7 @@ public class TrackSegment
     /**
      *  Adds multiple points to the end of the list.
      */
-    public TrackSegment addAll(Collection<Point> ps)
+    public TrackSegment addAll(Collection<GpxPoint> ps)
     {
         points.addAll(ps);
         return this;
@@ -120,10 +120,10 @@ public class TrackSegment
         if (points.isEmpty())
             return;
 
-        Element eSeg = DomUtil.appendChild(parent, Constants.NAMESPACE, Constants.E_TRKSEG);
-        for (Point p : points)
+        Element eSeg = DomUtil.appendChild(parent, GpxConstants.NAMESPACE, GpxConstants.E_TRKSEG);
+        for (GpxPoint p : points)
         {
-            p.appendAsXml(eSeg, Constants.E_TRKPOINT);
+            p.appendAsXml(eSeg, GpxConstants.E_TRKPOINT);
         }
     }
 
@@ -131,9 +131,9 @@ public class TrackSegment
     /**
      *  Filters all points in this segment, using a Java8 predicate.
      */
-    public void filter(Predicate<Point> pred)
+    public void filter(Predicate<GpxPoint> pred)
     {
-        List<Point> filtered = points.stream()
+        List<GpxPoint> filtered = points.stream()
                                .filter(pred)
                                .collect(Collectors.toList());
         points = new ArrayList<>(filtered);

@@ -56,17 +56,17 @@ public class GpxFile
     {
         Element eGpx = dom.getDocumentElement();
 
-        if (! Constants.NAMESPACE.equals(eGpx.getNamespaceURI()))
+        if (! GpxConstants.NAMESPACE.equals(eGpx.getNamespaceURI()))
         {
             throw new IllegalArgumentException("invalid root namespace: " + eGpx.getNamespaceURI());
         }
 
-        version = eGpx.getAttribute(Constants.A_GPX_VERSION);
+        version = eGpx.getAttribute(GpxConstants.A_GPX_VERSION);
         // TODO - verify version, throw if missing or not supported version
 
-        creator = eGpx.getAttribute(Constants.A_GPX_CREATOR);
+        creator = eGpx.getAttribute(GpxConstants.A_GPX_CREATOR);
 
-        for (Element eTrack : DomUtil.getChildren(eGpx, Constants.NAMESPACE, Constants.E_TRK))
+        for (Element eTrack : DomUtil.getChildren(eGpx, GpxConstants.NAMESPACE, GpxConstants.E_TRK))
         {
             addTrack(new Track(eTrack));
         }
@@ -155,9 +155,9 @@ public class GpxFile
      */
     public Document toXml()
     {
-        Element eGpx = DomUtil.newDocument(Constants.NAMESPACE, Constants.E_GPX);
-        eGpx.setAttribute(Constants.A_GPX_VERSION, getVersion());
-        eGpx.setAttribute(Constants.A_GPX_CREATOR, getCreator());
+        Element eGpx = DomUtil.newDocument(GpxConstants.NAMESPACE, GpxConstants.E_GPX);
+        eGpx.setAttribute(GpxConstants.A_GPX_VERSION, getVersion());
+        eGpx.setAttribute(GpxConstants.A_GPX_CREATOR, getCreator());
         for (Track track : tracks)
         {
             track.appendAsXml(eGpx);

@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 import net.sf.kdgcommons.collections.CollectionUtil;
 
 import com.kdgregory.geoutil.lib.gpx.GpxFile;
-import com.kdgregory.geoutil.lib.gpx.Point;
+import com.kdgregory.geoutil.lib.gpx.GpxPoint;
 import com.kdgregory.geoutil.lib.gpx.Track;
 import com.kdgregory.geoutil.lib.gpx.TrackSegment;
 
@@ -72,7 +72,7 @@ public class GPXCleanup
         newTrack.combineSegments();
         TrackSegment newSeg = newTrack.getSegments().get(0);
 
-        List<Point> tmpPoints = newSeg.getPoints();
+        List<GpxPoint> tmpPoints = newSeg.getPoints();
         logger.info("combined track has {} points, from {} to {}",
                     tmpPoints.size(),
                     CollectionUtil.first(tmpPoints).getTimestamp(),

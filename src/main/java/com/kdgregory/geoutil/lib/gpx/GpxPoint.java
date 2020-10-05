@@ -38,7 +38,7 @@ import com.kdgregory.geoutil.lib.shared.XmlUtils;
  *  <p>
  *  In normal usage, the various conversion functions are the primary API.
  */
-public class Point
+public class GpxPoint
 extends com.kdgregory.geoutil.lib.shared.Point
 {
     // note: order of variables follows required order of elements
@@ -55,7 +55,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
     /**
      *  Base constructor.
      */
-    public Point(double lat, double lon)
+    public GpxPoint(double lat, double lon)
     {
         super(lat,lon);
     }
@@ -68,19 +68,19 @@ extends com.kdgregory.geoutil.lib.shared.Point
      *  Does not validate the provided element's name or namespace, or whether
      *  it contains unexpected content.
      */
-    public Point(Element elem)
+    public GpxPoint(Element elem)
     {
-        this(XmlUtils.getAttributeAsDouble(elem, Constants.A_WPT_LAT),
-             XmlUtils.getAttributeAsDouble(elem, Constants.A_WPT_LON));
+        this(XmlUtils.getAttributeAsDouble(elem, GpxConstants.A_WPT_LAT),
+             XmlUtils.getAttributeAsDouble(elem, GpxConstants.A_WPT_LON));
 
         Map<String,Element> children = XmlUtils.listToMap(DomUtil.getChildren(elem));
-        XmlUtils.optSetDouble(children.get(Constants.E_WPT_ELEVATION),      Constants.NAMESPACE, this::setElevation);
-        XmlUtils.optSetString(children.get(Constants.E_WPT_TIMESTAMP),      Constants.NAMESPACE, this::setTimestampString);
-        XmlUtils.optSetDouble(children.get(Constants.E_WPT_VARIANCE),       Constants.NAMESPACE, this::setMagneticVariance);
-        XmlUtils.optSetDouble(children.get(Constants.E_WPT_GEOID_HEIGHT),   Constants.NAMESPACE, this::setGeoidHeight);
-        XmlUtils.optSetString(children.get(Constants.E_WPT_NAME),           Constants.NAMESPACE, this::setName);
-        XmlUtils.optSetString(children.get(Constants.E_WPT_COMMENT),        Constants.NAMESPACE, this::setComment);
-        XmlUtils.optSetString(children.get(Constants.E_WPT_DESCRIPTION),    Constants.NAMESPACE, this::setDescription);
+        XmlUtils.optSetDouble(children.get(GpxConstants.E_WPT_ELEVATION),      GpxConstants.NAMESPACE, this::setElevation);
+        XmlUtils.optSetString(children.get(GpxConstants.E_WPT_TIMESTAMP),      GpxConstants.NAMESPACE, this::setTimestampString);
+        XmlUtils.optSetDouble(children.get(GpxConstants.E_WPT_VARIANCE),       GpxConstants.NAMESPACE, this::setMagneticVariance);
+        XmlUtils.optSetDouble(children.get(GpxConstants.E_WPT_GEOID_HEIGHT),   GpxConstants.NAMESPACE, this::setGeoidHeight);
+        XmlUtils.optSetString(children.get(GpxConstants.E_WPT_NAME),           GpxConstants.NAMESPACE, this::setName);
+        XmlUtils.optSetString(children.get(GpxConstants.E_WPT_COMMENT),        GpxConstants.NAMESPACE, this::setComment);
+        XmlUtils.optSetString(children.get(GpxConstants.E_WPT_DESCRIPTION),    GpxConstants.NAMESPACE, this::setDescription);
     }
 
 //----------------------------------------------------------------------------
@@ -109,7 +109,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
      *  Each of these mechanisms has separate getters and setters, to avoid
      *  confusing bean introspectors.
      */
-    public Point setTimestamp(Instant timestamp)
+    public GpxPoint setTimestamp(Instant timestamp)
     {
         this.timestamp = timestamp;
         return this;
@@ -142,7 +142,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
      *  Each of these mechanisms has separate getters and setters, to avoid
      *  confusing bean introspectors.
      */
-    public Point setTimestampString(String timestamp)
+    public GpxPoint setTimestampString(String timestamp)
     {
         this.timestamp = (timestamp.endsWith("Z"))
                        ? Instant.parse(timestamp)
@@ -176,7 +176,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
      *  Each of these mechanisms has separate getters and setters, to avoid
      *  confusing bean introspectors.
      */
-    public Point setTimestampMillis(long timestamp)
+    public GpxPoint setTimestampMillis(long timestamp)
     {
         this.timestamp = Instant.ofEpochMilli(timestamp);
         return this;
@@ -195,7 +195,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
     /**
      *  Sets the point's elevation, in meters.
      */
-    public Point setElevation(Double value)
+    public GpxPoint setElevation(Double value)
     {
         this.elevation = value;
         return this;
@@ -214,7 +214,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
     /**
      *  Sets the point's magnetic variance, in degrees (0 ... 360).
      */
-    public Point setMagneticVariance(Double value)
+    public GpxPoint setMagneticVariance(Double value)
     {
         if ((value < 0) || (value > 360))
             throw new IllegalArgumentException("magnetic variance must be 0..360; was " + value);
@@ -236,7 +236,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
     /**
      *  Sets the point's geoid height, in meters.
      */
-    public Point setGeoidHeight(Double value)
+    public GpxPoint setGeoidHeight(Double value)
     {
         this.geoidHeight = value;
         return this;
@@ -255,7 +255,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
     /**
      *  Sets the point's name.
      */
-    public Point setName(String value)
+    public GpxPoint setName(String value)
     {
         this.name = value;
         return this;
@@ -274,7 +274,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
     /**
      *  Sets a comment on the point.
      */
-    public Point setComment(String value)
+    public GpxPoint setComment(String value)
     {
         this.comment = value;
         return this;
@@ -293,7 +293,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
     /**
      *  Sets the point's description.
      */
-    public Point setDescription(String value)
+    public GpxPoint setDescription(String value)
     {
         this.description = value;
         return this;
@@ -312,9 +312,9 @@ extends com.kdgregory.geoutil.lib.shared.Point
         if (this == obj)
             return true;
 
-        else if (obj instanceof Point)
+        else if (obj instanceof GpxPoint)
         {
-            Point that = (Point)obj;
+            GpxPoint that = (GpxPoint)obj;
             return super.equals(that)
                 && ObjectUtil.equals(this.elevation, that.elevation)
                 && ObjectUtil.equals(this.timestamp, that.timestamp)
@@ -342,10 +342,10 @@ extends com.kdgregory.geoutil.lib.shared.Point
     @Override
     public int compareTo(com.kdgregory.geoutil.lib.shared.Point that)
     {
-        if (that instanceof Point)
+        if (that instanceof GpxPoint)
         {
             long thisTimestmap = getTimestampMillis();
-            long thatTimestamp = ((Point)that).getTimestampMillis();
+            long thatTimestamp = ((GpxPoint)that).getTimestampMillis();
             return (thisTimestmap > thatTimestamp) ? 1
                  : (thisTimestmap < thatTimestamp) ? -1
                  : super.compareTo(that);
@@ -378,21 +378,21 @@ extends com.kdgregory.geoutil.lib.shared.Point
      *
      *  @param  parent      The DOM Element representing the container type.
      *  @para   nodeName    The local name to use for this element. To avoid typos,
-     *                      use one of the names from {@link Constants}.
+     *                      use one of the names from {@link GpxConstants}.
      */
     public Element appendAsXml(Element parent, String nodeName)
     {
-        Element elem = DomUtil.appendChild(parent, Constants.NAMESPACE, nodeName);
-        elem.setAttribute(Constants.A_WPT_LAT, String.valueOf(getLat()));
-        elem.setAttribute(Constants.A_WPT_LON, String.valueOf(getLon()));
+        Element elem = DomUtil.appendChild(parent, GpxConstants.NAMESPACE, nodeName);
+        elem.setAttribute(GpxConstants.A_WPT_LAT, String.valueOf(getLat()));
+        elem.setAttribute(GpxConstants.A_WPT_LON, String.valueOf(getLon()));
 
-        XmlUtils.optAppendDataElement(elem, Constants.NAMESPACE, Constants.E_WPT_ELEVATION,     getElevation());
-        XmlUtils.optAppendDataElement(elem, Constants.NAMESPACE, Constants.E_WPT_TIMESTAMP,     getTimestamp());
-        XmlUtils.optAppendDataElement(elem, Constants.NAMESPACE, Constants.E_WPT_VARIANCE,      getMagneticVariance());
-        XmlUtils.optAppendDataElement(elem, Constants.NAMESPACE, Constants.E_WPT_GEOID_HEIGHT,  getGeoidHeight());
-        XmlUtils.optAppendDataElement(elem, Constants.NAMESPACE, Constants.E_WPT_NAME,          getName());
-        XmlUtils.optAppendDataElement(elem, Constants.NAMESPACE, Constants.E_WPT_COMMENT,       getComment());
-        XmlUtils.optAppendDataElement(elem, Constants.NAMESPACE, Constants.E_WPT_DESCRIPTION,   getDescription());
+        XmlUtils.optAppendDataElement(elem, GpxConstants.NAMESPACE, GpxConstants.E_WPT_ELEVATION,     getElevation());
+        XmlUtils.optAppendDataElement(elem, GpxConstants.NAMESPACE, GpxConstants.E_WPT_TIMESTAMP,     getTimestamp());
+        XmlUtils.optAppendDataElement(elem, GpxConstants.NAMESPACE, GpxConstants.E_WPT_VARIANCE,      getMagneticVariance());
+        XmlUtils.optAppendDataElement(elem, GpxConstants.NAMESPACE, GpxConstants.E_WPT_GEOID_HEIGHT,  getGeoidHeight());
+        XmlUtils.optAppendDataElement(elem, GpxConstants.NAMESPACE, GpxConstants.E_WPT_NAME,          getName());
+        XmlUtils.optAppendDataElement(elem, GpxConstants.NAMESPACE, GpxConstants.E_WPT_COMMENT,       getComment());
+        XmlUtils.optAppendDataElement(elem, GpxConstants.NAMESPACE, GpxConstants.E_WPT_DESCRIPTION,   getDescription());
 
         return elem;
     }

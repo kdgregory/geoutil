@@ -36,9 +36,9 @@ public class TestTrackSegment
         assertTrue("after construction, list exists and is empty", seg.getPoints().isEmpty());
         assertTrue("after construction, segment reports empty",    seg.isEmpty());
 
-        Point p1 = new Point(12,34);
-        Point p2 = new Point(23,45);
-        Point p3 = new Point(34,56);
+        GpxPoint p1 = new GpxPoint(12,34);
+        GpxPoint p2 = new GpxPoint(23,45);
+        GpxPoint p3 = new GpxPoint(34,56);
 
         seg.add(p1);
         assertEquals("after adding single point", Arrays.asList(p1), seg.getPoints());
@@ -48,7 +48,7 @@ public class TestTrackSegment
 
         try
         {
-            seg.getPoints().add(new Point(0,0));
+            seg.getPoints().add(new GpxPoint(0,0));
             fail("returned list of points should be unmodifiable");
         }
         catch (UnsupportedOperationException ex)
@@ -65,10 +65,10 @@ public class TestTrackSegment
     @Test
     public void testFilter() throws Exception
     {
-        Point p1 = new Point(12,34).setTimestampMillis(1577547825000L);
-        Point p2 = new Point(12,34).setTimestampMillis(1577547826000L);
-        Point p3 = new Point(12,34).setTimestampMillis(1577547827000L);
-        Point p4 = new Point(12,34).setTimestampMillis(1577547828000L);
+        GpxPoint p1 = new GpxPoint(12,34).setTimestampMillis(1577547825000L);
+        GpxPoint p2 = new GpxPoint(12,34).setTimestampMillis(1577547826000L);
+        GpxPoint p3 = new GpxPoint(12,34).setTimestampMillis(1577547827000L);
+        GpxPoint p4 = new GpxPoint(12,34).setTimestampMillis(1577547828000L);
 
         TrackSegment seg = new TrackSegment().addAll(Arrays.asList(p1, p2, p3, p4));
         assertEquals("before filter", Arrays.asList(p1, p2, p3, p4), seg.getPoints());
@@ -83,10 +83,10 @@ public class TestTrackSegment
     @Test
     public void testSort() throws Exception
     {
-        Point p1 = new Point(12,34).setTimestampMillis(1577547825000L);
-        Point p2 = new Point(12,34).setTimestampMillis(1577547826000L);
-        Point p3 = new Point(12,34).setTimestampMillis(1577547827000L);
-        Point p4 = new Point(12,34).setTimestampMillis(1577547828000L);
+        GpxPoint p1 = new GpxPoint(12,34).setTimestampMillis(1577547825000L);
+        GpxPoint p2 = new GpxPoint(12,34).setTimestampMillis(1577547826000L);
+        GpxPoint p3 = new GpxPoint(12,34).setTimestampMillis(1577547827000L);
+        GpxPoint p4 = new GpxPoint(12,34).setTimestampMillis(1577547828000L);
 
         TrackSegment seg = new TrackSegment().addAll(Arrays.asList(p3, p2, p4, p1));
         seg.sortPoints();
@@ -109,8 +109,8 @@ public class TestTrackSegment
 
         // second test appends some actual points
 
-        Point p1 = new Point(12,34);
-        Point p2 = new Point(23, 45);
+        GpxPoint p1 = new GpxPoint(12,34);
+        GpxPoint p2 = new GpxPoint(23, 45);
         seg.addAll(Arrays.asList(p1, p2));
 
         seg.appendAsXml(root);
@@ -120,8 +120,8 @@ public class TestTrackSegment
         assertEquals("track segment namespace",     "http://www.topografix.com/GPX/1/1",    eSeg.getNamespaceURI());
         assertEquals("track segment name",          "trkseg",                               eSeg.getNodeName());
         assertEquals("track segment child count",   2,                                      DomUtil.getChildren(eSeg).size());
-        assertEquals("first child",                 p1,                                     new Point(DomUtil.getChildren(eSeg).get(0)));
-        assertEquals("second child",                p2,                                     new Point(DomUtil.getChildren(eSeg).get(1)));
+        assertEquals("first child",                 p1,                                     new GpxPoint(DomUtil.getChildren(eSeg).get(0)));
+        assertEquals("second child",                p2,                                     new GpxPoint(DomUtil.getChildren(eSeg).get(1)));
     }
 
 
@@ -139,8 +139,8 @@ public class TestTrackSegment
 
         TrackSegment seg = new TrackSegment(dom.getDocumentElement());
         assertEquals("number of points", 2, seg.getPoints().size());
-        assertEquals("point 1", new Point(12, 34), seg.getPoints().get(0));
-        assertEquals("point 2", new Point(23, 45), seg.getPoints().get(1));
+        assertEquals("point 1", new GpxPoint(12, 34), seg.getPoints().get(0));
+        assertEquals("point 2", new GpxPoint(23, 45), seg.getPoints().get(1));
     }
 
 }
