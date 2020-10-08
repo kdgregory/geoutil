@@ -46,6 +46,20 @@ public class XmlUtils
 
 
     /**
+     *  Apends a child element that contains a representation of the passed
+     *  boolean value, iff it's not null.
+     */
+    public static void optAppendBooleanDataElement(Element parent, String namespace, String localName, Boolean value)
+    {
+        if (value == null)
+            return;
+
+        Element c = DomUtil.appendChild(parent, namespace, localName);
+        c.setTextContent(value.booleanValue() ? "1" : "0");
+    }
+
+
+    /**
      *  Given a list of elements, converts them to a map keyed by localname. If the
      *  source contains elements with duplicate name, only the last is retained.
      */
@@ -77,6 +91,59 @@ public class XmlUtils
             throw new IllegalArgumentException("attribute " + name + " has unparseable value: " + value);
         }
     }
+
+
+    /**
+     *  Returns the text content of a named child element, null if the child
+     *  doesn't exist.
+     */
+    public static String getChildText(Element parent, String lclName)
+    {
+        Element child = DomUtil.getChild(parent, lclName);
+        return (child == null)
+             ? null
+             : DomUtil.getText(child);
+    }
+
+
+    /**
+     *  Returns the text content of a named child element, null if the child
+     *  doesn't exist.
+     */
+    public static String getChildText(Element parent, String nsUri, String lclName)
+    {
+        Element child = DomUtil.getChild(parent, nsUri, lclName);
+        return (child == null)
+             ? null
+             : DomUtil.getText(child);
+    }
+
+
+    /**
+     *  Returns the text content of a child element as a Boolean, using the
+     *  encoding supported by XML Schema. Returns null if the child doesn't
+     *  exist, throws if the value is not a supported encoding.
+     */
+    public static Boolean getXsiBoolean(Element parent, String childName)
+    {
+        String value = getChildText(parent, childName);
+
+        if (value == null)
+            return null;
+            if ("0".equals(value))
+            {
+                return Boolean.FALSE;
+            }
+            else if ("1".equals(value))
+            {
+                return Boolean.TRUE;
+            }
+            else
+            {
+                throw new IllegalArgumentException("invalid content for " + childName + ": " + value);
+            }
+    }
+
 
 //----------------------------------------------------------------------------
 //  These can't be moved to PracticalXML until it supports Java 8

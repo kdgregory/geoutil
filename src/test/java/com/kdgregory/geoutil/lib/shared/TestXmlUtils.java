@@ -55,6 +55,21 @@ public class TestXmlUtils
 
 
     @Test
+    public void testOptAppendBooleanDataElement() throws Exception
+    {
+        Element parent = DomUtil.newDocument("foo");
+
+        XmlUtils.optAppendBooleanDataElement(parent, "nsuri:something", "foo", null);
+        XmlUtils.optAppendBooleanDataElement(parent, "nsuri:something", "bar", Boolean.TRUE);
+        XmlUtils.optAppendBooleanDataElement(parent, "nsuri:something", "baz", Boolean.FALSE);
+
+        assertEquals("only added two children",     2,      DomUtil.getChildren(parent).size());
+        assertEquals("encoded Boolean.TRUE",        "1",    DomUtil.getChild(parent, "nsuri:something", "bar").getTextContent());
+        assertEquals("encoded Boolean.FALSE",        "0",   DomUtil.getChild(parent, "nsuri:something", "baz").getTextContent());
+    }
+
+
+    @Test
     @SuppressWarnings("unused")
     public void testListToMap() throws Exception
     {
@@ -69,6 +84,4 @@ public class TestXmlUtils
         assertSame("argle is child 1",  child1, map.get("argle"));
         assertSame("bargle is child 3", child3, map.get("bargle"));
     }
-
-
 }

@@ -20,4 +20,25 @@ package com.kdgregory.geoutil.lib.kml;
  */
 public class KmlConstants
 {
+    /**
+     *  The namespace used to write XML content. 
+     *  <p>
+     *  Note that files written by Google Earth use the namespace "http://earth.google.com/kml/2.1", 
+     *  and the file format is compatible with files using the namespace "http://www.opengis.net/kml/2.2". 
+     */
+    public final static String  NAMESPACE               = "http://www.opengis.net/kml/2.2";
+    
+    
+    /** Point element name. */
+    public final static String  E_POINT                 = "Point";
+    
+    /** Point child element: extrude. */
+    public final static String  E_POINT_EXTRUDE         = "extrude";
+    
+    /** Point child element: altitudeMode. */
+    public final static String  E_POINT_ALTMODE         = "altitudeMode";
+    
+    /** Point child element: coordinates. */
+    public final static String  E_POINT_COORD           = "coordinates";
+
 }
