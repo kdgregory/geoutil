@@ -23,8 +23,8 @@ import org.w3c.dom.Element;
 import net.sf.kdgcommons.lang.ObjectUtil;
 import net.sf.practicalxml.DomUtil;
 
+import com.kdgregory.geoutil.lib.internal.XmlUtils;
 import com.kdgregory.geoutil.lib.shared.TimestampedPoint;
-import com.kdgregory.geoutil.lib.shared.XmlUtils;
 
 
 /**

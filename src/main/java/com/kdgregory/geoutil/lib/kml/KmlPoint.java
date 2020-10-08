@@ -19,7 +19,7 @@ import org.w3c.dom.Element;
 import net.sf.kdgcommons.lang.StringUtil;
 import net.sf.practicalxml.DomUtil;
 
-import com.kdgregory.geoutil.lib.shared.XmlUtils;
+import com.kdgregory.geoutil.lib.internal.XmlUtils;
 
 
 /**
