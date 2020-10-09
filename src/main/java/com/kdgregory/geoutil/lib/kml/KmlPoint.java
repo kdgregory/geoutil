@@ -27,6 +27,7 @@ import com.kdgregory.geoutil.lib.internal.XmlUtils;
  */
 public class KmlPoint
 extends com.kdgregory.geoutil.lib.shared.Point
+implements Geometry
 {
     private Double altitude;
     private AltitudeMode altitudeMode;
