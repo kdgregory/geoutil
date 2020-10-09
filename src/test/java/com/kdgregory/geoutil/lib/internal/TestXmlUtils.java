@@ -130,14 +130,14 @@ public class TestXmlUtils
         XmlUtils.optAppendDataElement(parent, "nsuri:something", "baz", "");
         XmlUtils.optAppendDataElement(parent, "nsuri:something", "biff", "NAN");
 
-        assertEquals("parseable: true",         Boolean.TRUE,   XmlUtils.getChildTextAsBoolean(parent, "foo"));
-        assertEquals("parseable: false",        Boolean.FALSE,  XmlUtils.getChildTextAsBoolean(parent, "bar"));
-        assertNull("child has empty string",                    XmlUtils.getChildTextAsBoolean(parent, "baz"));
-        assertNull("no such child",                             XmlUtils.getChildTextAsBoolean(parent, "boffo"));
+        assertEquals("parseable: true",         Boolean.TRUE,   XmlUtils.getChildTextAsBoolean(parent, "nsuri:something", "foo"));
+        assertEquals("parseable: false",        Boolean.FALSE,  XmlUtils.getChildTextAsBoolean(parent, "nsuri:something", "bar"));
+        assertNull("child has empty string",                    XmlUtils.getChildTextAsBoolean(parent, "nsuri:something", "baz"));
+        assertNull("no such child",                             XmlUtils.getChildTextAsBoolean(parent, "nsuri:something", "boffo"));
 
         try
         {
-            XmlUtils.getChildTextAsBoolean(parent, "biff");
+            XmlUtils.getChildTextAsBoolean(parent, "nsuri:something", "biff");
             fail("didn't throw on unparseable value");
         }
         catch (IllegalArgumentException ex)

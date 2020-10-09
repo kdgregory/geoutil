@@ -82,7 +82,7 @@ public class TestKmlPoint
     @Test
     public void testFromXmlMinimal() throws Exception
     {
-        Document dom = XmlBuilder.element("irrelevant",
+        Document dom = XmlBuilder.element("http://earth.google.com/kml/2.1", "Point",
                             XmlBuilder.element("http://earth.google.com/kml/2.1", "coordinates",    XmlBuilder.text("12.0,34.0")))
                        .toDOM();
 
@@ -100,7 +100,7 @@ public class TestKmlPoint
     @Test
     public void testFromXmlComplete() throws Exception
     {
-        Document dom = XmlBuilder.element("irrelevant",
+        Document dom = XmlBuilder.element("http://earth.google.com/kml/2.1", "Point",
                             XmlBuilder.element("http://earth.google.com/kml/2.1", "extrude",        XmlBuilder.text("1")),
                             XmlBuilder.element("http://earth.google.com/kml/2.1", "altitudeMode",   XmlBuilder.text("relativeToGround")),
                             XmlBuilder.element("http://earth.google.com/kml/2.1", "coordinates",    XmlBuilder.text("12.0,34.0,56.0")))
@@ -114,6 +114,25 @@ public class TestKmlPoint
 
         assertEquals("extrude",         Boolean.TRUE,                   p.getExtrude());
         assertEquals("altitudeMode",    AltitudeMode.relativeToGround,  p.getAltitudeMode());
+    }
+
+
+    @Test
+    public void testFromXmlInvalidName() throws Exception
+    {
+        Document dom = XmlBuilder.element("http://earth.google.com/kml/2.1", "SomethingElse",
+                            XmlBuilder.element("http://earth.google.com/kml/2.1", "coordinates",    XmlBuilder.text("12.0,34.0")))
+                       .toDOM();
+
+        try
+        {
+            KmlPoint.fromXml(dom.getDocumentElement());
+            fail("should not have parsed successfully");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertTrue("exception message (was: " + ex.getMessage() + ")", ex.getMessage().contains("SomethingElse"));
+        }
     }
 
 

@@ -167,23 +167,33 @@ extends com.kdgregory.geoutil.lib.shared.Point
      *  Creates an instance from an element tree following the description in
      *  https://developers.google.com/kml/documentation/kmlreference#point.
      *  <p>
-     *  Note: KML documents may use different namespaces depending on origin.
-     *  To avoid complexity, this function ignores namespace when looking at
-     *  child elements. If it's important to you that namespaces be checked,
-     *  the best solution is to validate the entire file against the schema
-     *  that you believe to be the "correct" one.
+     *  Note: since KML documents may use multiple namespaces, this operation
+     *  merely requires that the child elements have the same namespace as the
+     *  passed element. It does not validate that the provided namespace is
+     *  one of the expected ones.
+     *
+     *  @throws IllegalArgumentException if the provided element does not have
+     *          the name "Point", or cannot be parsed according to the KML
+     *          specification.
      */
     public static KmlPoint fromXml(Element elem)
     {
-        KmlPoint p = fromCoordinates(XmlUtils.getChildText(elem, KmlConstants.E_POINT_COORD));
+        if (! KmlConstants.E_POINT.equals(DomUtil.getLocalName(elem)))
+        {
+            throw new IllegalArgumentException("incorrect element name: " + DomUtil.getLocalName(elem));
+        }
 
-        String altitudeMode = XmlUtils.getChildText(elem, KmlConstants.E_POINT_ALTMODE);
+        String namespace = elem.getNamespaceURI();
+        
+        KmlPoint p = fromCoordinates(XmlUtils.getChildText(elem, namespace, KmlConstants.E_POINT_COORD));
+
+        String altitudeMode = XmlUtils.getChildText(elem, namespace, KmlConstants.E_POINT_ALTMODE);
         if (! StringUtil.isEmpty(altitudeMode))
         {
             p.setAltitudeMode(AltitudeMode.fromString(altitudeMode));
         }
 
-        p.setExtrude(XmlUtils.getChildTextAsBoolean(elem, KmlConstants.E_POINT_EXTRUDE));
+        p.setExtrude(XmlUtils.getChildTextAsBoolean(elem, namespace, KmlConstants.E_POINT_EXTRUDE));
 
         return p;
     }

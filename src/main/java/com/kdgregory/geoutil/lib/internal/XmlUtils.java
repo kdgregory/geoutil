@@ -111,9 +111,9 @@ public class XmlUtils
      *  encoding supported by XML Schema. Returns null if the child doesn't
      *  exist, throws if the value is not a supported encoding.
      */
-    public static Boolean getChildTextAsBoolean(Element parent, String childName)
+    public static Boolean getChildTextAsBoolean(Element parent, String nsUri, String childName)
     {
-        String value = getChildText(parent, childName);
+        String value = getChildText(parent, nsUri, childName);
 
         if (value == null)
             return null;
