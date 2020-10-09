@@ -17,7 +17,6 @@ package com.kdgregory.geoutil.lib.internal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.w3c.dom.Element;
 
@@ -46,10 +45,10 @@ public class XmlUtils
 
 
     /**
-     *  Apends a child element that contains a representation of the passed
-     *  boolean value, iff it's not null.
+     *  Apends a child element that contains the XML Schema Instance representation
+     * of the passed boolean value, iff it's not null.
      */
-    public static void optAppendBooleanDataElement(Element parent, String namespace, String localName, Boolean value)
+    public static void optAppendDataElement(Element parent, String namespace, String localName, Boolean value)
     {
         if (value == null)
             return;
@@ -60,17 +59,77 @@ public class XmlUtils
 
 
     /**
-     *  Given a list of elements, converts them to a map keyed by localname. If the
-     *  source contains elements with duplicate name, only the last is retained.
+     *  Returns the text content of the specified child element, null if the child
+     *  doesn't exist.
      */
-    public static Map<String,Element> listToMap(List<Element> children)
+    public static String getChildText(Element parent, String lclName)
     {
-        Map<String,Element> result = new HashMap<>();
-        for (Element child : children)
+        Element child = DomUtil.getChild(parent, lclName);
+        return (child == null)
+             ? null
+             : DomUtil.getText(child);
+    }
+
+
+    /**
+     *  Returns the text content of the specified child element, null if the child
+     *  doesn't exist.
+     */
+    public static String getChildText(Element parent, String nsUri, String lclName)
+    {
+        Element child = DomUtil.getChild(parent, nsUri, lclName);
+        return (child == null)
+             ? null
+             : DomUtil.getText(child);
+    }
+
+
+    /**
+     *  Retrieves the text from a child element and parses it as a Double, null if
+     *  the child doesn't exist.
+     */
+    public static Double getChildTextAsDouble(Element parent, String nsUri, String lclName)
+    {
+        String text = getChildText(parent, nsUri, lclName);
+        if (text == null)
+            return null;
+
+        try
         {
-            result.put(DomUtil.getLocalName(child), child);
+            return Double.valueOf(text);
         }
-        return result;
+        catch (NumberFormatException ex)
+        {
+            // trim stack trace and give a more useful message
+            throw new IllegalArgumentException("unparseable value at " + nsUri + ":" + lclName + ": " + text);
+        }
+    }
+
+
+    /**
+     *  Returns the text content of a child element as a Boolean, using the
+     *  encoding supported by XML Schema. Returns null if the child doesn't
+     *  exist, throws if the value is not a supported encoding.
+     */
+    public static Boolean getChildTextAsBoolean(Element parent, String childName)
+    {
+        String value = getChildText(parent, childName);
+
+        if (value == null)
+            return null;
+
+        if ("0".equals(value))
+        {
+            return Boolean.FALSE;
+        }
+        else if ("1".equals(value))
+        {
+            return Boolean.TRUE;
+        }
+        else
+        {
+            throw new IllegalArgumentException("invalid content for " + childName + ": " + value);
+        }
     }
 
 
@@ -94,113 +153,16 @@ public class XmlUtils
 
 
     /**
-     *  Returns the text content of a named child element, null if the child
-     *  doesn't exist.
+     *  Given a list of elements, converts them to a map keyed by localname. If the
+     *  source contains elements with duplicate name, only the last is retained.
      */
-    public static String getChildText(Element parent, String lclName)
+    public static Map<String,Element> listToMap(List<Element> children)
     {
-        Element child = DomUtil.getChild(parent, lclName);
-        return (child == null)
-             ? null
-             : DomUtil.getText(child);
-    }
-
-
-    /**
-     *  Returns the text content of a named child element, null if the child
-     *  doesn't exist.
-     */
-    public static String getChildText(Element parent, String nsUri, String lclName)
-    {
-        Element child = DomUtil.getChild(parent, nsUri, lclName);
-        return (child == null)
-             ? null
-             : DomUtil.getText(child);
-    }
-
-
-    /**
-     *  Returns the text content of a child element as a Boolean, using the
-     *  encoding supported by XML Schema. Returns null if the child doesn't
-     *  exist, throws if the value is not a supported encoding.
-     */
-    public static Boolean getXsiBoolean(Element parent, String childName)
-    {
-        String value = getChildText(parent, childName);
-
-        if (value == null)
-            return null;
-            if ("0".equals(value))
-            {
-                return Boolean.FALSE;
-            }
-            else if ("1".equals(value))
-            {
-                return Boolean.TRUE;
-            }
-            else
-            {
-                throw new IllegalArgumentException("invalid content for " + childName + ": " + value);
-            }
-    }
-
-
-//----------------------------------------------------------------------------
-//  These can't be moved to PracticalXML until it supports Java 8
-//----------------------------------------------------------------------------
-
-    /**
-     *  If passed a not-null Element, validates its namespace, attempts to parse
-     *  its text as a Double, and invokes the passed setter object.
-     *  <p>
-     *  If passed a null Element, does nothing.
-     */
-    public static void optSetDouble(Element elem, String namespace, Consumer<Double> setter)
-    {
-        if (elem == null)
-            return;
-
-        String elemNS = elem.getNamespaceURI();
-        if (! StringUtil.equalOrEmpty(namespace, elemNS))
-            throw new IllegalArgumentException(elem.getNodeName() + " has an invalid namespace: " + elemNS);
-
-        String text = DomUtil.getText(elem);
-        if (StringUtil.isBlank(text))
-            throw new IllegalArgumentException(elem.getNodeName() + " has blank content");
-
-        double value = 0.0;
-        try
+        Map<String,Element> result = new HashMap<>();
+        for (Element child : children)
         {
-            value = Double.parseDouble(text);
+            result.put(DomUtil.getLocalName(child), child);
         }
-        catch (NumberFormatException ex)
-        {
-            throw new IllegalArgumentException(elem.getNodeName() + " has invalid content: " + text);
-        }
-
-        setter.accept(Double.valueOf(value));
-    }
-
-
-    /**
-     *  If passed a not-null Element, validates its namespace and invokes the passed setter
-     *  object on its text content.
-     *  <p>
-     *  If passed a null Element, does nothing.
-     */
-    public static void optSetString(Element elem, String namespace, Consumer<String> setter)
-    {
-        if (elem == null)
-            return;
-
-        String elemNS = elem.getNamespaceURI();
-        if (! StringUtil.equalOrEmpty(namespace, elemNS))
-            throw new IllegalArgumentException(elem.getNodeName() + " has an invalid namespace: " + elemNS);
-
-        String text = DomUtil.getText(elem);
-        if (StringUtil.isBlank(text))
-            throw new IllegalArgumentException(elem.getNodeName() + " has blank content");
-
-        setter.accept(text);
+        return result;
     }
 }

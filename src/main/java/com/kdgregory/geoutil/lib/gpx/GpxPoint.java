@@ -16,13 +16,13 @@ package com.kdgregory.geoutil.lib.gpx;
 
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 
 import org.w3c.dom.Element;
 
 import net.sf.kdgcommons.lang.ObjectUtil;
 import net.sf.practicalxml.DomUtil;
 
+import com.kdgregory.geoutil.lib.internal.ObjectUtils;
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
 import com.kdgregory.geoutil.lib.shared.TimestampedPoint;
 
@@ -73,14 +73,13 @@ extends com.kdgregory.geoutil.lib.shared.Point
         this(XmlUtils.getAttributeAsDouble(elem, GpxConstants.A_WPT_LAT),
              XmlUtils.getAttributeAsDouble(elem, GpxConstants.A_WPT_LON));
 
-        Map<String,Element> children = XmlUtils.listToMap(DomUtil.getChildren(elem));
-        XmlUtils.optSetDouble(children.get(GpxConstants.E_WPT_ELEVATION),      GpxConstants.NAMESPACE, this::setElevation);
-        XmlUtils.optSetString(children.get(GpxConstants.E_WPT_TIMESTAMP),      GpxConstants.NAMESPACE, this::setTimestampString);
-        XmlUtils.optSetDouble(children.get(GpxConstants.E_WPT_VARIANCE),       GpxConstants.NAMESPACE, this::setMagneticVariance);
-        XmlUtils.optSetDouble(children.get(GpxConstants.E_WPT_GEOID_HEIGHT),   GpxConstants.NAMESPACE, this::setGeoidHeight);
-        XmlUtils.optSetString(children.get(GpxConstants.E_WPT_NAME),           GpxConstants.NAMESPACE, this::setName);
-        XmlUtils.optSetString(children.get(GpxConstants.E_WPT_COMMENT),        GpxConstants.NAMESPACE, this::setComment);
-        XmlUtils.optSetString(children.get(GpxConstants.E_WPT_DESCRIPTION),    GpxConstants.NAMESPACE, this::setDescription);
+        ObjectUtils.optSetDouble(XmlUtils.getChildText(elem, GpxConstants.NAMESPACE, GpxConstants.E_WPT_ELEVATION),     this::setElevation);
+        ObjectUtils.optSetString(XmlUtils.getChildText(elem, GpxConstants.NAMESPACE, GpxConstants.E_WPT_TIMESTAMP),     this::setTimestampString);
+        ObjectUtils.optSetDouble(XmlUtils.getChildText(elem, GpxConstants.NAMESPACE, GpxConstants.E_WPT_VARIANCE),      this::setMagneticVariance);
+        ObjectUtils.optSetDouble(XmlUtils.getChildText(elem, GpxConstants.NAMESPACE, GpxConstants.E_WPT_GEOID_HEIGHT),  this::setGeoidHeight);
+        ObjectUtils.optSetString(XmlUtils.getChildText(elem, GpxConstants.NAMESPACE, GpxConstants.E_WPT_NAME),          this::setName);
+        ObjectUtils.optSetString(XmlUtils.getChildText(elem, GpxConstants.NAMESPACE, GpxConstants.E_WPT_COMMENT),       this::setComment);
+        ObjectUtils.optSetString(XmlUtils.getChildText(elem, GpxConstants.NAMESPACE, GpxConstants.E_WPT_DESCRIPTION),   this::setDescription);
     }
 
 //----------------------------------------------------------------------------

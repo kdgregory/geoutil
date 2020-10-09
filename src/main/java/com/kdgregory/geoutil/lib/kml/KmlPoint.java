@@ -183,7 +183,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
             p.setAltitudeMode(AltitudeMode.fromString(altitudeMode));
         }
 
-        p.setExtrude(XmlUtils.getXsiBoolean(elem, KmlConstants.E_POINT_EXTRUDE));
+        p.setExtrude(XmlUtils.getChildTextAsBoolean(elem, KmlConstants.E_POINT_EXTRUDE));
 
         return p;
     }
@@ -196,7 +196,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
     {
         Element ep = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_POINT);
 
-        XmlUtils.optAppendBooleanDataElement(ep, KmlConstants.NAMESPACE, KmlConstants.E_POINT_EXTRUDE, extrude);
+        XmlUtils.optAppendDataElement(ep, KmlConstants.NAMESPACE, KmlConstants.E_POINT_EXTRUDE, extrude);
 
         if (altitudeMode != null)
         {

@@ -22,6 +22,7 @@ import org.w3c.dom.Element;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import net.sf.kdgcommons.test.StringAsserts;
 import net.sf.practicalxml.DomUtil;
 
 
@@ -30,42 +31,121 @@ public class TestXmlUtils
     @Test
     public void testOptAppendDataElement() throws Exception
     {
-        Element parent = DomUtil.newDocument("foo");
+        Element parent = DomUtil.newDocument("parent");
+
+        // various things that have a simple string representation
+        XmlUtils.optAppendDataElement(parent, "nsuri:something", "foo", "fribble");
         XmlUtils.optAppendDataElement(parent, "nsuri:something", "bar", Integer.valueOf(12));
+        XmlUtils.optAppendDataElement(parent, "nsuri:something", "baz", Double.valueOf(12));
+
+        // null won't be appended
+        XmlUtils.optAppendDataElement(parent, "nsuri:something", "biff", null);
+
+        // empty string will be
+        XmlUtils.optAppendDataElement(parent, "nsuri:something", "boffo", "");
+
+        // and we have two variants of booleans
+        XmlUtils.optAppendDataElement(parent, "nsuri:something", "boo", Boolean.TRUE);
+        XmlUtils.optAppendDataElement(parent, "nsuri:something", "boo", Boolean.FALSE);
 
         List<Element> children = DomUtil.getChildren(parent);
-        assertEquals("number of children", 1, children.size());
+        assertEquals("number of children", 6, children.size());
 
-        Element child = children.get(0);
-        assertEquals("child namespace", "nsuri:something",  child.getNamespaceURI());
-        assertEquals("child name",      "bar",              child.getNodeName());
-        assertEquals("child content",   "12",               child.getTextContent());
+        assertEquals("child namespace", "nsuri:something",  children.get(0).getNamespaceURI());
+        assertEquals("child name",      "foo",              children.get(0).getNodeName());
+        assertEquals("child content",   "fribble",          children.get(0).getTextContent());
+
+        assertEquals("child namespace", "nsuri:something",  children.get(1).getNamespaceURI());
+        assertEquals("child name",      "bar",              children.get(1).getNodeName());
+        assertEquals("child content",   "12",               children.get(1).getTextContent());
+
+        assertEquals("child namespace", "nsuri:something",  children.get(2).getNamespaceURI());
+        assertEquals("child name",      "baz",              children.get(2).getNodeName());
+        assertEquals("child content",   "12.0",             children.get(2).getTextContent());
+
+        assertEquals("child namespace", "nsuri:something",  children.get(3).getNamespaceURI());
+        assertEquals("child name",      "boffo",            children.get(3).getNodeName());
+        assertEquals("child content",   "",                 children.get(3).getTextContent());
+
+        assertEquals("child namespace", "nsuri:something",  children.get(4).getNamespaceURI());
+        assertEquals("child name",      "boo",              children.get(4).getNodeName());
+        assertEquals("child content",   "1",                children.get(4).getTextContent());
+
+        assertEquals("child namespace", "nsuri:something",  children.get(5).getNamespaceURI());
+        assertEquals("child name",      "boo",              children.get(5).getNodeName());
+        assertEquals("child content",   "0",                children.get(5).getTextContent());
     }
 
 
     @Test
-    public void testOptAppendNullDataElement() throws Exception
+    public void testGetChildText() throws Exception
     {
-        Element parent = DomUtil.newDocument("foo");
-        XmlUtils.optAppendDataElement(parent, "nsuri:something", "bar", null);
+        Element parent = DomUtil.newDocument("nsuri:argle", "foo");
+        Element child  = DomUtil.appendChild(parent, "nsuri:argle", "bar");
+        child.setTextContent("baz");
 
-        List<Element> children = DomUtil.getChildren(parent);
-        assertEquals("number of children", 0, children.size());
+        // first variant ignores namespace if it exists on elements
+        assertEquals("sans namespace",              "baz",  XmlUtils.getChildText(parent, "bar"));
+        assertEquals("sans namespace, no child",    null,   XmlUtils.getChildText(parent, "biff"));
+
+        // second variant requires namespace match
+        assertEquals("with namespace",              "baz",  XmlUtils.getChildText(parent, "nsuri:argle", "bar"));
+        assertEquals("with namespace, no child",    null,   XmlUtils.getChildText(parent, "nsuri:argle", "biff"));
+        assertEquals("with incorrect namespace",    null,   XmlUtils.getChildText(parent, "nsuri:nargle", "bar"));
     }
 
 
     @Test
-    public void testOptAppendBooleanDataElement() throws Exception
+    public void testGetChildTextAsDouble() throws Exception
     {
-        Element parent = DomUtil.newDocument("foo");
+        Element parent = DomUtil.newDocument("parent");
+        XmlUtils.optAppendDataElement(parent, "nsuri:something", "foo", Double.valueOf(12));
+        XmlUtils.optAppendDataElement(parent, "nsuri:something", "bar", "");
+        XmlUtils.optAppendDataElement(parent, "nsuri:something", "biff", "NAN");
 
-        XmlUtils.optAppendBooleanDataElement(parent, "nsuri:something", "foo", null);
-        XmlUtils.optAppendBooleanDataElement(parent, "nsuri:something", "bar", Boolean.TRUE);
-        XmlUtils.optAppendBooleanDataElement(parent, "nsuri:something", "baz", Boolean.FALSE);
+        assertEquals("parseable value", Double.valueOf(12), XmlUtils.getChildTextAsDouble(parent, "nsuri:something", "foo"));
+        assertNull("child has empty string",                XmlUtils.getChildTextAsDouble(parent, "nsuri:something", "bar"));
+        assertNull("no such child",                         XmlUtils.getChildTextAsDouble(parent, "nsuri:something", "boffo"));
 
-        assertEquals("only added two children",     2,      DomUtil.getChildren(parent).size());
-        assertEquals("encoded Boolean.TRUE",        "1",    DomUtil.getChild(parent, "nsuri:something", "bar").getTextContent());
-        assertEquals("encoded Boolean.FALSE",        "0",   DomUtil.getChild(parent, "nsuri:something", "baz").getTextContent());
+        try
+        {
+            XmlUtils.getChildTextAsDouble(parent, "nsuri:something", "biff");
+            fail("didn't throw on unparseable value");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            StringAsserts.assertRegex("exception message identifies element, value (was: " + ex.getMessage() + ")",
+                                      ".*nsuri:something.*biff.*: NAN",
+                                      ex.getMessage());
+        }
+    }
+
+
+    @Test
+    public void testGetChildTextAsBoolean() throws Exception
+    {
+        Element parent = DomUtil.newDocument("parent");
+        XmlUtils.optAppendDataElement(parent, "nsuri:something", "foo", "1");
+        XmlUtils.optAppendDataElement(parent, "nsuri:something", "bar", "0");
+        XmlUtils.optAppendDataElement(parent, "nsuri:something", "baz", "");
+        XmlUtils.optAppendDataElement(parent, "nsuri:something", "biff", "NAN");
+
+        assertEquals("parseable: true",         Boolean.TRUE,   XmlUtils.getChildTextAsBoolean(parent, "foo"));
+        assertEquals("parseable: false",        Boolean.FALSE,  XmlUtils.getChildTextAsBoolean(parent, "bar"));
+        assertNull("child has empty string",                    XmlUtils.getChildTextAsBoolean(parent, "baz"));
+        assertNull("no such child",                             XmlUtils.getChildTextAsBoolean(parent, "boffo"));
+
+        try
+        {
+            XmlUtils.getChildTextAsBoolean(parent, "biff");
+            fail("didn't throw on unparseable value");
+        }
+        catch (IllegalArgumentException ex)
+        {
+            StringAsserts.assertRegex("exception message identifies element, value (was: " + ex.getMessage() + ")",
+                                      ".*biff.*: NAN",
+                                      ex.getMessage());
+        }
     }
 
 

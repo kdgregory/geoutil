@@ -17,7 +17,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -25,6 +24,7 @@ import org.w3c.dom.Element;
 
 import net.sf.practicalxml.DomUtil;
 
+import com.kdgregory.geoutil.lib.internal.ObjectUtils;
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
 
 
@@ -62,9 +62,8 @@ public class Track
      */
     public Track(Element elem)
     {
-        Map<String,Element> children = XmlUtils.listToMap(DomUtil.getChildren(elem));
-        XmlUtils.optSetString(children.get(GpxConstants.E_TRK_NAME),           GpxConstants.NAMESPACE, this::setName);
-        XmlUtils.optSetString(children.get(GpxConstants.E_TRK_DESCRIPTION),    GpxConstants.NAMESPACE, this::setDescription);
+        ObjectUtils.optSetString(XmlUtils.getChildText(elem, GpxConstants.NAMESPACE, GpxConstants.E_TRK_NAME),          this::setName);
+        ObjectUtils.optSetString(XmlUtils.getChildText(elem, GpxConstants.NAMESPACE, GpxConstants.E_TRK_DESCRIPTION),   this::setDescription);
 
         for (Element eSeg : DomUtil.getChildren(elem, GpxConstants.NAMESPACE, GpxConstants.E_TRKSEG))
         {
