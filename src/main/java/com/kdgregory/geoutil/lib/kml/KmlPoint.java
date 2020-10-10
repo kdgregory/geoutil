@@ -185,7 +185,7 @@ implements Geometry
         }
 
         String namespace = elem.getNamespaceURI();
-        
+
         KmlPoint p = fromCoordinates(XmlUtils.getChildText(elem, namespace, KmlConstants.E_POINT_COORD));
 
         String altitudeMode = XmlUtils.getChildText(elem, namespace, KmlConstants.E_POINT_ALTMODE);
@@ -203,6 +203,7 @@ implements Geometry
     /**
      *  Appends this point's XML representation to the provided element.
      */
+    @Override
     public void appendAsXml(Element parent)
     {
         Element ep = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_POINT);

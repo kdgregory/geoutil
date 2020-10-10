@@ -14,6 +14,7 @@
 
 package com.kdgregory.geoutil.lib.kml;
 
+import org.w3c.dom.Element;
 
 /**
  *  This is a marker interface that corresponds to the Geometry abstract element
@@ -21,5 +22,8 @@ package com.kdgregory.geoutil.lib.kml;
  */
 public interface Geometry
 {
-    // all methods defined by implementing classes
+    /**
+     *  Appends this object to a parent, using an implementation-defined element name.
+     */
+    void appendAsXml(Element parent);
 }
