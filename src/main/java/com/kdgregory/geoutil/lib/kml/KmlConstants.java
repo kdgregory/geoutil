@@ -29,6 +29,13 @@ public class KmlConstants
     public final static String  NAMESPACE               = "http://www.opengis.net/kml/2.2";
 
 
+    /** Folder element name. */
+    public final static String  E_FOLDER                = "Folder";
+    
+    /** Folder attribute: ID. */
+    public final static String  A_FOLDER_ID             = "id";
+
+
     /** Placemark element name. */
     public final static String  E_PLACEMARK             = "Placemark";
 
