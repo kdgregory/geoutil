@@ -18,8 +18,6 @@ import org.w3c.dom.Element;
 
 import net.sf.practicalxml.DomUtil;
 
-import com.kdgregory.geoutil.lib.internal.XmlUtils;
-
 
 /**
  *  Represents a Placemark as defined in https://developers.google.com/kml/documentation/kmlreference.
@@ -28,72 +26,13 @@ import com.kdgregory.geoutil.lib.internal.XmlUtils;
  *  may return null.
  */
 public class Placemark
+extends Feature<Placemark>
 {
-    public String name;
-    public Boolean visibility;
-    public String description;
-    public Geometry geometry;
+    private Geometry geometry;
 
 //----------------------------------------------------------------------------
 //  Accessors
 //----------------------------------------------------------------------------
-
-    /**
-     *  Returns this placemark's name, if any.
-     */
-    public String getName()
-    {
-        return name;
-    }
-
-
-    /**
-     *  Sets the name for this placemark.
-     */
-    public Placemark setName(String value)
-    {
-        name = value;
-        return this;
-    }
-
-
-    /**
-     *  Returns this placemark's visibility. May be null, which is equivalent to false.
-     */
-    public Boolean getVisibility()
-    {
-        return visibility;
-    }
-
-
-    /**
-     *  Sets this placemark's visibility.
-     */
-    public Placemark setVisibility(Boolean value)
-    {
-        visibility = value;
-        return this;
-    }
-
-
-    /**
-     *  Returns the description of this placemark, if any.
-     */
-    public String getDescription()
-    {
-        return description;
-    }
-
-
-    /**
-     *  Sets the description of this placemark.
-     */
-    public Placemark setDescription(String value)
-    {
-        description = value;
-        return this;
-    }
-
 
     /**
      *  Returns the geometry associated with this placemark. There are multiple
@@ -138,23 +77,17 @@ public class Placemark
             throw new IllegalArgumentException("incorrect element name: " + DomUtil.getLocalName(elem));
         }
 
-        String namespace = elem.getNamespaceURI();
-
         Placemark pm = new Placemark();
+        pm.fromXmlHelper(elem);
 
-        pm.setName(XmlUtils.getChildText(elem, namespace, KmlConstants.E_PLACEMARK_NAME));
-        pm.setVisibility(XmlUtils.getChildTextAsBoolean(elem, namespace, KmlConstants.E_PLACEMARK_VIS));
-        pm.setDescription(XmlUtils.getChildText(elem, namespace, KmlConstants.E_PLACEMARK_DESC));
-
-        // TODO - slightly higher performance if we convert to map, because not constantly iterating
-
-        Element ePoint = DomUtil.getChild(elem, namespace, KmlConstants.E_POINT);
-        if (ePoint != null)
+        for (Element child : DomUtil.getChildren(elem))
         {
-            pm.setGeometry(KmlPoint.fromXml(ePoint));
+            // TODO - support other geometries
+            if (DomUtil.getLocalName(child).equals(KmlConstants.E_POINT))
+            {
+                pm.setGeometry(KmlPoint.fromXml(child));
+            }
         }
-
-        // TODO - support other geometries
 
         return pm;
     }
@@ -163,18 +96,15 @@ public class Placemark
     /**
      *  Appends this placemark's XML representation to the provided element.
      */
+    @Override
     public void appendAsXml(Element parent)
     {
         Element ep = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_PLACEMARK);
-
-        XmlUtils.optAppendDataElement(ep, KmlConstants.NAMESPACE, KmlConstants.E_PLACEMARK_NAME, name);
-        XmlUtils.optAppendDataElement(ep, KmlConstants.NAMESPACE, KmlConstants.E_PLACEMARK_VIS,  visibility);
-        XmlUtils.optAppendDataElement(ep, KmlConstants.NAMESPACE, KmlConstants.E_PLACEMARK_DESC, description);
+        appendAsXmlHelper(ep);
 
         if (geometry != null)
         {
             geometry.appendAsXml(ep);
         }
     }
-
 }

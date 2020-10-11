@@ -32,14 +32,15 @@ public class KmlConstants
     /** Placemark element name. */
     public final static String  E_PLACEMARK             = "Placemark";
 
-    /** Placemark child element: name. */
-    public final static String  E_PLACEMARK_NAME        = "name";
 
-    /** Placemark child element: visibility. */
-    public final static String  E_PLACEMARK_VIS         = "visibility";
+    /** Feature child element: name. */
+    public final static String  E_FEATURE_NAME          = "name";
 
-    /** Placemark child element: description. */
-    public final static String  E_PLACEMARK_DESC        = "description";
+    /** Feature child element: visibility. */
+    public final static String  E_FEATURE_VISIBILITY    = "visibility";
+
+    /** Feature child element: description. */
+    public final static String  E_FEATURE_DESCRIPTION   = "description";
 
 
     /** Point element name. */
