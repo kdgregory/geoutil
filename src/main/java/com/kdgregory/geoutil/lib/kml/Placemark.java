@@ -97,14 +97,16 @@ extends Feature<Placemark>
      *  Appends this placemark's XML representation to the provided element.
      */
     @Override
-    public void appendAsXml(Element parent)
+    public Element appendAsXml(Element parent)
     {
-        Element ep = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_PLACEMARK);
-        appendAsXmlHelper(ep);
+        Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_PLACEMARK);
+        appendAsXmlHelper(elem);
 
         if (geometry != null)
         {
-            geometry.appendAsXml(ep);
+            geometry.appendAsXml(elem);
         }
+
+        return elem;
     }
 }

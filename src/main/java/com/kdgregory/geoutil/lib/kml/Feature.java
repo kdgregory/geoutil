@@ -94,7 +94,7 @@ extends KmlObject<T>
 //  Methods to be implemented by children
 //---------------------------------------------------------------------------
 
-    public abstract void appendAsXml(Element parent);
+    public abstract Element appendAsXml(Element parent);
 
 //----------------------------------------------------------------------------
 //  XML conversion helpers

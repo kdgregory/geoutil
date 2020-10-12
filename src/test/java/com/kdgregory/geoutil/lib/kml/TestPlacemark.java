@@ -54,6 +54,69 @@ public class TestPlacemark
 
 
     @Test
+    public void testAppendAsXmlMinimal() throws Exception
+    {
+        Placemark m = new Placemark();
+
+        Element parent = DomUtil.newDocument("irrelevant");
+        Element child = m.appendAsXml(parent);
+
+        assertEquals("added single child to existing parent",   1,                                  DomUtil.getChildren(parent).size());
+        assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
+        assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
+        assertEquals("child name",                              "Placemark",                        child.getNodeName());
+
+        assertEquals("number of data elements",                 0,                                  DomUtil.getChildren(child).size());
+    }
+
+
+    @Test
+    public void testAppendAsXmlComplete() throws Exception
+    {
+        KmlPoint p = new KmlPoint(12,34);
+        Placemark m = new Placemark()
+                      .setName("example")
+                      .setDescription("a description")
+                      .setVisibility(Boolean.TRUE)
+                      .setGeometry(p);
+
+        Element parent = DomUtil.newDocument("irrelevant");
+        Element child = m.appendAsXml(parent);
+
+        assertEquals("added single child to existing parent",   1,                                  DomUtil.getChildren(parent).size());
+        assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
+        assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
+        assertEquals("child name",                              "Placemark",                        child.getNodeName());
+
+        // we care about order, so will retrieve all children and access via index
+        List<Element> dataElements = DomUtil.getChildren(child);
+
+        assertEquals("number of data elements",     4,                                  dataElements.size());
+
+        assertEquals("name namespace",              "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
+        assertEquals("name name",                   "name",                             dataElements.get(0).getNodeName());
+        assertEquals("name value",                  "example",                          dataElements.get(0).getTextContent());
+
+        assertEquals("visibility namespace",        "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
+        assertEquals("visibility name",             "visibility",                       dataElements.get(1).getNodeName());
+        assertEquals("visibility value",            "1",                                dataElements.get(1).getTextContent());
+
+        assertEquals("description namespace",       "http://www.opengis.net/kml/2.2",   dataElements.get(2).getNamespaceURI());
+        assertEquals("description name",            "description",                      dataElements.get(2).getNodeName());
+        assertEquals("description value",           "a description",                    dataElements.get(2).getTextContent());
+
+        assertEquals("Point namespace",             "http://www.opengis.net/kml/2.2",   dataElements.get(3).getNamespaceURI());
+        assertEquals("Point name",                  "Point",                            dataElements.get(3).getNodeName());
+
+        // rather than verify the Point element's contents, we'll try to convert it
+
+        assertEquals("nested point", p, KmlPoint.fromXml(dataElements.get(3)));
+    }
+
+    // TODO - test conversion to XML with a different geometry
+
+
+    @Test
     public void testFromXmlMinimal() throws Exception
     {
         Document dom = XmlBuilder.element("http://earth.google.com/kml/2.1", "Placemark")
@@ -111,65 +174,4 @@ public class TestPlacemark
             assertTrue("exception message (was: " + ex.getMessage() + ")", ex.getMessage().contains("SomethingElse"));
         }
     }
-
-
-    @Test
-    public void testAppendAsXmlMinimal() throws Exception
-    {
-        Placemark m = new Placemark();
-
-        Element parent = DomUtil.newDocument("irrelevant");
-        m.appendAsXml(parent);
-
-        assertEquals("added single child to test parent", 1, DomUtil.getChildren(parent).size());
-
-        Element ep = DomUtil.getChild(parent, "http://www.opengis.net/kml/2.2", "Placemark");
-
-        assertEquals("number of child elements",    0,  DomUtil.getChildren(ep).size());
-    }
-
-
-    @Test
-    public void testAppendAsXmlComplete() throws Exception
-    {
-        KmlPoint p = new KmlPoint(12,34);
-        Placemark m = new Placemark()
-                      .setName("example")
-                      .setDescription("a description")
-                      .setVisibility(Boolean.TRUE)
-                      .setGeometry(p);
-
-        Element parent = DomUtil.newDocument("irrelevant");
-        m.appendAsXml(parent);
-
-        assertEquals("added single child to existing parent", 1, DomUtil.getChildren(parent).size());
-
-        Element ep = DomUtil.getChild(parent, "http://www.opengis.net/kml/2.2", "Placemark");
-
-        // we care about order, so will retrieve all children and access via index
-        List<Element> children = DomUtil.getChildren(ep);
-
-        assertEquals("number of child elements",    4,                                  children.size());
-
-        assertEquals("name namespace",              "http://www.opengis.net/kml/2.2",   children.get(0).getNamespaceURI());
-        assertEquals("name name",                   "name",                             children.get(0).getNodeName());
-        assertEquals("name value",                  "example",                          children.get(0).getTextContent());
-
-        assertEquals("visibility namespace",        "http://www.opengis.net/kml/2.2",   children.get(1).getNamespaceURI());
-        assertEquals("visibility name",             "visibility",                       children.get(1).getNodeName());
-        assertEquals("visibility value",            "1",                                children.get(1).getTextContent());
-
-        assertEquals("description namespace",       "http://www.opengis.net/kml/2.2",   children.get(2).getNamespaceURI());
-        assertEquals("description name",            "description",                      children.get(2).getNodeName());
-        assertEquals("description value",           "a description",                    children.get(2).getTextContent());
-
-        assertEquals("Point namespace",             "http://www.opengis.net/kml/2.2",   children.get(3).getNamespaceURI());
-        assertEquals("Point name",                  "Point",                            children.get(3).getNodeName());
-
-        // rather than verify the Point element's contents, we'll try to convert it
-
-        assertEquals("nested point", p, KmlPoint.fromXml(children.get(3)));
-    }
-
-    // TODO - test conversion to XML with a different geometry
 }
