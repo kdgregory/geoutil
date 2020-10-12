@@ -14,10 +14,6 @@
 
 package com.kdgregory.geoutil.lib.kml;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.w3c.dom.Element;
 
 import net.sf.practicalxml.DomUtil;
@@ -29,50 +25,8 @@ import net.sf.practicalxml.DomUtil;
  *  See https://developers.google.com/kml/documentation/kmlreference#folder.
  */
 public class Folder
-extends Feature<Folder>
+extends Container<Folder>
 {
-    private List<Feature<?>> features = new ArrayList<>();
-
-//----------------------------------------------------------------------------
-//  Accessors
-//----------------------------------------------------------------------------
-
-    /**
-     *  Returns an unmodifiable list of features in this folder. May be empty,
-     *  never null. If necessary, caller must determine concrete type.
-     */
-    public List<Feature<?>> getFeatures()
-    {
-        return Collections.unmodifiableList(features);
-    }
-
-
-    /**
-     *  Replaces the current list of features with the provided list. Subsequent
-     *  modifications to the list will not be reflected in this object, but
-     *  modifications to the contained features will. May pass null, to clear the
-     *  current list of features.
-     */
-    public Folder setFeatures(List<? extends Feature<?>> value)
-    {
-        features.clear();
-        if (value != null)
-        {
-            features.addAll(value);
-        }
-        return this;
-    }
-
-
-    /**
-     *  Adds a feature to the end of the list managed by this object. Subsequent
-     *  modifications to the feature will be reflected in this object.
-     */
-    public Folder addFeature(Feature<?> value)
-    {
-        features.add(value);
-        return this;
-    }
 
 //----------------------------------------------------------------------------
 //  Other Public Methods
@@ -98,15 +52,6 @@ extends Feature<Folder>
 
         Folder f = new Folder();
         f.fromXmlHelper(elem);
-        for (Element child : DomUtil.getChildren(elem))
-        {
-            // TODO - support other geometries
-            if (DomUtil.getLocalName(child).equals(KmlConstants.E_PLACEMARK))
-            {
-                f.addFeature(Placemark.fromXml(child));
-            }
-        }
-
         return f;
     }
 
@@ -118,13 +63,7 @@ extends Feature<Folder>
     public Element appendAsXml(Element parent)
     {
         Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_FOLDER);
-
-        appendAsXmlHelper(elem);
-        for (Feature<?> feature : features)
-        {
-            feature.appendAsXml(elem);
-        }
-        
+        super.appendAsXmlHelper(elem);
         return elem;
     }
 }
