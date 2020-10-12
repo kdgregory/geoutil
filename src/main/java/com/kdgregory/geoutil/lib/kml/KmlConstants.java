@@ -31,9 +31,6 @@ public class KmlConstants
 
     /** Folder element name. */
     public final static String  E_FOLDER                = "Folder";
-    
-    /** Folder attribute: ID. */
-    public final static String  A_FOLDER_ID             = "id";
 
 
     /** Placemark element name. */
@@ -61,5 +58,9 @@ public class KmlConstants
 
     /** Point child element: coordinates. */
     public final static String  E_POINT_COORD           = "coordinates";
+    
+    
+    /** Object attribute: ID. */
+    public final static String  A_OBJECT_ID             = "id";
 
 }

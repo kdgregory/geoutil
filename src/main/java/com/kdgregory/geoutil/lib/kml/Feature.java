@@ -24,6 +24,7 @@ import com.kdgregory.geoutil.lib.internal.XmlUtils;
  *  See https://developers.google.com/kml/documentation/kmlreference#feature.
  */
 public abstract class Feature<T extends Feature<T>>
+extends KmlObject<T>
 {
     private String name;
     private Boolean visibility;
@@ -103,13 +104,15 @@ public abstract class Feature<T extends Feature<T>>
      *  Sets the fields controlled by this class from children/attributes of
      *  the passed element.
      */
-    protected void fromXmlHelper(Element parent)
+    @Override
+    protected void fromXmlHelper(Element elem)
     {
-        String namespace = parent.getNamespaceURI();
+        String namespace = elem.getNamespaceURI();
 
-        setName(XmlUtils.getChildText(parent, namespace, KmlConstants.E_FEATURE_NAME));
-        setVisibility(XmlUtils.getChildTextAsBoolean(parent, namespace, KmlConstants.E_FEATURE_VISIBILITY));
-        setDescription(XmlUtils.getChildText(parent, namespace, KmlConstants.E_FEATURE_DESCRIPTION));
+        super.fromXmlHelper(elem);
+        setName(XmlUtils.getChildText(elem, namespace, KmlConstants.E_FEATURE_NAME));
+        setVisibility(XmlUtils.getChildTextAsBoolean(elem, namespace, KmlConstants.E_FEATURE_VISIBILITY));
+        setDescription(XmlUtils.getChildText(elem, namespace, KmlConstants.E_FEATURE_DESCRIPTION));
     }
 
 
@@ -117,10 +120,12 @@ public abstract class Feature<T extends Feature<T>>
      *  Adds the fields controlled by this class as children/attributes of the
      *  passed element.
      */
-    protected void appendAsXmlHelper(Element parent)
+    @Override
+    protected void appendAsXmlHelper(Element elem)
     {
-        XmlUtils.optAppendDataElement(parent, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_NAME, getName());
-        XmlUtils.optAppendDataElement(parent, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_VISIBILITY,  getVisibility());
-        XmlUtils.optAppendDataElement(parent, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_DESCRIPTION, getDescription());
+        super.appendAsXmlHelper(elem);
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_NAME, getName());
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_VISIBILITY,  getVisibility());
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_DESCRIPTION, getDescription());
     }
 }

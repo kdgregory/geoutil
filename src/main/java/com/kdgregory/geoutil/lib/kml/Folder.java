@@ -20,45 +20,22 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import net.sf.kdgcommons.lang.StringUtil;
 import net.sf.practicalxml.DomUtil;
 
 
 /**
- *  Represents a Folder, as defined by https://developers.google.com/kml/documentation/kmlreference#folder.
- *  <p>
- *  Note that a Folder has no required components; any and all accessors
- *  may return null.
+ *  A container for other features.
+ *
+ *  See https://developers.google.com/kml/documentation/kmlreference#folder.
  */
 public class Folder
 extends Feature<Folder>
 {
-    private String id;
     private List<Feature<?>> features = new ArrayList<>();
 
 //----------------------------------------------------------------------------
 //  Accessors
 //----------------------------------------------------------------------------
-
-    /**
-     *  Returns this folder's unique ID. May be null.
-     */
-    public String getId()
-    {
-        return id;
-    }
-
-
-    /**
-     *  Sets this folder's ID. Note that there is no attempt made to verify
-     *  that the ID is unique.
-     */
-    public Folder setId(String value)
-    {
-        id = value;
-        return this;
-    }
-
 
     /**
      *  Returns an unmodifiable list of features in this folder. May be empty,
@@ -109,7 +86,7 @@ extends Feature<Folder>
      *  passed element.
      *
      *  @throws IllegalArgumentException if the provided element does not have
-     *          the name "Placemark", or cannot be parsed according to the KML
+     *          the name "Folder", or cannot be parsed according to the KML
      *          specification.
      */
     public static Folder fromXml(Element elem)
@@ -121,9 +98,6 @@ extends Feature<Folder>
 
         Folder f = new Folder();
         f.fromXmlHelper(elem);
-
-        f.setId(StringUtil.trimToNull(elem.getAttribute(KmlConstants.A_FOLDER_ID)));
-
         for (Element child : DomUtil.getChildren(elem))
         {
             // TODO - support other geometries
@@ -145,9 +119,7 @@ extends Feature<Folder>
     {
         Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_FOLDER);
 
-        elem.setAttribute(KmlConstants.A_FOLDER_ID, getId());
         appendAsXmlHelper(elem);
-
         for (Feature<?> feature : features)
         {
             feature.appendAsXml(elem);
