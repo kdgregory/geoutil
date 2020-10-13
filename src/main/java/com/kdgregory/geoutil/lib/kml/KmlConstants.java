@@ -29,6 +29,10 @@ public class KmlConstants
     public final static String  NAMESPACE               = "http://www.opengis.net/kml/2.2";
 
 
+    /** Document element name. */
+    public final static String  E_DOCUMENT              = "Document";
+
+
     /** Folder element name. */
     public final static String  E_FOLDER                = "Folder";
 
@@ -58,9 +62,8 @@ public class KmlConstants
 
     /** Point child element: coordinates. */
     public final static String  E_POINT_COORD           = "coordinates";
-    
-    
+
+
     /** Object attribute: ID. */
     public final static String  A_OBJECT_ID             = "id";
-
 }
