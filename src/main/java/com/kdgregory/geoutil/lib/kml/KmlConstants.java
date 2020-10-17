@@ -29,6 +29,14 @@ public class KmlConstants
     public final static String  NAMESPACE               = "http://www.opengis.net/kml/2.2";
 
 
+    /** Object attribute: ID. */
+    public final static String  A_OBJECT_ID             = "id";
+
+
+    /** Root element name. */
+    public final static String  E_ROOT                  = "kml";
+
+
     /** Document element name. */
     public final static String  E_DOCUMENT              = "Document";
 
@@ -64,6 +72,19 @@ public class KmlConstants
     public final static String  E_POINT_COORD           = "coordinates";
 
 
-    /** Object attribute: ID. */
-    public final static String  A_OBJECT_ID             = "id";
+    /** Style element name. */
+    public final static String  E_STYLE                 = "Style";
+
+
+    /** LineStyle element name. */
+    public final static String  E_LINESTYLE             = "LineStyle";
+
+    /** LineStyle child elemnt: color */
+    public final static String  E_LINESTYLE_COLOR       = "color";
+
+    /** LineStyle child elemnt: colorMode */
+    public final static String  E_LINESTYLE_COLORMODE   = "colorMode";
+
+    /** LineStyle child elemnt: width */
+    public final static String  E_LINESTYLE_WIDTH       = "width";
 }
