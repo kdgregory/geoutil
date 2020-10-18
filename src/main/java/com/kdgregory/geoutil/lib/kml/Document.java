@@ -14,6 +14,9 @@
 
 package com.kdgregory.geoutil.lib.kml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.w3c.dom.Element;
 
 import net.sf.practicalxml.DomUtil;
@@ -27,6 +30,59 @@ import net.sf.practicalxml.DomUtil;
 public class Document
 extends Container<Document>
 {
+    private List<Style> sharedStyles = new ArrayList<>();
+
+//----------------------------------------------------------------------------
+//  Accessors
+//----------------------------------------------------------------------------
+
+    /**
+     *  Returns the list of shared styles from this document. May be empty,
+     *  never null.
+     */
+    public List<Style> getSharedStyles()
+    {
+        return sharedStyles;
+    }
+
+
+    /**
+     *  Clears the list of shared styles and appends the contents of the
+     *  passed list.
+     *
+     *  @throws IllegalArgumentException if the styles in the passed list do
+     *          not have IDs. Note that partial replacement is possible.
+     */
+    public Document setSharedStyles(List<Style> value)
+    {
+        sharedStyles.clear();
+        if (value != null)
+        {
+            for (Style style : value)
+            {
+                addSharedStyle(style);
+            }
+        }
+        return this;
+    }
+
+
+    /**
+     *  Adds a single shared style to the list managed by this document.
+     *
+     *  @throws IllegalArgumentException if the style does not have an ID.
+     */
+    public Document addSharedStyle(Style value)
+    {
+        if (value.getId() == null)
+        {
+            throw new IllegalArgumentException("shared styles must have an ID");
+        }
+
+        sharedStyles.add(value);
+        return this;
+    }
+
 
 //----------------------------------------------------------------------------
 //  Other Public Methods
@@ -63,7 +119,12 @@ extends Container<Document>
     public Element appendAsXml(Element parent)
     {
         Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_DOCUMENT);
-        super.appendAsXmlHelper(elem);
+        appendAsXmlHelper(elem);
+        for (Style style : sharedStyles)
+        {
+            style.appendAsXml(elem);
+        }
+        appendFeaturesAsXml(elem);
         return elem;
     }
 }

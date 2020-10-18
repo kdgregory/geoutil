@@ -97,13 +97,10 @@ extends Feature<T>
 
 
     /**
-     *  Adds the fields controlled by this class as children/attributes of the
-     *  passed element.
+     *  Appends all features managed by this container.
      */
-    @Override
-    protected void appendAsXmlHelper(Element elem)
+    protected void appendFeaturesAsXml(Element elem)
     {
-        super.appendAsXmlHelper(elem);
         for (Feature<?> feature : features)
         {
             feature.appendAsXml(elem);

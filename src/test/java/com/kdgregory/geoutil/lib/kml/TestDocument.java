@@ -36,21 +36,33 @@ public class TestDocument
 
         Document d = new Document();
 
-        assertNull("getId() initial value",                                 d.getId());
-        assertEquals("setId()",                     d,                      d.setId("argle"));
-        assertEquals("getId()",                     "argle",                d.getId());
+        assertNull("getId() initial value",                                     d.getId());
+        assertEquals("setId()",                         d,                      d.setId("argle"));
+        assertEquals("getId()",                         "argle",                d.getId());
+
+        Style s1 = new Style().setId("style1");
+        Style s2 = new Style().setId("style2");
+
+        assertEquals("getSharedStyles() initial size",  0,                      d.getSharedStyles().size());
+        assertEquals("addSharedStyle()",                d,                      d.addSharedStyle(s1));
+        assertEquals("getSharedStyles() 1",             Arrays.asList(s1),      d.getSharedStyles());
+        assertEquals("setSharedStyles()",               d,                      d.setSharedStyles(Arrays.asList(s2, s1)));
+        assertEquals("getSharedStyles() 2",             Arrays.asList(s2, s1),  d.getSharedStyles());
+
+        d.setSharedStyles(null);
+        assertEquals("null clears shared styles",       0,                      d.getSharedStyles().size());
 
         Placemark p1 = new Placemark();
         Placemark p2 = new Placemark();
 
-        assertEquals("getFeatures() initial size",  0,                      d.getFeatures().size());
-        assertEquals("addFeature()",                d,                      d.addFeature(p1));
-        assertEquals("getFeatures() 1",             Arrays.asList(p1),      d.getFeatures());
-        assertEquals("setFeatures()",               d,                      d.setFeatures(Arrays.asList(p2, p1)));
-        assertEquals("getFeatures() 2",             Arrays.asList(p2, p1),  d.getFeatures());
+        assertEquals("getFeatures() initial size",      0,                      d.getFeatures().size());
+        assertEquals("addFeature()",                    d,                      d.addFeature(p1));
+        assertEquals("getFeatures() 1",                 Arrays.asList(p1),      d.getFeatures());
+        assertEquals("setFeatures()",                   d,                      d.setFeatures(Arrays.asList(p2, p1)));
+        assertEquals("getFeatures() 2",                 Arrays.asList(p2, p1),  d.getFeatures());
 
         d.setFeatures(null);
-        assertEquals("null clears features",        0,                      d.getFeatures().size());
+        assertEquals("null clears features",            0,                      d.getFeatures().size());
 
         ArrayList<Placemark> orig = new ArrayList<>(Arrays.asList(p1, p2));
         d.setFeatures(orig);
@@ -65,6 +77,17 @@ public class TestDocument
         {
             // success
         }
+    }
+
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSharedStyleWithoutId() throws Exception
+    {
+        Document d = new Document();
+        Style s = new Style();
+
+        d.addSharedStyle(s);
+        fail("able to add shared style without ID");
     }
 
 
@@ -88,12 +111,17 @@ public class TestDocument
     @Test
     public void testAppendAsXmlComplete() throws Exception
     {
+        Style s1 = new Style().setId("style1");
+        Style s2 = new Style().setId("style2");
+
         Placemark m1 = new Placemark().setName("first feature");
         Placemark m2 = new Placemark().setName("second feature");
 
         Document d = new Document()
                    .setId("some-unique-id")
-                   .setName("folder name")  // this serves as a proxy for all Feature fields
+                   .setName("document name")  // this serves as a proxy for all Feature fields
+                   .addSharedStyle(s1)
+                   .addSharedStyle(s2)
                    .addFeature(m1)
                    .addFeature(m2);
 
@@ -108,22 +136,30 @@ public class TestDocument
         // we care about order, so will retrieve all children and access via index
         List<Element> dataElements = DomUtil.getChildren(child);
 
-        assertEquals("number of data elements",     3,                                  dataElements.size());
+        assertEquals("number of data elements",     5,                                  dataElements.size());
 
         assertEquals("name namespace",              "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
         assertEquals("name name",                   "name",                             dataElements.get(0).getNodeName());
-        assertEquals("name value",                  "folder name",                      dataElements.get(0).getTextContent());
+        assertEquals("name value",                  "document name",                    dataElements.get(0).getTextContent());
 
-        assertEquals("feature 1 namespace",         "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
-        assertEquals("feature 1 name",              "Placemark",                        dataElements.get(1).getNodeName());
+        assertEquals("style 1 namespace",           "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
+        assertEquals("style 1 name",                "Style",                            dataElements.get(1).getNodeName());
+        assertEquals("style 1 id",                  "style1",                           dataElements.get(1).getAttribute("id"));
 
-        assertEquals("feature 2 namespace",         "http://www.opengis.net/kml/2.2",   dataElements.get(2).getNamespaceURI());
-        assertEquals("feature 2 name",              "Placemark",                        dataElements.get(2).getNodeName());
+        assertEquals("style 2 namespace",           "http://www.opengis.net/kml/2.2",   dataElements.get(2).getNamespaceURI());
+        assertEquals("style 2 name",                "Style",                            dataElements.get(2).getNodeName());
+        assertEquals("style 2 id",                  "style2",                           dataElements.get(2).getAttribute("id"));
+
+        assertEquals("feature 1 namespace",         "http://www.opengis.net/kml/2.2",   dataElements.get(3).getNamespaceURI());
+        assertEquals("feature 1 name",              "Placemark",                        dataElements.get(3).getNodeName());
+
+        assertEquals("feature 2 namespace",         "http://www.opengis.net/kml/2.2",   dataElements.get(4).getNamespaceURI());
+        assertEquals("feature 2 name",              "Placemark",                        dataElements.get(4).getNodeName());
 
         // verify the feature contents by converting them, using name to assert correct order
 
-        Feature<?> f1 = Placemark.fromXml(dataElements.get(1));
-        Feature<?> f2 = Placemark.fromXml(dataElements.get(2));
+        Feature<?> f1 = Placemark.fromXml(dataElements.get(3));
+        Feature<?> f2 = Placemark.fromXml(dataElements.get(4));
 
         assertEquals("feature 1",                   "first feature",                    f1.getName());
         assertEquals("feature 2",                   "second feature",                   f2.getName());

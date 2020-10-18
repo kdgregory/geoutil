@@ -63,7 +63,8 @@ extends Container<Folder>
     public Element appendAsXml(Element parent)
     {
         Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_FOLDER);
-        super.appendAsXmlHelper(elem);
+        appendAsXmlHelper(elem);
+        appendFeaturesAsXml(elem);
         return elem;
     }
 }
