@@ -58,6 +58,9 @@ public class KmlConstants
     /** Feature child element: description. */
     public final static String  E_FEATURE_DESCRIPTION   = "description";
 
+    /** Feature child element: style reference. */
+    public final static String  E_FEATURE_STYLEREF      = "styleUrl";
+
 
     /** Point element name. */
     public final static String  E_POINT                 = "Point";

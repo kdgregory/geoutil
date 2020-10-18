@@ -16,6 +16,8 @@ package com.kdgregory.geoutil.lib.kml;
 
 import org.w3c.dom.Element;
 
+import net.sf.practicalxml.DomUtil;
+
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
 
 
@@ -29,6 +31,8 @@ extends KmlObject<T>
     private String name;
     private Boolean visibility;
     private String description;
+    private String styleRef;
+    private Style styleSelector;
 
 //----------------------------------------------------------------------------
 //  Accessors
@@ -90,6 +94,57 @@ extends KmlObject<T>
         return (T)this;
     }
 
+
+    /**
+     *  Returns the style reference for this feature, if any.
+     */
+    public String getStyleRef()
+    {
+        return styleRef;
+    }
+
+
+    /**
+     *  Sets the style reference for this feature. This method takes a URI; see
+     *  {@link #setLocalStyleRef} if you want to set a reference to a style in
+     *  the same document.
+     */
+    public T setStyleRef(String value)
+    {
+        styleRef = value;
+        return (T)this;
+    }
+
+
+    /**
+     *  Sets the style reference for this feature. This method takes an ID for a
+     *  style, and prepends "#" to turn it into a local document URI.
+     */
+    public T setLocalStyleRef(String value)
+    {
+        styleRef = "#" + value;
+        return (T)this;
+    }
+
+
+    /**
+     *  Returns the style selector for this feature, if any.
+     */
+    public Style getStyleSelector()
+    {
+        return styleSelector;
+    }
+
+
+    /**
+     *  Sets the style reference for this feature.
+     */
+    public T setStyleSelector(Style value)
+    {
+        styleSelector = value;
+        return (T)this;
+    }
+
 //----------------------------------------------------------------------------
 //  Methods to be implemented by children
 //---------------------------------------------------------------------------
@@ -113,6 +168,13 @@ extends KmlObject<T>
         setName(XmlUtils.getChildText(elem, namespace, KmlConstants.E_FEATURE_NAME));
         setVisibility(XmlUtils.getChildTextAsBoolean(elem, namespace, KmlConstants.E_FEATURE_VISIBILITY));
         setDescription(XmlUtils.getChildText(elem, namespace, KmlConstants.E_FEATURE_DESCRIPTION));
+        setStyleRef(XmlUtils.getChildText(elem, namespace, KmlConstants.E_FEATURE_STYLEREF));
+
+        Element eStyleSelector = DomUtil.getChild(elem, namespace, KmlConstants.E_STYLE);
+        if (eStyleSelector != null)
+        {
+            setStyleSelector(Style.fromXml(eStyleSelector));
+        }
     }
 
 
@@ -124,8 +186,15 @@ extends KmlObject<T>
     protected void appendAsXmlHelper(Element elem)
     {
         super.appendAsXmlHelper(elem);
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_NAME, getName());
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_NAME,        getName());
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_VISIBILITY,  getVisibility());
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_DESCRIPTION, getDescription());
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_STYLEREF,    getStyleRef());
+
+        // TODO - replace with a helper function in ObjectUtils
+        if (getStyleSelector() != null)
+        {
+            getStyleSelector().appendAsXml(elem);
+        }
     }
 }
