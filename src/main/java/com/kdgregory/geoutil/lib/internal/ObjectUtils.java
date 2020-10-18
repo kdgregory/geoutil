@@ -15,6 +15,7 @@
 package com.kdgregory.geoutil.lib.internal;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 import net.sf.kdgcommons.lang.StringUtil;
 
@@ -24,6 +25,30 @@ import net.sf.kdgcommons.lang.StringUtil;
  */
 public class ObjectUtils
 {
+    /**
+     *  Invokes a function IFF provided a non-null value. Returns the function
+     *  result or null.
+     */
+    public static <T,R> R optInvoke(T value, Function<T,R> fn)
+    {
+        return (value == null)
+             ? null
+             : fn.apply(value);
+    }
+
+
+    /**
+     *  Invokes a setter IFF provided a non-null value.
+     */
+    public static <T> void optSet(T value, Consumer<T> setter)
+    {
+        if (value != null)
+        {
+            setter.accept(value);
+        }
+    }
+
+
     /**
      *  Invokes the specified setter IFF the passed string is not null or empty.
      */

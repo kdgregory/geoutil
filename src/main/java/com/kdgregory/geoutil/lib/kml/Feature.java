@@ -18,6 +18,7 @@ import org.w3c.dom.Element;
 
 import net.sf.practicalxml.DomUtil;
 
+import com.kdgregory.geoutil.lib.internal.ObjectUtils;
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
 
 
@@ -169,12 +170,7 @@ extends KmlObject<T>
         setVisibility(XmlUtils.getChildTextAsBoolean(elem, namespace, KmlConstants.E_FEATURE_VISIBILITY));
         setDescription(XmlUtils.getChildText(elem, namespace, KmlConstants.E_FEATURE_DESCRIPTION));
         setStyleRef(XmlUtils.getChildText(elem, namespace, KmlConstants.E_FEATURE_STYLEREF));
-
-        Element eStyleSelector = DomUtil.getChild(elem, namespace, KmlConstants.E_STYLE);
-        if (eStyleSelector != null)
-        {
-            setStyleSelector(Style.fromXml(eStyleSelector));
-        }
+        setStyleSelector(ObjectUtils.optInvoke(DomUtil.getChild(elem, namespace, KmlConstants.E_STYLE), Style::fromXml));
     }
 
 
@@ -190,11 +186,6 @@ extends KmlObject<T>
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_VISIBILITY,  getVisibility());
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_DESCRIPTION, getDescription());
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_STYLEREF,    getStyleRef());
-
-        // TODO - replace with a helper function in ObjectUtils
-        if (getStyleSelector() != null)
-        {
-            getStyleSelector().appendAsXml(elem);
-        }
+        ObjectUtils.optSet(getStyleSelector(), s -> s.appendAsXml(elem));
     }
 }

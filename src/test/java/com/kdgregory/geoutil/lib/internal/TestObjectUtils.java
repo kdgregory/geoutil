@@ -20,6 +20,10 @@ import static org.junit.Assert.*;
 
 public class TestObjectUtils
 {
+//----------------------------------------------------------------------------
+//  Helpers
+//----------------------------------------------------------------------------
+
     // used to test getters and setters; it must be public so that Java can
     // access its members
     public static class TestBean
@@ -46,6 +50,33 @@ public class TestObjectUtils
         {
             this.doubleValue = doubleValue;
         }
+    }
+
+//----------------------------------------------------------------------------
+//  Testcases
+//----------------------------------------------------------------------------
+
+    @Test
+    public void testOptApply() throws Exception
+    {
+        assertEquals("null value",      null,       ObjectUtils.optInvoke(null,           String::valueOf));
+        assertEquals("not-null value",  "12.0",     ObjectUtils.optInvoke(new Double(12), String::valueOf));
+    }
+
+
+    @Test
+    public void testOptAccept() throws Exception
+    {
+        TestBean b = new TestBean();
+
+        ObjectUtils.optSet("", b::setStringValue);
+        assertEquals("after setting empty", "", b.getStringValue());
+
+        ObjectUtils.optSet("foo", b::setStringValue);
+        assertEquals("after setting non-empty", "foo", b.getStringValue());
+
+        ObjectUtils.optSet(null, b::setStringValue);
+        assertEquals("after setting null", "foo", b.getStringValue());
     }
 
 

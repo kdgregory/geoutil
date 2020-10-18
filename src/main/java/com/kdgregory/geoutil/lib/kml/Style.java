@@ -18,6 +18,8 @@ import org.w3c.dom.Element;
 
 import net.sf.practicalxml.DomUtil;
 
+import com.kdgregory.geoutil.lib.internal.ObjectUtils;
+
 
 /**
  *  A container for style definitions.
@@ -102,10 +104,7 @@ extends KmlObject<Style>
     {
         Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_STYLE);
         super.appendAsXmlHelper(elem);
-        if (lineStyle != null)
-        {
-            lineStyle.appendAsXml(elem);
-        }
+        ObjectUtils.optSet(lineStyle, s -> s.appendAsXml(elem));
         return elem;
     }
 }

@@ -18,6 +18,8 @@ import org.w3c.dom.Element;
 
 import net.sf.practicalxml.DomUtil;
 
+import com.kdgregory.geoutil.lib.internal.ObjectUtils;
+
 
 /**
  *  Represents a Placemark as defined in https://developers.google.com/kml/documentation/kmlreference.
@@ -100,13 +102,8 @@ extends Feature<Placemark>
     public Element appendAsXml(Element parent)
     {
         Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_PLACEMARK);
-        appendAsXmlHelper(elem);
-
-        if (geometry != null)
-        {
-            geometry.appendAsXml(elem);
-        }
-
+        appendAsXmlHelper(elem);        
+        ObjectUtils.optSet(geometry, g -> g.appendAsXml(elem));
         return elem;
     }
 }

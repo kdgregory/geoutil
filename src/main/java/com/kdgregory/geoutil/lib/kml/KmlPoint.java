@@ -16,9 +16,9 @@ package com.kdgregory.geoutil.lib.kml;
 
 import org.w3c.dom.Element;
 
-import net.sf.kdgcommons.lang.StringUtil;
 import net.sf.practicalxml.DomUtil;
 
+import com.kdgregory.geoutil.lib.internal.ObjectUtils;
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
 
 
@@ -187,13 +187,9 @@ implements Geometry
         String namespace = elem.getNamespaceURI();
 
         KmlPoint p = fromCoordinates(XmlUtils.getChildText(elem, namespace, KmlConstants.E_POINT_COORD));
-
-        String altitudeMode = XmlUtils.getChildText(elem, namespace, KmlConstants.E_POINT_ALTMODE);
-        if (! StringUtil.isEmpty(altitudeMode))
-        {
-            p.setAltitudeMode(AltitudeMode.fromString(altitudeMode));
-        }
-
+        p.setAltitudeMode(ObjectUtils.optInvoke(
+            XmlUtils.getChildText(elem, namespace, KmlConstants.E_POINT_ALTMODE),
+            AltitudeMode::fromString));
         p.setExtrude(XmlUtils.getChildTextAsBoolean(elem, namespace, KmlConstants.E_POINT_EXTRUDE));
 
         return p;
@@ -209,14 +205,8 @@ implements Geometry
         Element ep = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_POINT);
 
         XmlUtils.optAppendDataElement(ep, KmlConstants.NAMESPACE, KmlConstants.E_POINT_EXTRUDE, extrude);
-
-        if (altitudeMode != null)
-        {
-            Element eAltitudeMode = DomUtil.appendChild(ep, KmlConstants.NAMESPACE, KmlConstants.E_POINT_ALTMODE);
-            DomUtil.setText(eAltitudeMode, altitudeMode.name());
-        }
-
-        Element ecoord = DomUtil.appendChild(ep, KmlConstants.NAMESPACE, KmlConstants.E_POINT_COORD);
-        DomUtil.setText(ecoord, getCoordinates());
+        XmlUtils.optAppendDataElement(ep, KmlConstants.NAMESPACE, KmlConstants.E_POINT_ALTMODE,
+            ObjectUtils.optInvoke(altitudeMode, AltitudeMode::name));
+        XmlUtils.optAppendDataElement(ep, KmlConstants.NAMESPACE, KmlConstants.E_POINT_COORD, getCoordinates());
     }
 }
