@@ -52,7 +52,7 @@ public abstract class KmlObject<T extends KmlObject<T>>
     }
 
 //----------------------------------------------------------------------------
-//  XML conversion helpers
+//  Helpers for subclasses
 //----------------------------------------------------------------------------
 
     /**
@@ -69,7 +69,7 @@ public abstract class KmlObject<T extends KmlObject<T>>
      *  Adds the fields controlled by this class as children/attributes of the
      *  passed element.
      */
-    protected void appendAsXmlHelper(Element elem)
+    protected void appendObjectXml(Element elem)
     {
         elem.setAttribute(KmlConstants.A_OBJECT_ID, getId());
     }

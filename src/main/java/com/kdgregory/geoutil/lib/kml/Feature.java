@@ -178,10 +178,9 @@ extends KmlObject<T>
      *  Adds the fields controlled by this class as children/attributes of the
      *  passed element.
      */
-    @Override
-    protected void appendAsXmlHelper(Element elem)
+    protected void appendFeatureXml(Element elem)
     {
-        super.appendAsXmlHelper(elem);
+        super.appendObjectXml(elem);
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_NAME,        getName());
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_VISIBILITY,  getVisibility());
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_DESCRIPTION, getDescription());

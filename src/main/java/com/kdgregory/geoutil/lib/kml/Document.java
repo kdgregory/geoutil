@@ -119,7 +119,7 @@ extends Container<Document>
     public Element appendAsXml(Element parent)
     {
         Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_DOCUMENT);
-        appendAsXmlHelper(elem);
+        appendFeatureXml(elem);
         for (Style style : sharedStyles)
         {
             style.appendAsXml(elem);

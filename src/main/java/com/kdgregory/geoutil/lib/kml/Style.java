@@ -103,7 +103,7 @@ extends KmlObject<Style>
     public Element appendAsXml(Element parent)
     {
         Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_STYLE);
-        super.appendAsXmlHelper(elem);
+        super.appendObjectXml(elem);
         ObjectUtils.optSet(lineStyle, s -> s.appendAsXml(elem));
         return elem;
     }

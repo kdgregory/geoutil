@@ -151,7 +151,7 @@ extends KmlObject<LineStyle>
     public Element appendAsXml(Element parent)
     {
         Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_LINESTYLE);
-        super.appendAsXmlHelper(elem);
+        super.appendObjectXml(elem);
 
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_LINESTYLE_COLOR,     getColor());
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_LINESTYLE_COLORMODE, getColorMode());

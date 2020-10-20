@@ -102,7 +102,7 @@ extends Feature<Placemark>
     public Element appendAsXml(Element parent)
     {
         Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_PLACEMARK);
-        appendAsXmlHelper(elem);        
+        appendFeatureXml(elem);        
         ObjectUtils.optSet(geometry, g -> g.appendAsXml(elem));
         return elem;
     }
