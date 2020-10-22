@@ -32,6 +32,7 @@ extends KmlObject<T>
     private String name;
     private Boolean visibility;
     private String description;
+    private Timestamp timestamp;
     private String styleRef;
     private Style styleSelector;
 
@@ -92,6 +93,25 @@ extends KmlObject<T>
     public T setDescription(String value)
     {
         description = value;
+        return (T)this;
+    }
+
+
+    /**
+     *  Returns this feature's timestamp, if any.
+     */
+    public Timestamp getTimestamp()
+    {
+        return timestamp;
+    }
+
+
+    /**
+     *  Sets this feature's timestamp.
+     */
+    public T setTimestamp(Timestamp value)
+    {
+        timestamp = value;
         return (T)this;
     }
 
@@ -169,6 +189,7 @@ extends KmlObject<T>
         setName(XmlUtils.getChildText(elem, namespace, KmlConstants.E_FEATURE_NAME));
         setVisibility(XmlUtils.getChildTextAsBoolean(elem, namespace, KmlConstants.E_FEATURE_VISIBILITY));
         setDescription(XmlUtils.getChildText(elem, namespace, KmlConstants.E_FEATURE_DESCRIPTION));
+        setTimestamp(ObjectUtils.optInvoke(DomUtil.getChild(elem, namespace, KmlConstants.E_TIMESTAMP), Timestamp::fromXml));
         setStyleRef(XmlUtils.getChildText(elem, namespace, KmlConstants.E_FEATURE_STYLEREF));
         setStyleSelector(ObjectUtils.optInvoke(DomUtil.getChild(elem, namespace, KmlConstants.E_STYLE), Style::fromXml));
     }
@@ -184,6 +205,7 @@ extends KmlObject<T>
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_NAME,        getName());
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_VISIBILITY,  getVisibility());
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_DESCRIPTION, getDescription());
+        ObjectUtils.optSet(getTimestamp(), t -> t.appendAsXml(elem));
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_STYLEREF,    getStyleRef());
         ObjectUtils.optSet(getStyleSelector(), s -> s.appendAsXml(elem));
     }

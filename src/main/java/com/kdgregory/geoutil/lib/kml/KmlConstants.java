@@ -75,6 +75,13 @@ public class KmlConstants
     public final static String  E_POINT_COORD           = "coordinates";
 
 
+    /** Timestamp element name. */
+    public final static String  E_TIMESTAMP             = "TimeStamp";
+
+    /** Timestamp child element: when. */
+    public final static String  E_TIMESTAMP_WHEN        = "when";
+
+
     /** Style element name. */
     public final static String  E_STYLE                 = "Style";
 
