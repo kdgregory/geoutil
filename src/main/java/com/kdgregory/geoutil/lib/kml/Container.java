@@ -115,10 +115,18 @@ extends Feature<T>
         super.fromXmlHelper(elem);
         for (Element child : DomUtil.getChildren(elem))
         {
-            // TODO - support other geometries
-            if (DomUtil.getLocalName(child).equals(KmlConstants.E_PLACEMARK))
+            // note: this iteration includes children that represent attributes
+            //       of the container; we have to ignore them, so will ignore
+            //       any unrecognized child (even ones that are invalid)
+            switch (DomUtil.getLocalName(child))
             {
-                addFeature(Placemark.fromXml(child));
+                // TODO - support other geometries
+                case KmlConstants.E_PLACEMARK:
+                    addFeature(Placemark.fromXml(child));
+                    break;
+                case KmlConstants.E_FOLDER:
+                    addFeature(Folder.fromXml(child));
+                    break;
             }
         }
     }

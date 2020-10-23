@@ -173,6 +173,7 @@ public class TestFolder
     @Test
     public void testFromXmlComplete() throws Exception
     {
+        // TODO - addition feature types
         Document dom = XmlBuilder.element("http://earth.google.com/kml/2.1", "Folder",
                             XmlBuilder.attribute("id", "uniqueId"),
                             XmlBuilder.element("http://earth.google.com/kml/2.1", "name",               XmlBuilder.text("my folder")),
@@ -195,7 +196,33 @@ public class TestFolder
         assertEquals("placemark name",      "contained feature",    pm.getName());
     }
 
-    // TODO - test alternate features
+
+    @Test
+    public void testFromXmlNested() throws Exception
+    {
+        Document dom = XmlBuilder.element("http://earth.google.com/kml/2.1", "Folder",
+                            XmlBuilder.element("http://earth.google.com/kml/2.1", "name",               XmlBuilder.text("top-level")),
+                            XmlBuilder.element("http://earth.google.com/kml/2.1", "Folder",
+                                XmlBuilder.element("http://earth.google.com/kml/2.1", "name",           XmlBuilder.text("nested")),
+                                XmlBuilder.element("http://earth.google.com/kml/2.1", "Placemark",
+                                    XmlBuilder.element("http://earth.google.com/kml/2.1", "name",       XmlBuilder.text("contained feature")))))
+                       .toDOM();
+
+        Folder tl = Folder.fromXml(dom.getDocumentElement());
+
+        assertEquals("top-level name",                  "top-level",            tl.getName());
+        assertEquals("top-level feature count",         1,                      tl.getFeatures().size());
+
+        Folder nf = (Folder)tl.getFeatures().get(0);
+
+        assertEquals("nested name",                     "nested",               nf.getName());
+        assertEquals("nested feature count",            1,                      nf.getFeatures().size());
+
+        Placemark pm = (Placemark)nf.getFeatures().get(0);
+
+        assertEquals("placemark name",                  "contained feature",    pm.getName());
+    }
+
 
 
     @Test
