@@ -15,9 +15,6 @@
 package com.kdgregory.geoutil.lib.kml;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -34,9 +31,8 @@ import net.sf.practicalxml.ParseUtil;
  *  https://www.topografix.com/GPX/1/1/.
  */
 public class KmlFile
+extends Container<KmlFile>
 {
-    private List<Feature<?>> features = new ArrayList<>();
-
     /**
      *  Base constructor: an empty file.
      */
@@ -44,44 +40,6 @@ public class KmlFile
     {
         // nothing here
     }
-
-//----------------------------------------------------------------------------
-//  Accessors
-//----------------------------------------------------------------------------
-
-    /**
-     *  Returns all features in this file. May be empty, never null.
-     */
-    public List<Feature<?>> getFeatures()
-    {
-        return features;
-    }
-
-
-    /**
-     *  Adds a single feature to the list maintained by this file.
-     */
-    public KmlFile addFeature(Feature<?> value)
-    {
-        features.add(value);
-        return this;
-    }
-
-
-    /**
-     *  Sets the features in this file from a passed list. Passing null clears
-     *  the current list.
-     */
-    public KmlFile setFeatures(Collection<Feature<?>> value)
-    {
-        features.clear();
-        if (value != null)
-        {
-            features.addAll(value);
-        }
-        return this;
-    }
-
 
 //----------------------------------------------------------------------------
 //  Other public methods
@@ -138,7 +96,7 @@ public class KmlFile
     public org.w3c.dom.Document toXml()
     {
         Element root = DomUtil.newDocument(KmlConstants.NAMESPACE, KmlConstants.E_ROOT);
-        for (Feature<?> feature : features)
+        for (Feature<?> feature : getFeatures())
         {
             feature.appendAsXml(root);
         }
@@ -153,5 +111,15 @@ public class KmlFile
     public void write(File file)
     {
         OutputUtil.compact(new DOMSource(toXml()), new StreamResult(file));
+    }
+
+//----------------------------------------------------------------------------
+//  Internals
+//----------------------------------------------------------------------------
+
+    @Override
+    public Element appendAsXml(Element parent)
+    {
+        throw new UnsupportedOperationException("KmlFile is the root of the DOM");
     }
 }
