@@ -71,6 +71,27 @@ public class TestFolder
 
 
     @Test
+    public void testFindByName() throws Exception
+    {
+        Placemark pm1 = new Placemark().setName("pm1");
+        Placemark pm2 = new Placemark().setName("pm2");
+        Placemark pm3a = new Placemark().setName("pm3");
+        Placemark pm3b = new Placemark().setName("pm3");
+
+        Folder root = new Folder()
+                      .addFeature(pm1)
+                      .addFeature(pm3a)
+                      .addFeature(new Folder()
+                                  .addFeature(pm2)
+                                  .addFeature(pm3b));
+
+        assertEquals("top level",   Arrays.asList(pm1),         root.findByName("pm1"));
+        assertEquals("nested",      Arrays.asList(pm2),         root.findByName("pm2"));
+        assertEquals("split",       Arrays.asList(pm3a, pm3b),  root.findByName("pm3"));
+    }
+
+
+    @Test
     public void testAppendAsXmlMinimal() throws Exception
     {
         Folder f = new Folder();

@@ -167,6 +167,19 @@ extends KmlObject<T>
     }
 
 //----------------------------------------------------------------------------
+//  Other public methods
+//----------------------------------------------------------------------------
+
+    /**
+     *  Identifies whether this feature is a Container (and can therefore hold
+     *  other features).
+     */
+    public boolean isContainer()
+    {
+        return this instanceof Container;
+    }
+
+//----------------------------------------------------------------------------
 //  Methods to be implemented by children
 //---------------------------------------------------------------------------
 

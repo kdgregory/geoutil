@@ -96,6 +96,7 @@ public class KmlFile
         return KmlFile.fromXml(ParseUtil.parse(file));
     }
 
+
     /**
      *  Creates a new instance from an XML DOM.
      */
@@ -130,6 +131,7 @@ public class KmlFile
 
         return file;
     }
+
 
     /**
      *  Converts this object to its XML representation.

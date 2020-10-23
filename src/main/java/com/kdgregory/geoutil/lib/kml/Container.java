@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
+import net.sf.kdgcommons.lang.ObjectUtil;
 import net.sf.practicalxml.DomUtil;
 
 
@@ -71,6 +72,33 @@ extends Feature<T>
     {
         features.add(value);
         return (T)this;
+    }
+
+//----------------------------------------------------------------------------
+//  Other public methods
+//----------------------------------------------------------------------------
+
+    /**
+     *  Recursively searches this container and any descendents for features
+     *  with the given name.
+     */
+    public List<Feature<?>> findByName(String name)
+    {
+        List<Feature<?>> result = new ArrayList<>();
+
+        for (Feature<?> f : features)
+        {
+            if (ObjectUtil.equals(name, f.getName()))
+            {
+                result.add(f);
+            }
+            if (f.isContainer())
+            {
+                result.addAll(((Container<?>)f).findByName(name));
+            }
+        }
+
+        return result;
     }
 
 //----------------------------------------------------------------------------
