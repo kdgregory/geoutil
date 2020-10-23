@@ -15,7 +15,6 @@
 package com.kdgregory.geoutil.lib.kml;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.w3c.dom.Element;
@@ -38,12 +37,12 @@ extends Feature<T>
 //----------------------------------------------------------------------------
 
     /**
-     *  Returns an unmodifiable list of features in this folder. May be empty,
-     *  never null. If necessary, caller must determine concrete type.
+     *  Returns the list of features held in this folder. May be empty, never
+     *  null. If necessary, caller must determine concrete type.
      */
     public List<Feature<?>> getFeatures()
     {
-        return Collections.unmodifiableList(features);
+        return features;
     }
 
 

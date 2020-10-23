@@ -63,20 +63,6 @@ public class TestDocument
 
         d.setFeatures(null);
         assertEquals("null clears features",            0,                      d.getFeatures().size());
-
-        ArrayList<Placemark> orig = new ArrayList<>(Arrays.asList(p1, p2));
-        d.setFeatures(orig);
-        List<Feature<?>> ret = d.getFeatures();
-
-        try
-        {
-            ret.add(p1);
-            fail("able to add feature to returned list");
-        }
-        catch (UnsupportedOperationException ex)
-        {
-            // success
-        }
     }
 
 

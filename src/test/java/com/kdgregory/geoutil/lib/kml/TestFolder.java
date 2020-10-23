@@ -53,20 +53,6 @@ public class TestFolder
 
         f.setFeatures(null);
         assertEquals("null clears features",        0,                      f.getFeatures().size());
-
-        ArrayList<Placemark> orig = new ArrayList<>(Arrays.asList(p1, p2));
-        f.setFeatures(orig);
-        List<Feature<?>> ret = f.getFeatures();
-
-        try
-        {
-            ret.add(p1);
-            fail("able to add feature to returned list");
-        }
-        catch (UnsupportedOperationException ex)
-        {
-            // success
-        }
     }
 
 
