@@ -100,6 +100,30 @@ extends Feature<T>
         return result;
     }
 
+
+    /**
+     *  Recursively searches this container and any descendents for features
+     *  with the given type.
+     */
+    public List<Feature<?>> findByType(Class<? extends Feature<?>> type)
+    {
+       List<Feature<?>> result = new ArrayList<>();
+
+        for (Feature<?> f : features)
+        {
+            if (f.getClass().equals(type))
+            {
+                result.add(f);
+            }
+            if (f.isContainer())
+            {
+                result.addAll(((Container<?>)f).findByType(type));
+            }
+        }
+
+        return result;
+    }
+
 //----------------------------------------------------------------------------
 //  XML conversion helpers
 //----------------------------------------------------------------------------

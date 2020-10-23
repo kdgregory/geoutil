@@ -77,6 +77,28 @@ public class TestFolder
 
 
     @Test
+    public void testFindByType() throws Exception
+    {
+        Placemark pm1 = new Placemark().setName("pm1");
+        Placemark pm2 = new Placemark().setName("pm2");
+        Placemark pm3a = new Placemark().setName("pm3");
+        Placemark pm3b = new Placemark().setName("pm3");
+
+        Folder nested = new Folder()
+                        .addFeature(pm2)
+                        .addFeature(pm3b);
+
+        Folder root = new Folder()
+                      .addFeature(pm1)
+                      .addFeature(pm3a)
+                      .addFeature(nested);
+
+        assertEquals("Folder",      Arrays.asList(nested),                  root.findByType(Folder.class));
+        assertEquals("Placemark",   Arrays.asList(pm1, pm3a, pm2, pm3b),    root.findByType(Placemark.class));
+    }
+
+
+    @Test
     public void testAppendAsXmlMinimal() throws Exception
     {
         Folder f = new Folder();
