@@ -208,12 +208,21 @@ implements Comparable<Point>
 
 
     /**
-     *  String representation is "(lat, lon)".
+     *  Returns a string representation contains all fields that are set, with an
+     *  abbreviated field name.
+     *
+     *  Example: <code>Point(lat=12.0,lon=34.0,ele=56.0,ts=2019-12-28T15:43:48Z)</code>
      */
     @Override
     public String toString()
     {
-        return "(" + getLat() + "," + getLon() + ")";
+        StringBuilder sb = new StringBuilder(256)
+                           .append("Point(lat=").append(lat)
+                           .append(",lon=").append(lon);
+        if (elevation != null) sb.append(",ele=").append(elevation);
+        if (timestamp != null) sb.append(",ts=").append(timestamp);
+        sb.append(")");
+        return sb.toString();
     }
 
 

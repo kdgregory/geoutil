@@ -198,10 +198,18 @@ public class TestPoint
     @Test
     public void testToString() throws Exception
     {
-        Point p = new Point(39.95229, -75.1657517);
-
-        // note that there can be additional digits due to floating-point conversion
-        StringAsserts.assertRegex("\\(39.95229\\d*,-75.1657517\\d*\\)", p.toString());
+        assertEquals("with all components",
+                     "Point(lat=12.0,lon=34.0,ele=56.0,ts=2019-12-28T15:43:48Z)",
+                     new Point(12, 34, 56, 1577547828000L).toString());
+        assertEquals("without elevation",
+                     "Point(lat=12.0,lon=34.0,ts=2019-12-28T15:43:48Z)",
+                     new Point(12, 34, 1577547828000L).toString());
+        assertEquals("without timestamp",
+                     "Point(lat=12.0,lon=34.0,ele=56.0)",
+                     new Point(12, 34, Double.valueOf(56), null).toString());
+        assertEquals("base lat.lon",
+                     "Point(lat=12.0,lon=34.0)",
+                     new Point(12, 34).toString());
     }
 
 
