@@ -23,6 +23,7 @@ import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import net.sf.kdgcommons.test.NumericAsserts;
 import net.sf.kdgcommons.test.StringAsserts;
 
 
@@ -147,8 +148,8 @@ public class TestPoint
     {
         Point p1  = new Point(39.95229, -75.1657517, 10.5, 1577547828000L);
         Point p2  = new Point(39.95229, -75.1657517, 10.5, 1577547828000L);
-        Point p3  = new Point(39.95230, -75.1657517, 10.5, 1577547828000L);
-        Point p4  = new Point(39.95229, -75.165752,  10.5, 1577547828000L);
+        Point p3  = new Point(39.9523,  -75.1657517, 10.5, 1577547828000L);
+        Point p4  = new Point(39.95229, -75.1658,    10.5, 1577547828000L);
         Point p5  = new Point(39.95229, -75.1657517, 10.6, 1577547828000L);
         Point p6  = new Point(39.95229, -75.1657517, 10.5, 1577547828001L);
         Point p7  = new Point(39.95229, -75.1657517, null, Instant.ofEpochMilli(1577547828000L));
@@ -167,10 +168,34 @@ public class TestPoint
         assertTrue("null elevation and timestamp",      p9.equals(p10));
 
         assertEquals("hashcode of equal points",        p1.hashCode(), p2.hashCode());
-        assertEquals("hascode only considers lat/lon",  p1.hashCode(), p10.hashCode());
+        assertEquals("hashcode only considers lat/lon", p1.hashCode(), p10.hashCode());
 
-        // known unequal points
-        assertTrue("hashcode of unequal points", p1.hashCode() != p3.hashCode());
+        // within precision, different fractional components will always be different
+        assertTrue("hashcode of unequal lats",          p1.hashCode() != p3.hashCode());
+        assertTrue("hashcode of unequal lons",          p1.hashCode() != p4.hashCode());
+    }
+
+
+    @Test
+    public void testHashDistribution() throws Exception
+    {
+        int countGT = 0;
+        int countLT = 0;
+
+        for (double lat = -90.0 ; lat <= 90.0 ; lat += .1)
+        {
+            for (double lon = -180.0 ; lon <= 180.0 ; lon += .1)
+            {
+                int hc = new Point(lat,lon).hashCode();
+                if (hc > 0) countGT++;
+                if (hc < 0) countLT++;
+            }
+        }
+
+        assertTrue("some values > 0", countGT > 0);
+        assertTrue("some values < 0", countLT > 0);
+
+        NumericAsserts.assertApproximate(">0 within 5% of <0", countGT, countLT, 5);
     }
 
 

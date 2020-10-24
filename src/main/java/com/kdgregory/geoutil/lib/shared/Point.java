@@ -175,7 +175,11 @@ implements Comparable<Point>
     @Override
     public int hashCode()
     {
-        return Double.hashCode(lat) * 31 + Double.hashCode(lon);
+        // this hashcode calculation attempts to minimize the co-hashing of
+        // nearby points; it essentially truncates the whole degrees
+
+        return ((int)(lat * 128 * 65536) & 65535) * 65536
+             + ((int)(lon * 256 * 65536) & 65535);
     }
 
 
