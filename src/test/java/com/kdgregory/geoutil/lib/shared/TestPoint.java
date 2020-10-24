@@ -14,6 +14,7 @@
 
 package com.kdgregory.geoutil.lib.shared;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,13 +29,74 @@ import net.sf.kdgcommons.test.StringAsserts;
 public class TestPoint
 {
     @Test
-    public void testConstructor() throws Exception
+    public void testConstructorsAndAccessors() throws Exception
     {
-        Point p1 = new Point(39.95229, -75.1657517);
-        assertEquals("lat",  39.95229,   p1.getLat(), 0.00001);
-        assertEquals("lon", -75.1657517, p1.getLon(), 0.00001);
+        Point p1 = new Point(39.95229, -75.1657517, Double.valueOf(10.5), Instant.ofEpochMilli(1577547828000L));
 
-        // no exception means success for these two
+        assertEquals("lat",                     39.95229,                               p1.getLat(), 0.00001);
+        assertEquals("lon",                     -75.1657517,                            p1.getLon(), 0.00001);
+        assertEquals("elevation",               Double.valueOf(10.5),                   p1.getElevation());
+        assertEquals("elevation (primitive)",   10.5,                                   p1.getElevationOrZero(), 0.0);
+        assertEquals("timestamp",               Instant.ofEpochMilli(1577547828000L),   p1.getTimestamp());
+        assertEquals("timestamp (string)",      "2019-12-28T15:43:48Z",                 p1.getTimestampAsString());
+        assertEquals("timestamp (millis)",      1577547828000L,                         p1.getTimestampMillis());
+
+        Point p2 = new Point(39.95229, -75.1657517, null, null);
+
+        assertEquals("lat",                     39.95229,                               p2.getLat(), 0.00001);
+        assertEquals("lon",                     -75.1657517,                            p2.getLon(), 0.00001);
+        assertEquals("elevation",               null,                                   p2.getElevation());
+        assertEquals("elevation (primitive)",   0,                                      p2.getElevationOrZero(), 0.0);
+        assertEquals("timestamp",               null,                                   p2.getTimestamp());
+        assertEquals("timestamp (string)",      null,                                   p2.getTimestampAsString());
+        assertEquals("timestamp (millis)",      0L,                                     p2.getTimestampMillis());
+
+        Point p3 = new Point(39.95229, -75.1657517, 10.5, 1577547828000L);
+
+        assertEquals("lat",                     39.95229,                               p3.getLat(), 0.00001);
+        assertEquals("lon",                     -75.1657517,                            p3.getLon(), 0.00001);
+        assertEquals("elevation",               Double.valueOf(10.5),                   p3.getElevation());
+        assertEquals("elevation (primitive)",   10.5,                                   p3.getElevationOrZero(), 0.0);
+        assertEquals("timestamp",               Instant.ofEpochMilli(1577547828000L),   p3.getTimestamp());
+        assertEquals("timestamp (string)",      "2019-12-28T15:43:48Z",                 p3.getTimestampAsString());
+        assertEquals("timestamp (millis)",      1577547828000L,                         p3.getTimestampMillis());
+
+        Point p4 = new Point(39.95229, -75.1657517, Instant.ofEpochMilli(1577547828000L));
+
+        assertEquals("lat",                     39.95229,                               p4.getLat(), 0.00001);
+        assertEquals("lon",                     -75.1657517,                            p4.getLon(), 0.00001);
+        assertEquals("elevation",               null,                                   p4.getElevation());
+        assertEquals("elevation (primitive)",   0,                                      p4.getElevationOrZero(), 0.0);
+        assertEquals("timestamp",               Instant.ofEpochMilli(1577547828000L),   p4.getTimestamp());
+        assertEquals("timestamp (string)",      "2019-12-28T15:43:48Z",                 p4.getTimestampAsString());
+        assertEquals("timestamp (millis)",      1577547828000L,                         p4.getTimestampMillis());
+
+        Point p5 = new Point(39.95229, -75.1657517, 1577547828000L);
+
+        assertEquals("lat",                     39.95229,                               p5.getLat(), 0.00001);
+        assertEquals("lon",                     -75.1657517,                            p5.getLon(), 0.00001);
+        assertEquals("elevation",               null,                                   p5.getElevation());
+        assertEquals("elevation (primitive)",   0,                                      p5.getElevationOrZero(), 0.0);
+        assertEquals("timestamp",               Instant.ofEpochMilli(1577547828000L),   p5.getTimestamp());
+        assertEquals("timestamp (string)",      "2019-12-28T15:43:48Z",                 p5.getTimestampAsString());
+        assertEquals("timestamp (millis)",      1577547828000L,                         p5.getTimestampMillis());
+
+        Point p6 = new Point(39.95229, -75.1657517);
+
+        assertEquals("lat",                     39.95229,                               p6.getLat(), 0.00001);
+        assertEquals("lon",                     -75.1657517,                            p6.getLon(), 0.00001);
+        assertEquals("elevation",               null,                                   p6.getElevation());
+        assertEquals("elevation (primitive)",   0,                                      p6.getElevationOrZero(), 0.0);
+        assertEquals("timestamp",               null,                                   p6.getTimestamp());
+        assertEquals("timestamp (string)",      null,                                   p6.getTimestampAsString());
+        assertEquals("timestamp (millis)",      0L,                                     p6.getTimestampMillis());
+    }
+
+
+    @Test
+    public void testConstructorBoundsCheck() throws Exception
+    {
+        // being able to construct these two indicates success
         new Point(-90.0, -180.0);
         new Point(90.0, 180.0);
 

@@ -14,24 +14,32 @@
 
 package com.kdgregory.geoutil.lib.shared;
 
+import java.time.Instant;
 
 /**
- *  Represents a point on a sphere, using latitude and longitude.
+ *  Represents a point on a sphere, with latitude, longitude, optional
+ *  elevation, and an optional timestamp.
  *  <p>
- *  Instances are immutable.
+ *  Instances are immutable once constructed.
  */
 public class Point
 implements Comparable<Point>
 {
     private final double lat;
     private final double lon;
+    private final Double elevation;
+    private final Instant timestamp;
 
 
     /**
-     *  @param lat  Latitude, ranging from -90 (south) to +90 (north).
-     *  @param lon  Longitude, ranging from -180 (west) to +180 (east).
+     *  Base constructor, allowing all values to be set.
+     *
+     *  @param  lat         Latitude, ranging from -90 (south) to +90 (north).
+     *  @param  lon         Longitude, ranging from -180 (west) to +180 (east).
+     *  @param  elevation   Elevation of the point, in meters.
+     *  @param  timestamp   Fixes the point in time as well as space.
      */
-    public Point(double lat, double lon)
+    public Point(double lat, double lon, Double elevation, Instant timestamp)
     {
         if ((lat < -90.0) || (lat > 90.0))
             throw new IllegalArgumentException("invalid latitude: " + lat);
@@ -41,20 +49,126 @@ implements Comparable<Point>
 
         this.lat = lat;
         this.lon = lon;
+        this.elevation = elevation;
+        this.timestamp = timestamp;
     }
 
 
+    /**
+     *  Convenience constructor for primitive values, where timestamp is
+     *  provided as milliseconds since epoch.
+     */
+    public Point(double lat, double lon, double elevation, long timestamp)
+    {
+        this(lat, lon, Double.valueOf(elevation), Instant.ofEpochMilli(timestamp));
+    }
+
+
+    /**
+     *  Convenience constructor for timestamped points without elevation.
+     */
+    public Point(double lat, double lon, Instant timestamp)
+    {
+        this(lat, lon, null, timestamp);
+    }
+
+
+    /**
+     *  Convenience constructor for timestamped points without elevation, where
+     *  timestamp is provided as milliseconds sinch epoch.
+     */
+    public Point(double lat, double lon, long timestamp)
+    {
+        this(lat, lon, null, Instant.ofEpochMilli(timestamp));
+    }
+
+
+    /**
+     *  Convenience constructor, for points that just represent 2D location.
+     */
+    public Point(double lat, double lon)
+    {
+        this(lat, lon, null, null);
+    }
+
+//----------------------------------------------------------------------------
+//  Accessors
+//----------------------------------------------------------------------------
+
+    /**
+     *  Returns the point's latitude.
+     */
     public double getLat()
     {
         return lat;
     }
 
 
+    /**
+     *  Returns the point's longitude.
+     */
     public double getLon()
     {
         return lon;
     }
 
+
+    /**
+     *  Returns the point's elevation. May be null.
+     */
+    public Double getElevation()
+    {
+        return elevation;
+    }
+
+
+    /**
+     *  Returns the point's elevation as a primitive value, with missing
+     *  elevation replaced by 0.
+     */
+    public double getElevationOrZero()
+    {
+        return (elevation == null)
+             ? 0.0
+             : elevation.doubleValue();
+    }
+
+
+    /**
+     *  Returns the point's timestamp. May be null.
+     */
+    public Instant getTimestamp()
+    {
+        return timestamp;
+    }
+
+
+    /**
+     *  Returns the point's timestamp as a string in ISO-8601 "Zulu"
+     *  format. May be null.
+     */
+    public String getTimestampAsString()
+    {
+        return (timestamp == null)
+             ? null
+             : timestamp.toString();
+    }
+
+
+    /**
+     *  Returns the point's timestamp as milliseconds since the epoch, with
+     *  missing timestamps replaced by 0.
+     */
+    public long getTimestampMillis()
+    {
+        return (timestamp == null)
+             ? 0
+             : timestamp.toEpochMilli();
+    }
+
+//----------------------------------------------------------------------------
+//  Overrides
+//----------------------------------------------------------------------------
 
     @Override
     public int hashCode()
