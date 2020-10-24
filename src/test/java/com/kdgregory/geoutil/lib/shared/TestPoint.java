@@ -15,10 +15,6 @@
 package com.kdgregory.geoutil.lib.shared;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -212,20 +208,34 @@ public class TestPoint
     @Test
     public void testComparable() throws Exception
     {
-        // rather than individually test points, I'll put all possibilities in a list
-        // and let sort() figure it out (note this requires a stable sort for the
-        // equal points)
+        Point p1 = new Point( 12.34,  56.78, Double.valueOf(100.0), Instant.ofEpochMilli(1577547828000L));
+        Point p2 = new Point( 12.34,  56.78, Double.valueOf(100.0), Instant.ofEpochMilli(1577547829000L));
+        Point p3 = new Point( 12.34,  56.78, Double.valueOf(100.0), null);
+        Point p4 = new Point(-12.39,  56.78, Double.valueOf(100.0), Instant.ofEpochMilli(1577547828000L));
+        Point p5 = new Point( 12.34, -56.80, Double.valueOf(100.0), Instant.ofEpochMilli(1577547828000L));
+        Point p6 = new Point( 12.34,  56.78, Double.valueOf(200.0), Instant.ofEpochMilli(1577547828000L));
+        Point p7 = new Point( 12.34,  56.78, null,                  Instant.ofEpochMilli(1577547828000L));
+        Point p8 = new Point( 12.34,  56.78);
 
-        Point p1 = new Point(-1, 0);
-        Point p2 = new Point(0, 0);
-        Point p3 = new Point(0, 0);
-        Point p4 = new Point(1, -1);
-        Point p5 = new Point(1, 0);
-        Point p6 = new Point(1, 1);
+        assertEquals("timestamp <",                         -1,     p1.compareTo(p2));
+        assertEquals("timestamp >",                          1,     p2.compareTo(p1));
+        assertEquals("null timestamp <",                    -1,     p3.compareTo(p1));
+        assertEquals("null timestamp >",                     1,     p1.compareTo(p3));
 
-        List<Point> unordered = Arrays.asList(p6, p5, p4, p3, p2, p1);
-        List<Point> ordered = new ArrayList<Point>(unordered);
-        Collections.sort(ordered);
-        assertEquals(Arrays.asList(p1, p2, p3, p4, p5, p6), ordered);
+        assertEquals("latitude <",                          -1,     p1.compareTo(p4));
+        assertEquals("latitude >",                           1,     p4.compareTo(p1));
+
+        assertEquals("longitude <",                         -1,     p1.compareTo(p5));
+        assertEquals("longitude >",                          1,     p5.compareTo(p1));
+
+        assertEquals("elevation <",                         -1,     p1.compareTo(p6));
+        assertEquals("elevation >",                          1,     p6.compareTo(p1));
+        assertEquals("null elevation <",                     1,     p6.compareTo(p1));
+        assertEquals("null elevation >",                    -1,     p1.compareTo(p6));
+
+        assertEquals("equal",                                0,     p1.compareTo(p1));
+        assertEquals("equal, null timestamp",                0,     p3.compareTo(p3));
+        assertEquals("equal, null elevation",                0,     p7.compareTo(p7));
+        assertEquals("equal, null elevation and timestamp",  0,     p8.compareTo(p8));
     }
 }

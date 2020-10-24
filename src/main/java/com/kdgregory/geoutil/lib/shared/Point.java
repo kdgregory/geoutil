@@ -18,6 +18,8 @@ import java.time.Instant;
 
 import net.sf.kdgcommons.lang.ObjectUtil;
 
+import com.kdgregory.geoutil.lib.internal.TimestampUtils;
+
 /**
  *  Represents a point on a sphere, with latitude, longitude, optional
  *  elevation, and an optional timestamp.
@@ -216,17 +218,47 @@ implements Comparable<Point>
 
 
     /**
-     *  Instances are comparable, for compatibility with {@link TimestampedPoint}. One
-     *  instance is larger than another if (1) it has a greater latitude, or (2) has
-     *  the same latitude and a greater longitude (ie, ordered to the northeast).
+     *  Points are normally compared only to order by timestamp. However, for compatbility
+     *  with {@link #equals} all fields must be involved. To that end, the following tests
+     *  are applied in order:
+     *  <ol>
+     *  <li> Timestamp, where null is equivalent to 0.
+     *  <li> Absolute value of latitude, where points closer to 0 are smaller.
+     *  <li> Absolute value of longitude, where points closer to 0 are smaller.
+     *  <li> Elevation, where null is equivalent to 0.
+     *  </ol>
      */
     @Override
     public int compareTo(Point that)
     {
-        return (this.lat > that.lat) ? 1
-             : (this.lat < that.lat) ? -1
-             : (this.lon > that.lon) ? 1
-             : (this.lon < that.lon) ? -1
-             : 0;
+        int tsCmp = TimestampUtils.compare(this.getTimestamp(), that.getTimestamp());
+        if (tsCmp != 0)
+            return tsCmp;
+
+        double latThis = Math.abs(this.getLat());
+        double latThat = Math.abs(that.getLat());
+        int latCmp = (latThis < latThat) ? -1
+                  : (latThis > latThat) ? 1
+                  : 0;
+        if (latCmp != 0)
+            return latCmp;
+
+        double lonThis = Math.abs(this.getLon());
+        double lonThat = Math.abs(that.getLon());
+        int lonCmp = (lonThis < lonThat) ? -1
+                  : (lonThis > lonThat) ? 1
+                  : 0;
+        if (lonCmp != 0)
+            return lonCmp;
+
+        double eleThis = this.getElevationOrZero();
+        double eleThat = that.getElevationOrZero();
+        int eleCmp = (eleThis < eleThat) ? -1
+                  : (eleThis > eleThat) ? 1
+                  : 0;
+        if (eleCmp != 0)
+            return eleCmp;
+
+        return 0;
     }
 }
