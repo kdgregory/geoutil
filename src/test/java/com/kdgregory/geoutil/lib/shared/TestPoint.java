@@ -145,19 +145,31 @@ public class TestPoint
     @Test
     public void testHashcodeAndEquals() throws Exception
     {
-        Point p1 = new Point(39.95229, -75.1657517);
-        Point p2 = new Point(39.95229, -75.1657517);
-        Point p3 = new Point(39.95230, -75.1657517);
-        Point p4 = new Point(39.95229, -75.165752);
+        Point p1  = new Point(39.95229, -75.1657517, 10.5, 1577547828000L);
+        Point p2  = new Point(39.95229, -75.1657517, 10.5, 1577547828000L);
+        Point p3  = new Point(39.95230, -75.1657517, 10.5, 1577547828000L);
+        Point p4  = new Point(39.95229, -75.165752,  10.5, 1577547828000L);
+        Point p5  = new Point(39.95229, -75.1657517, 10.6, 1577547828000L);
+        Point p6  = new Point(39.95229, -75.1657517, 10.5, 1577547828001L);
+        Point p7  = new Point(39.95229, -75.1657517, null, Instant.ofEpochMilli(1577547828000L));
+        Point p8  = new Point(39.95229, -75.1657517, Double.valueOf(10.5), null);
+        Point p9  = new Point(39.95229, -75.1657517);
+        Point p10 = new Point(39.95229, -75.1657517);
 
-        assertTrue("identity", p1.equals(p1));
-        assertTrue("equality", p1.equals(p2));
-        assertFalse("inequality of latitude",  p1.equals(p3));
-        assertFalse("inequality of longitude", p1.equals(p4));
+        assertTrue("identity",                          p1.equals(p1));
+        assertTrue("equality",                          p1.equals(p2));
+        assertFalse("inequality of latitude",           p1.equals(p3));
+        assertFalse("inequality of longitude",          p1.equals(p4));
+        assertFalse("inequality of elevation",          p1.equals(p5));
+        assertFalse("inequality of timestamp",          p1.equals(p6));
+        assertFalse("null elevation",                   p1.equals(p7));
+        assertFalse("null timestamp",                   p1.equals(p8));
+        assertTrue("null elevation and timestamp",      p9.equals(p10));
 
-        assertEquals("hashcode of equal points", p1.hashCode(), p2.hashCode());
+        assertEquals("hashcode of equal points",        p1.hashCode(), p2.hashCode());
+        assertEquals("hascode only considers lat/lon",  p1.hashCode(), p10.hashCode());
 
-        // this has been observed to be true
+        // known unequal points
         assertTrue("hashcode of unequal points", p1.hashCode() != p3.hashCode());
     }
 

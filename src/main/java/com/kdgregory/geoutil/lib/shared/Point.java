@@ -16,6 +16,8 @@ package com.kdgregory.geoutil.lib.shared;
 
 import java.time.Instant;
 
+import net.sf.kdgcommons.lang.ObjectUtil;
+
 /**
  *  Represents a point on a sphere, with latitude, longitude, optional
  *  elevation, and an optional timestamp.
@@ -178,8 +180,8 @@ implements Comparable<Point>
 
 
     /**
-     *  Two points are equal if latitude and longitude are equal. Any subclass that
-     *  adds additional fields must ensure that its implementation is reflexive.
+     *  Two points are equal if all fields (lat, lon, elevation, timestamp) are
+     *  equal. For elevation and timestamp, null values are considered equal.
      */
     @Override
     public boolean equals(Object obj)
@@ -191,7 +193,9 @@ implements Comparable<Point>
         {
             Point that = (Point)obj;
             return this.lat == that.lat
-                && this.lon == that.lon;
+                && this.lon == that.lon
+                && ObjectUtil.equals(this.elevation, that.elevation)
+                && ObjectUtil.equals(this.timestamp, that.timestamp);
         }
         return false;
     }
