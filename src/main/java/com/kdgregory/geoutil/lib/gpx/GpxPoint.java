@@ -16,15 +16,15 @@ package com.kdgregory.geoutil.lib.gpx;
 
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 
 import org.w3c.dom.Element;
 
 import net.sf.kdgcommons.lang.ObjectUtil;
 import net.sf.practicalxml.DomUtil;
 
+import com.kdgregory.geoutil.lib.internal.ObjectUtils;
+import com.kdgregory.geoutil.lib.internal.XmlUtils;
 import com.kdgregory.geoutil.lib.shared.TimestampedPoint;
-import com.kdgregory.geoutil.lib.shared.XmlUtils;
 
 
 /**
@@ -73,14 +73,42 @@ extends com.kdgregory.geoutil.lib.shared.Point
         this(XmlUtils.getAttributeAsDouble(elem, GpxConstants.A_WPT_LAT),
              XmlUtils.getAttributeAsDouble(elem, GpxConstants.A_WPT_LON));
 
-        Map<String,Element> children = XmlUtils.listToMap(DomUtil.getChildren(elem));
-        XmlUtils.optSetDouble(children.get(GpxConstants.E_WPT_ELEVATION),      GpxConstants.NAMESPACE, this::setElevation);
-        XmlUtils.optSetString(children.get(GpxConstants.E_WPT_TIMESTAMP),      GpxConstants.NAMESPACE, this::setTimestampString);
-        XmlUtils.optSetDouble(children.get(GpxConstants.E_WPT_VARIANCE),       GpxConstants.NAMESPACE, this::setMagneticVariance);
-        XmlUtils.optSetDouble(children.get(GpxConstants.E_WPT_GEOID_HEIGHT),   GpxConstants.NAMESPACE, this::setGeoidHeight);
-        XmlUtils.optSetString(children.get(GpxConstants.E_WPT_NAME),           GpxConstants.NAMESPACE, this::setName);
-        XmlUtils.optSetString(children.get(GpxConstants.E_WPT_COMMENT),        GpxConstants.NAMESPACE, this::setComment);
-        XmlUtils.optSetString(children.get(GpxConstants.E_WPT_DESCRIPTION),    GpxConstants.NAMESPACE, this::setDescription);
+        for (Element child : DomUtil.getChildren(elem))
+        {
+            String childNamespace = child.getNamespaceURI();
+            String childName = DomUtil.getLocalName(child);
+            String childText = child.getTextContent();
+
+            if (! GpxConstants.NAMESPACE.equals(childNamespace))
+                throw new IllegalArgumentException("invalid namespace: " + childNamespace);
+
+            switch (childName)
+            {
+                case GpxConstants.E_WPT_ELEVATION:
+                    ObjectUtils.optSetDouble(childText, this::setElevation);
+                    break;
+                case GpxConstants.E_WPT_TIMESTAMP:
+                    ObjectUtils.optSetString(childText, this::setTimestampString);
+                    break;
+                case GpxConstants.E_WPT_VARIANCE:
+                    ObjectUtils.optSetDouble(childText, this::setMagneticVariance);
+                    break;
+                case GpxConstants.E_WPT_GEOID_HEIGHT:
+                    ObjectUtils.optSetDouble(childText, this::setGeoidHeight);
+                    break;
+                case GpxConstants.E_WPT_NAME:
+                    ObjectUtils.optSetString(childText, this::setName);
+                    break;
+                case GpxConstants.E_WPT_COMMENT:
+                    ObjectUtils.optSetString(childText, this::setComment);
+                    break;
+                case GpxConstants.E_WPT_DESCRIPTION:
+                    ObjectUtils.optSetString(childText, this::setDescription);
+                    break;
+                default:
+                    throw new IllegalArgumentException("unsupported element: " + childName);
+            }
+        }
     }
 
 //----------------------------------------------------------------------------

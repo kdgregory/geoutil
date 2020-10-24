@@ -1,3 +1,4 @@
+// Copyright Keith D Gregory
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +18,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -25,7 +25,8 @@ import org.w3c.dom.Element;
 
 import net.sf.practicalxml.DomUtil;
 
-import com.kdgregory.geoutil.lib.shared.XmlUtils;
+import com.kdgregory.geoutil.lib.internal.ObjectUtils;
+import com.kdgregory.geoutil.lib.internal.XmlUtils;
 
 
 /**
@@ -62,13 +63,30 @@ public class Track
      */
     public Track(Element elem)
     {
-        Map<String,Element> children = XmlUtils.listToMap(DomUtil.getChildren(elem));
-        XmlUtils.optSetString(children.get(GpxConstants.E_TRK_NAME),           GpxConstants.NAMESPACE, this::setName);
-        XmlUtils.optSetString(children.get(GpxConstants.E_TRK_DESCRIPTION),    GpxConstants.NAMESPACE, this::setDescription);
 
-        for (Element eSeg : DomUtil.getChildren(elem, GpxConstants.NAMESPACE, GpxConstants.E_TRKSEG))
+        for (Element child : DomUtil.getChildren(elem))
         {
-            addSegment(new TrackSegment(eSeg));
+            String childNamespace = child.getNamespaceURI();
+            String childName = DomUtil.getLocalName(child);
+
+            if (! GpxConstants.NAMESPACE.equals(childNamespace))
+                throw new IllegalArgumentException("invalid namespace: " + childNamespace);
+
+
+            switch (childName)
+            {
+                case GpxConstants.E_TRK_NAME:
+                    ObjectUtils.optSetString(child.getTextContent(), this::setName);
+                    break;
+                case GpxConstants.E_TRK_DESCRIPTION:
+                    ObjectUtils.optSetString(child.getTextContent(), this::setDescription);
+                    break;
+                case GpxConstants.E_TRKSEG:
+                    addSegment(new TrackSegment(child));
+                    break;
+                default:
+                    throw new IllegalArgumentException("unsupported element: " + childName);
+            }
         }
     }
 
