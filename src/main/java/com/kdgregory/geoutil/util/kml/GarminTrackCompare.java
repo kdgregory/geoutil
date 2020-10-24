@@ -34,7 +34,6 @@ import com.kdgregory.geoutil.lib.kml.KmlBuilder;
 import com.kdgregory.geoutil.lib.shared.Point;
 import com.kdgregory.geoutil.lib.shared.PointUtil;
 import com.kdgregory.geoutil.lib.shared.SegmentUtil;
-import com.kdgregory.geoutil.lib.shared.TimestampedPoint;
 
 
 /**
@@ -58,7 +57,7 @@ public class GarminTrackCompare
         logger.info("starting");
 
         Document[] sources = new Document[2];
-        List<TimestampedPoint>[] srcTracks = new List[2];
+        List<Point>[] srcTracks = new List[2];
 
         for (int argidx = 0 ; argidx < 2 ; argidx++)
         {
@@ -79,10 +78,10 @@ public class GarminTrackCompare
     }
 
 
-    private static List<TimestampedPoint> extractTrack(Document dom)
+    private static List<Point> extractTrack(Document dom)
     throws Exception
     {
-        List<TimestampedPoint> result = new ArrayList<>();
+        List<Point> result = new ArrayList<>();
 
         XPathWrapper placemarkSelect = new XPathWrapper("//ns:Folder/ns:name[text()='Track Points']/../ns:Placemark")
                                        .bindNamespace("ns", "http://earth.google.com/kml/2.1");
@@ -101,7 +100,7 @@ public class GarminTrackCompare
             double lon = Double.valueOf(parsedCoordinates[0].trim());
             double lat = Double.valueOf(parsedCoordinates[1].trim());
 
-            result.add(new TimestampedPoint(timestamp.toEpochMilli(), lat, lon));
+            result.add(new Point(lat, lon, timestamp));
         }
 
         return result;
@@ -115,12 +114,12 @@ public class GarminTrackCompare
                              .add(KmlBuilder.style("slower", KmlBuilder.lineStyle(6, "FF0000FF")));
 
         List<Point> segment1 = new ArrayList<>(pairs.size());
-        TimestampedPoint p1Prev = null;
-        TimestampedPoint p2Prev = null;
+        Point p1Prev = null;
+        Point p2Prev = null;
         for (Point[] pair : pairs)
         {
-            TimestampedPoint p1 = (TimestampedPoint)pair[0];
-            TimestampedPoint p2 = (TimestampedPoint)pair[1];
+            Point p1 = pair[0];
+            Point p2 = pair[1];
 
             segment1.add(p1);
             if (p1Prev != null)
@@ -140,7 +139,7 @@ public class GarminTrackCompare
     }
 
 
-    private static void appendLineSegment(KmlBuilder builder, TimestampedPoint p1Prev, TimestampedPoint p1, TimestampedPoint p2Prev, TimestampedPoint p2)
+    private static void appendLineSegment(KmlBuilder builder, Point p1Prev, Point p1, Point p2Prev, Point p2)
     {
         Point start = PointUtil.midpoint(p1Prev, p2Prev);
         Point finish = PointUtil.midpoint(p1, p2);

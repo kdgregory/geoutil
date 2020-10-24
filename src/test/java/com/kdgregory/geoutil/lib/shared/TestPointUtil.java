@@ -69,8 +69,8 @@ public class TestPointUtil
     @Test
     public void testVelocity() throws Exception
     {
-        TimestampedPoint p1 = new TimestampedPoint(0, 45, 75);
-        TimestampedPoint p2 = new TimestampedPoint(2000, 46, 76);
+        Point p1 = new Point(45, 75, 0);
+        Point p2 = new Point(46, 76, 2000);
         assertEquals("meters/second",  68054.2, PointUtil.velocity(p1, p2), 0.1);
         assertEquals("meters/second",  152232.6, PointUtil.velocityMPH(p1, p2), 0.1);
     }
@@ -79,17 +79,32 @@ public class TestPointUtil
     @Test
     public void testMidpoint() throws Exception
     {
-        Point p1 = new Point(-1,  1);
-        Point p2 = new Point( 1, -1);
-        assertEquals("simple point",            new Point(0, 0), PointUtil.midpoint(p1, p2));
-        assertEquals("simple point, reversed",  new Point(0, 0), PointUtil.midpoint(p2, p1));
+        Point p1a = new Point(-1,  1, 10, 1000);
+        Point p1b = new Point( 1, -1, 11, 2000);
+        Point x1  = new Point( 0,  0, 10.5, 1500);
 
-        TimestampedPoint p3 = new TimestampedPoint(1000, -1,  1);
-        TimestampedPoint p4 = new TimestampedPoint(2000,  1, -1);
-        assertEquals("timestamped point",            new TimestampedPoint(1500, 0, 0), PointUtil.midpoint(p3, p4));
-        assertEquals("timestamped point, reversed",  new TimestampedPoint(1500, 0, 0), PointUtil.midpoint(p4, p3));
+        assertEquals("all values",            x1, PointUtil.midpoint(p1a, p1b));
+        assertEquals("all values, reversed",  x1, PointUtil.midpoint(p1b, p1a));
 
-        assertEquals("mixed",           new Point(0, 0), PointUtil.midpoint(p1, p4));
-        assertEquals("mixed, reversed", new Point(0, 0), PointUtil.midpoint(p4, p1));
+        Point p2a = new Point(-1,  1, Double.valueOf(10), null);
+        Point p2b = new Point( 1, -1, Double.valueOf(11), null);
+        Point x2  = new Point( 0,  0, Double.valueOf(10.5), null);
+
+        assertEquals("no timestamp",            x2, PointUtil.midpoint(p2a, p2b));
+        assertEquals("no timestamp, reversed",  x2, PointUtil.midpoint(p2b, p2a));
+
+        Point p3a = new Point(-1,  1, 1000);
+        Point p3b = new Point( 1, -1, 2000);
+        Point x3  = new Point( 0,  0, 1500);
+
+        assertEquals("no elevation",            x3, PointUtil.midpoint(p3a, p3b));
+        assertEquals("no elevation, reversed",  x3, PointUtil.midpoint(p3b, p3a));
+
+        Point p4a = new Point(-1,  1);
+        Point p4b = new Point( 1, -1);
+        Point x4  = new Point( 0,  0);
+
+        assertEquals("lat/lon only",            x4, PointUtil.midpoint(p4a, p4b));
+        assertEquals("lat/lon only, reversed",  x4, PointUtil.midpoint(p4b, p4a));
     }
 }

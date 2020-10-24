@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 import net.sf.practicalxml.DomUtil;
 import net.sf.practicalxml.builder.XmlBuilder;
 
-import com.kdgregory.geoutil.lib.shared.TimestampedPoint;
+import com.kdgregory.geoutil.lib.shared.Point;
 
 
 public class TestGpxPoint
@@ -121,15 +121,15 @@ public class TestGpxPoint
         GpxPoint p2b = new GpxPoint(12,34).setTimestampMillis(1577547828000L);
         GpxPoint p2c = new GpxPoint(12,34).setTimestampMillis(1577547829000L);
         GpxPoint p3a = new GpxPoint(12,34).setTimestampMillis(1577547828000L)
-                                    .setElevation(123.45)
-                                    .setMagneticVariance(15.5)
-                                    .setGeoidHeight(123.0);
+                                          .setElevation(123.45)
+                                          .setMagneticVariance(15.5)
+                                          .setGeoidHeight(123.0);
         GpxPoint p3b = new GpxPoint(12,34).setTimestampMillis(1577547828000L)
-                                    .setElevation(123.45)
-                                    .setMagneticVariance(15.5)
-                                    .setGeoidHeight(123.0);
+                                          .setElevation(123.45)
+                                          .setMagneticVariance(15.5)
+                                          .setGeoidHeight(123.0);
 
-        GpxPoint p4  = new GpxPoint(34,56);
+        GpxPoint p4  = new GpxPoint(12.2,34.4);
 
         assertTrue("equal, identity",                       p1a.equals(p1a));
         assertTrue("equal, lat/lon",                        p1a.equals(p1b));
@@ -195,16 +195,16 @@ public class TestGpxPoint
     public void testConvertToTimestampedPoint() throws Exception
     {
         GpxPoint p1 = new GpxPoint(12,34).setTimestampMillis(1577547828000L);
-        TimestampedPoint tp1 = p1.toTimestampedPoint();
+        Point tp1 = p1.toPoint();
 
-        assertEquals("timestamp",   1577547828000L,     tp1.getTimestamp());
+        assertEquals("timestamp",   1577547828000L,     tp1.getTimestampMillis());
         assertEquals("lat",         12,                 tp1.getLat(), 0.0);
         assertEquals("lon",         34,                 tp1.getLon(), 0.0);
 
         GpxPoint p2 = new GpxPoint(12,34);
-        TimestampedPoint tp2 = p2.toTimestampedPoint();
+        Point tp2 = p2.toPoint();
 
-        assertEquals("timestamp",   0,                  tp2.getTimestamp());
+        assertEquals("timestamp",   0,                  tp2.getTimestampMillis());
         assertEquals("lat",         12,                 tp2.getLat(), 0.0);
         assertEquals("lon",         34,                 tp2.getLon(), 0.0);
     }

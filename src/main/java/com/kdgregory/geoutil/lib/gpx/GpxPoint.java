@@ -24,7 +24,7 @@ import net.sf.practicalxml.DomUtil;
 
 import com.kdgregory.geoutil.lib.internal.ObjectUtils;
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
-import com.kdgregory.geoutil.lib.shared.TimestampedPoint;
+import com.kdgregory.geoutil.lib.shared.Point;
 
 
 /**
@@ -392,9 +392,9 @@ extends com.kdgregory.geoutil.lib.shared.Point
      *  Converts to the {@link com.kdgregory.geoutil.lib.shared.TimestampedPoint}
      *  representation. Missing timestamps are converted to 0.
      */
-    public TimestampedPoint toTimestampedPoint()
+    public Point toPoint()
     {
-        return new TimestampedPoint(getTimestampMillis(), getLat(), getLon());
+        return new Point(getLat(), getLon(), getTimestamp());
     }
 
 
