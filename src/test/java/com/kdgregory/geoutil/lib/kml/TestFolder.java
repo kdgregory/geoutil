@@ -56,45 +56,25 @@ public class TestFolder
 
 
     @Test
-    public void testFindByName() throws Exception
+    public void testFind() throws Exception
     {
-        Placemark pm1 = new Placemark().setName("pm1");
-        Placemark pm2 = new Placemark().setName("pm2");
-        Placemark pm3a = new Placemark().setName("pm3");
-        Placemark pm3b = new Placemark().setName("pm3");
+        Placemark pm1 = new Placemark().setName("foo");
+        Placemark pm2 = new Placemark().setName("bar");
+        Placemark pm3a = new Placemark().setName("baz");
+        Placemark pm3b = new Placemark().setName("baz");
 
-        Folder root = new Folder()
+        Folder child = new Folder().setName("baz")
+                       .addFeature(pm2)
+                       .addFeature(pm3b);
+
+        Folder root = new Folder().setName("root")
                       .addFeature(pm1)
                       .addFeature(pm3a)
-                      .addFeature(new Folder()
-                                  .addFeature(pm2)
-                                  .addFeature(pm3b));
+                      .addFeature(child);
 
-        assertEquals("top level",   Arrays.asList(pm1),         root.findByName("pm1"));
-        assertEquals("nested",      Arrays.asList(pm2),         root.findByName("pm2"));
-        assertEquals("split",       Arrays.asList(pm3a, pm3b),  root.findByName("pm3"));
-    }
-
-
-    @Test
-    public void testFindByType() throws Exception
-    {
-        Placemark pm1 = new Placemark().setName("pm1");
-        Placemark pm2 = new Placemark().setName("pm2");
-        Placemark pm3a = new Placemark().setName("pm3");
-        Placemark pm3b = new Placemark().setName("pm3");
-
-        Folder nested = new Folder()
-                        .addFeature(pm2)
-                        .addFeature(pm3b);
-
-        Folder root = new Folder()
-                      .addFeature(pm1)
-                      .addFeature(pm3a)
-                      .addFeature(nested);
-
-        assertEquals("Folder",      Arrays.asList(nested),                  root.findByType(Folder.class));
-        assertEquals("Placemark",   Arrays.asList(pm1, pm3a, pm2, pm3b),    root.findByType(Placemark.class));
+        assertEquals("all folders",         Arrays.asList(child),                   root.find(Folder.class, null));
+        assertEquals("all placemarks",      Arrays.asList(pm1, pm3a, pm2, pm3b),    root.find(Placemark.class, null));
+        assertEquals("placemarks by name",  Arrays.asList(pm3a, pm3b),              root.find(Placemark.class, "baz"));
     }
 
 

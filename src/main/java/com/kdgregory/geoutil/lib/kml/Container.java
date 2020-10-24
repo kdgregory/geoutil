@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-import net.sf.kdgcommons.lang.ObjectUtil;
 import net.sf.practicalxml.DomUtil;
 
 
@@ -79,45 +78,22 @@ extends Feature<T>
 
     /**
      *  Recursively searches this container and any descendents for features
-     *  with the given name.
+     *  with the given type and optional name (null matches all).
      */
-    public List<Feature<?>> findByName(String name)
+    public <R extends Feature<?>> List<R> find(Class<? extends R> type, String name)
     {
-        List<Feature<?>> result = new ArrayList<>();
+       List<R> result = new ArrayList<>();
 
         for (Feature<?> f : features)
         {
-            if (ObjectUtil.equals(name, f.getName()))
+            if (f.getClass().equals(type)
+                && ((name == null) || (name.equals(f.getName()))))
             {
-                result.add(f);
+                result.add((R)f);
             }
             if (f.isContainer())
             {
-                result.addAll(((Container<?>)f).findByName(name));
-            }
-        }
-
-        return result;
-    }
-
-
-    /**
-     *  Recursively searches this container and any descendents for features
-     *  with the given type.
-     */
-    public List<Feature<?>> findByType(Class<? extends Feature<?>> type)
-    {
-       List<Feature<?>> result = new ArrayList<>();
-
-        for (Feature<?> f : features)
-        {
-            if (f.getClass().equals(type))
-            {
-                result.add(f);
-            }
-            if (f.isContainer())
-            {
-                result.addAll(((Container<?>)f).findByType(type));
+                result.addAll(((Container<?>)f).find(type, name));
             }
         }
 
