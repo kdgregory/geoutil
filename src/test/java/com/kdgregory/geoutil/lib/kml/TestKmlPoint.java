@@ -31,30 +31,11 @@ public class TestKmlPoint
     @Test
     public void testConstruction() throws Exception
     {
-        KmlPoint p1 = new KmlPoint(12, 34);
-        assertEquals("p1 lat",  12.0,   p1.getLat(), 0.0);
-        assertEquals("p1 lon",  34.0,   p1.getLon(), 0.0);
-        assertEquals("p1 alt",  null,   p1.getAltitude());
+        // simplest way to assert constrcution is to get the coordinates
 
-        KmlPoint p2 = new KmlPoint(12, 34, 56);
-        assertEquals("p1 lat",  12.0,   p2.getLat(), 0.0);
-        assertEquals("p1 lon",  34.0,   p2.getLon(), 0.0);
-        assertEquals("p1 alt",  56.0,   p2.getAltitude().doubleValue(), 0.0);
-    }
-
-
-    @Test
-    public void testFromCoordinates() throws Exception
-    {
-        KmlPoint p1 = KmlPoint.fromCoordinates("12,34");
-        assertEquals("p1 lat",  12.0,   p1.getLat(), 0.0);
-        assertEquals("p1 lon",  34.0,   p1.getLon(), 0.0);
-        assertEquals("p1 alt",  null,   p1.getAltitude());
-
-        KmlPoint p2 = KmlPoint.fromCoordinates("12,34,56");
-        assertEquals("p1 lat",  12.0,   p2.getLat(), 0.0);
-        assertEquals("p1 lon",  34.0,   p2.getLon(), 0.0);
-        assertEquals("p1 alt",  56.0,   p2.getAltitude().doubleValue(), 0.0);
+        assertEquals("lat/lon",     "34.0,12.0",        new KmlPoint(12, 34).getCoordinates().toString());
+        assertEquals("lat/lon/alt", "34.0,12.0,56.0",   new KmlPoint(12, 34, 56).getCoordinates().toString());
+        assertEquals("lat/lon/alt", "34.0,12.0,56.0",   new KmlPoint("34.0,12.0,56.0").getCoordinates().toString());
     }
 
 
@@ -63,11 +44,7 @@ public class TestKmlPoint
     {
         KmlPoint p = new KmlPoint(12, 34);
 
-        assertEquals("getCoordinates() 1",      "12.0,34.0",                    p.getCoordinates());
-
-        assertEquals("setAltitude()",           p,                              p.setAltitude(new Double(56)));
-        assertEquals("getAltitude()",           new Double(56),                 p.getAltitude());
-        assertEquals("getCoordinates() 2",      "12.0,34.0,56.0",               p.getCoordinates());
+        assertEquals("getCoordinates()",        "34.0,12.0",                    p.getCoordinates().toString());
 
         assertNull("default altitudeMode",                                      p.getAltitudeMode());
         assertEquals("setAltitudeMode()",       p,                              p.setAltitudeMode(AltitudeMode.clampToGround));
@@ -88,10 +65,7 @@ public class TestKmlPoint
 
         KmlPoint p = KmlPoint.fromXml(dom.getDocumentElement());
 
-        assertEquals("lat",  12.0,      p.getLat(), 0.0);
-        assertEquals("lon",  34.0,      p.getLon(), 0.0);
-
-        assertNull("altitude",          p.getAltitude());
+        assertEquals("coordinates",     "12.0,34.0",    p.getCoordinates().toString());
         assertNull("altitudeMode",      p.getAltitudeMode());
         assertNull("extrude",           p.getExtrude());
     }
@@ -108,10 +82,7 @@ public class TestKmlPoint
 
         KmlPoint p = KmlPoint.fromXml(dom.getDocumentElement());
 
-        assertEquals("lat",             12.0,                           p.getLat(), 0.0);
-        assertEquals("lon",             34.0,                           p.getLon(), 0.0);
-        assertEquals("altitude",        56.0,                           p.getAltitude().doubleValue(), 0.0);
-
+        assertEquals("coordinates",     "12.0,34.0,56.0",               p.getCoordinates().toString());
         assertEquals("extrude",         Boolean.TRUE,                   p.getExtrude());
         assertEquals("altitudeMode",    AltitudeMode.relativeToGround,  p.getAltitudeMode());
     }
@@ -155,15 +126,14 @@ public class TestKmlPoint
 
         assertEquals("coordinates namespace",       "http://www.opengis.net/kml/2.2",   children.get(0).getNamespaceURI());
         assertEquals("coordinates name",            "coordinates",                      children.get(0).getNodeName());
-        assertEquals("coordinates value",           "12.0,34.0",                        children.get(0).getTextContent());
+        assertEquals("coordinates value",           "34.0,12.0",                        children.get(0).getTextContent());
     }
 
 
     @Test
     public void testAppendAsXmlComplete() throws Exception
     {
-        KmlPoint p = new KmlPoint(12, 34)
-                     .setAltitude(56.0)
+        KmlPoint p = new KmlPoint(12, 34, 56)
                      .setAltitudeMode(AltitudeMode.clampToGround)
                      .setExtrude(Boolean.TRUE);
 
@@ -189,6 +159,6 @@ public class TestKmlPoint
 
         assertEquals("coordinates namespace",       "http://www.opengis.net/kml/2.2",   children.get(2).getNamespaceURI());
         assertEquals("coordinates name",            "coordinates",                      children.get(2).getNodeName());
-        assertEquals("coordinates value",           "12.0,34.0,56.0",                   children.get(2).getTextContent());
+        assertEquals("coordinates value",           "34.0,12.0,56.0",                   children.get(2).getTextContent());
     }
 }

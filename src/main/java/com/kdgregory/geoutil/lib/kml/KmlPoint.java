@@ -23,13 +23,15 @@ import com.kdgregory.geoutil.lib.internal.XmlUtils;
 
 
 /**
- *  Represents a point on the map.
+ *  Represents a point on the map; used as the Geometry of a Placemark.
+ *  <p>
+ *  This object has identity equality semantics; for manipulation, extract
+ *  the underlying <code>Point</code> object.
  */
 public class KmlPoint
-extends com.kdgregory.geoutil.lib.shared.Point
 implements Geometry
 {
-    private Double altitude;
+    private Coordinates coordinates;
     private AltitudeMode altitudeMode;
     private Boolean extrude;
 
@@ -37,10 +39,9 @@ implements Geometry
     /**
      *  Creates an instance with latitude, longitude, and altitude.
      */
-    public KmlPoint(double lat, double lon, double altitude)
+    public KmlPoint(double lat, double lon, double alt)
     {
-        super(lat,lon);
-        this.altitude = Double.valueOf(altitude);
+        this.coordinates = new Coordinates(lat, lon, alt);
     }
 
 
@@ -49,49 +50,28 @@ implements Geometry
      */
     public KmlPoint(double lat, double lon)
     {
-        super(lat,lon);
+        this.coordinates = new Coordinates(lat, lon);
     }
 
+
+    /**
+     *  Creates an instance from a set of serialized coordinates.
+     */
+    public KmlPoint(String coords)
+    {
+        this.coordinates = Coordinates.fromString(coords);
+    }
 
 //----------------------------------------------------------------------------
 //  Accessors
 //----------------------------------------------------------------------------
 
     /**
-     *  Returns this point's coordinates, as a comma-delimited string.
+     *  Returns this point's coordinates.
      */
-    public String getCoordinates()
+    public Coordinates getCoordinates()
     {
-        StringBuilder sb = new StringBuilder()
-                           .append(getLat())
-                           .append(",")
-                           .append(getLon());
-
-        if (altitude != null)
-        {
-            sb.append(",").append(altitude);
-        }
-
-        return sb.toString();
-    }
-
-
-    /**
-     *  Returns this point's altitude, if any.
-     */
-    public Double getAltitude()
-    {
-        return altitude;
-    }
-
-
-    /**
-     *  Sets this point's altitude.
-     */
-    public KmlPoint setAltitude(Double value)
-    {
-        altitude = value;
-        return this;
+        return coordinates;
     }
 
 
@@ -121,6 +101,7 @@ implements Geometry
         return extrude;
     }
 
+
     /**
      *  Sets the extrude flag; may be null.
      */
@@ -133,36 +114,6 @@ implements Geometry
 //----------------------------------------------------------------------------
 //  Other Public Methods
 //----------------------------------------------------------------------------
-
-    /**
-     *  Creates a new instance from the comma-separated string tuple lat,lon,alt
-     *  used to represent the point's coordinates in a KML file.
-     */
-    public static KmlPoint fromCoordinates(String coord)
-    {
-        try
-        {
-            String[] parts = coord.split(",");
-            if (parts.length == 2)
-            {
-                return new KmlPoint(Double.parseDouble(parts[0]),
-                                    Double.parseDouble(parts[1]));
-            }
-            if (parts.length == 3)
-            {
-                return new KmlPoint(Double.parseDouble(parts[0]),
-                                    Double.parseDouble(parts[1]),
-                                    Double.parseDouble(parts[2]));
-            }
-            // drop through to shared throw
-        }
-        catch (NullPointerException|NumberFormatException ex)
-        {
-            // drop through to shared throw
-        }
-        throw new IllegalArgumentException("invalid coordinates: " + coord);
-    }
-
 
     /**
      *  Creates an instance from an element tree following the description in
@@ -186,7 +137,7 @@ implements Geometry
 
         String namespace = elem.getNamespaceURI();
 
-        KmlPoint p = fromCoordinates(XmlUtils.getChildText(elem, namespace, KmlConstants.E_POINT_COORD));
+        KmlPoint p = new KmlPoint(XmlUtils.getChildText(elem, namespace, KmlConstants.E_POINT_COORD));
         p.setAltitudeMode(ObjectUtils.optInvoke(
             XmlUtils.getChildText(elem, namespace, KmlConstants.E_POINT_ALTMODE),
             AltitudeMode::fromString));
@@ -206,7 +157,7 @@ implements Geometry
 
         XmlUtils.optAppendDataElement(ep, KmlConstants.NAMESPACE, KmlConstants.E_POINT_EXTRUDE, extrude);
         XmlUtils.optAppendDataElement(ep, KmlConstants.NAMESPACE, KmlConstants.E_POINT_ALTMODE,
-            ObjectUtils.optInvoke(altitudeMode, AltitudeMode::name));
+                                          ObjectUtils.optInvoke(altitudeMode, AltitudeMode::name));
         XmlUtils.optAppendDataElement(ep, KmlConstants.NAMESPACE, KmlConstants.E_POINT_COORD, getCoordinates());
     }
 }

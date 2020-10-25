@@ -145,9 +145,9 @@ public class TestPlacemark
 
         assertEquals("nested style element",        2.0,                                Style.fromXml(dataElements.get(5)).getLineStyle().getWidth(), 0.0);
 
-        // ditto with the Point element (easier because it supports value equality)
+        // ditto with the Point element
 
-        assertEquals("nested point",                p,                                  KmlPoint.fromXml(dataElements.get(6)));
+        assertEquals("nested point coordinates",    "34.0,12.0",                        KmlPoint.fromXml(dataElements.get(6)).getCoordinates().toString());
     }
 
     // TODO - test conversion to XML with a different geometry
@@ -201,9 +201,7 @@ public class TestPlacemark
 
         KmlPoint p = (KmlPoint)pm.getGeometry();
 
-        assertEquals("geometry, lat",       12.0,               p.getLat(), 0.0);
-        assertEquals("geometry, lon",       34.0,               p.getLon(), 0.0);
-        assertEquals("geometry, altitude",  56.0,               p.getAltitude().doubleValue(), 0.0);
+        assertEquals("geometry, coordinates",   "12.0,34.0,56.0",   p.getCoordinates().toString());
     }
 
     // TODO - test alternate geometries
