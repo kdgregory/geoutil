@@ -18,8 +18,6 @@ import java.io.File;
 
 import com.kdgregory.geoutil.lib.gpx.GpxFile;
 import com.kdgregory.geoutil.lib.gpx.Track;
-import com.kdgregory.geoutil.lib.gpx.TrackSegment;
-import com.kdgregory.geoutil.lib.shared.SegmentUtil;
 
 
 /**
@@ -59,9 +57,6 @@ public class GPXTrackLength
         if (track.getSegments().size() == 0)
             return 0;
 
-        TrackSegment seg = track.getSegments().get(0);
-        seg.sortPoints();
-
-        return SegmentUtil.distance(seg.getPoints()) / 1609.34;
+        return track.getSegments().get(0).distance() / 1609.34;
     }
 }
