@@ -26,6 +26,9 @@ import org.w3c.dom.Element;
 
 import net.sf.practicalxml.DomUtil;
 
+import com.kdgregory.geoutil.lib.shared.Point;
+import com.kdgregory.geoutil.lib.shared.SegmentUtil;
+
 
 /**
  *  A list of points within a track.
@@ -158,5 +161,19 @@ public class TrackSegment
     {
         Collections.sort(points,
                          (p1, p2) -> p1.getPoint().compareTo(p2.getPoint()));
+    }
+
+
+    /**
+     *  Calculates the length of this segment, in meters, using latitude-compensated
+     *  Pythagorean distance.
+     */
+    public double distance()
+    {
+        List<Point> temp = points.stream()
+                           .map(GpxPoint::getPoint)
+                           .sorted()
+                           .collect(Collectors.toList());
+        return SegmentUtil.distance(temp);
     }
 }
