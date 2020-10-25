@@ -25,6 +25,8 @@ import static org.junit.Assert.*;
 import net.sf.practicalxml.DomUtil;
 import net.sf.practicalxml.builder.XmlBuilder;
 
+import com.kdgregory.geoutil.lib.shared.Point;
+
 
 public class TestTrackSegment
 {
@@ -116,12 +118,14 @@ public class TestTrackSegment
         seg.appendAsXml(root);
         assertEquals("appendeded single child to parent", 1, DomUtil.getChildren(root).size());
 
+        // note that we validate output by parsing the points
+
         Element eSeg = DomUtil.getChildren(root).get(0);
         assertEquals("track segment namespace",     "http://www.topografix.com/GPX/1/1",    eSeg.getNamespaceURI());
         assertEquals("track segment name",          "trkseg",                               eSeg.getNodeName());
         assertEquals("track segment child count",   2,                                      DomUtil.getChildren(eSeg).size());
-        assertEquals("first child",                 p1,                                     new GpxPoint(DomUtil.getChildren(eSeg).get(0)));
-        assertEquals("second child",                p2,                                     new GpxPoint(DomUtil.getChildren(eSeg).get(1)));
+        assertEquals("first child",                 new Point(12,34),                       new GpxPoint(DomUtil.getChildren(eSeg).get(0)).getPoint());
+        assertEquals("second child",                new Point(23,45),                       new GpxPoint(DomUtil.getChildren(eSeg).get(1)).getPoint());
     }
 
 
@@ -137,10 +141,13 @@ public class TestTrackSegment
                                 XmlBuilder.attribute("lon", "45.0")))
                        .toDOM();
 
+        // note: we assume that the points in the segment have been properly converted if
+        //       there aren't any errors and the underlying Point was properly constructed
+
         TrackSegment seg = new TrackSegment(dom.getDocumentElement());
         assertEquals("number of points", 2, seg.getPoints().size());
-        assertEquals("point 1", new GpxPoint(12, 34), seg.getPoints().get(0));
-        assertEquals("point 2", new GpxPoint(23, 45), seg.getPoints().get(1));
+        assertEquals("point 1", new Point(12, 34), seg.getPoints().get(0).getPoint());
+        assertEquals("point 2", new Point(23, 45), seg.getPoints().get(1).getPoint());
     }
 
 }
