@@ -39,7 +39,6 @@ import net.sf.practicalxml.xpath.XPathWrapperFactory.CacheType;
 
 import com.kdgregory.geoutil.lib.shared.Point;
 import com.kdgregory.geoutil.lib.shared.SegmentUtil;
-import com.kdgregory.geoutil.lib.shared.TimestampedPoint;
 
 
 /**
@@ -63,7 +62,7 @@ public class GarminTrackMerge
         logger.info("starting");
 
         Document[] sources = new Document[2];
-        List<TimestampedPoint>[] srcTracks = new List[2];
+        List<Point>[] srcTracks = new List[2];
 
         for (int argidx = 0 ; argidx < 2 ; argidx++)
         {
@@ -84,10 +83,10 @@ public class GarminTrackMerge
     }
 
 
-    private static List<TimestampedPoint> extractTrack(Document dom)
+    private static List<Point> extractTrack(Document dom)
     throws Exception
     {
-        List<TimestampedPoint> result = new ArrayList<>();
+        List<Point> result = new ArrayList<>();
 
         List<Element> points = xpFact.newXPath("//ns:Folder/ns:name[text()='Track Points']/../ns:Placemark").evaluate(dom, Element.class);
         for (Element point : points)
@@ -100,7 +99,7 @@ public class GarminTrackMerge
             double lon = Double.valueOf(parsedCoordinates[0].trim());
             double lat = Double.valueOf(parsedCoordinates[1].trim());
 
-            result.add(new TimestampedPoint(timestamp.toEpochMilli(), lat, lon));
+            result.add(new Point(lat, lon, timestamp));
         }
 
         return result;
@@ -117,8 +116,8 @@ public class GarminTrackMerge
 
         for (Point[] pair : pairs)
         {
-            appendPoint(kdoc, (TimestampedPoint)pair[0], 1);
-            appendPoint(kdoc, (TimestampedPoint)pair[1], 2);
+            appendPoint(kdoc, pair[0], 1);
+            appendPoint(kdoc, pair[1], 2);
         }
 
 //        OutputUtil.indented(new DOMSource(root.getOwnerDocument()), new StreamResult("/tmp/test.xml"), 4);
@@ -138,10 +137,10 @@ public class GarminTrackMerge
     }
 
 
-    private static void appendPoint(Element path, TimestampedPoint p, int pathNumber)
+    private static void appendPoint(Element path, Point p, int pathNumber)
     {
         Element pm = DomUtil.appendChildInheritNamespace(path, "Placemark");
-        
+
         Element desc = DomUtil.appendChildInheritNamespace(pm, "description");
         desc.setTextContent("path " + pathNumber + ": " + formatTimestamp(p));
 
@@ -152,11 +151,11 @@ public class GarminTrackMerge
         Element coord = DomUtil.appendChildInheritNamespace(pt, "coordinates");
         coord.setTextContent(p.getLon() + "," + p.getLat());
     }
-    
-    
-    private static String formatTimestamp(TimestampedPoint p)
+
+
+    private static String formatTimestamp(Point p)
     {
-        Instant timestamp = Instant.ofEpochMilli(p.getTimestamp());
+        Instant timestamp = Instant.ofEpochMilli(p.getTimestampMillis());
         ZonedDateTime localTime = timestamp.atZone(ZoneId.systemDefault());
         return DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(localTime);
     }

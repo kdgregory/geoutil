@@ -15,36 +15,33 @@
 package com.kdgregory.geoutil.lib.gpx;
 
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
 
 import org.w3c.dom.Element;
 
-import net.sf.kdgcommons.lang.ObjectUtil;
 import net.sf.practicalxml.DomUtil;
 
 import com.kdgregory.geoutil.lib.internal.ObjectUtils;
+import com.kdgregory.geoutil.lib.internal.TimestampUtils;
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
-import com.kdgregory.geoutil.lib.shared.TimestampedPoint;
+import com.kdgregory.geoutil.lib.shared.Point;
 
 
 /**
- *  Represents a location -- waypoint or trackpoint -- stored in a GPX
- *  file. See https://www.topografix.com/GPX/1/1/#type_wptType for more
- *  information.
+ *  Represents a location -- waypoint or trackpoint -- stored in a GPX cfile.
+ *  See https://www.topografix.com/GPX/1/1/#type_wptType for more information.
  *  <p>
- *  This is implemented using bean-style getters and setters, although
- *  it's based on the shared <code>Point</code> class, which is immutable.
- *  The setters return the object itself, so may be chained.
+ *  This object is based on the shared Point class, and provides bean-style
+ *  getters and setters for all fields other  than latitude and longitude.
  *  <p>
- *  In normal usage, the various conversion functions are the primary API.
+ *  This object provides identity equality. If you need value equality, use
+ *  the underlying Point object.
  */
 public class GpxPoint
-extends com.kdgregory.geoutil.lib.shared.Point
 {
-    // note: order of variables follows required order of elements
+    // this object always exists, but may not contain elevation or timestamp
+    private Point point;
 
-    private Double elevation;
-    private Instant timestamp;
+    // these are all optional
     private Double variance;
     private Double geoidHeight;
     private String name;
@@ -57,7 +54,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
      */
     public GpxPoint(double lat, double lon)
     {
-        super(lat,lon);
+        point = new Point(lat,lon);
     }
 
 
@@ -70,8 +67,8 @@ extends com.kdgregory.geoutil.lib.shared.Point
      */
     public GpxPoint(Element elem)
     {
-        this(XmlUtils.getAttributeAsDouble(elem, GpxConstants.A_WPT_LAT),
-             XmlUtils.getAttributeAsDouble(elem, GpxConstants.A_WPT_LON));
+        point = new Point(XmlUtils.getAttributeAsDouble(elem, GpxConstants.A_WPT_LAT),
+                          XmlUtils.getAttributeAsDouble(elem, GpxConstants.A_WPT_LON));
 
         for (Element child : DomUtil.getChildren(elem))
         {
@@ -116,6 +113,34 @@ extends com.kdgregory.geoutil.lib.shared.Point
 //----------------------------------------------------------------------------
 
     /**
+     *  Returns the underlying Point object. This may be used in cases where
+     *  you need value equality or comparability.
+     */
+    public Point getPoint()
+    {
+        return point;
+    }
+
+
+    /**
+     *  Returns the point's latitude. Note that there is not corresponding setter.
+     */
+    public double getLat()
+    {
+        return point.getLat();
+    }
+
+
+    /**
+     *  Returns the point's latitude. Note that there is not corresponding setter.
+     */
+    public double getLon()
+    {
+        return point.getLon();
+    }
+
+
+    /**
      *  Returns the point's timestamp, as a Java 8 Instant. May be null.
      *  <p>
      *  Note: there are three ways to set/retrieve a point's timestamp: as an
@@ -125,7 +150,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
      */
     public Instant getTimestamp()
     {
-        return timestamp;
+        return point.getTimestamp();
     }
 
 
@@ -139,7 +164,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
      */
     public GpxPoint setTimestamp(Instant timestamp)
     {
-        this.timestamp = timestamp;
+        this.point = new Point(getLat(), getLon(), getElevation(), timestamp);
         return this;
     }
 
@@ -155,9 +180,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
      */
     public String getTimestampString()
     {
-        return (timestamp == null)
-             ? null
-             : timestamp.toString();
+        return point.getTimestampAsString();
     }
 
 
@@ -172,9 +195,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
      */
     public GpxPoint setTimestampString(String timestamp)
     {
-        this.timestamp = (timestamp.endsWith("Z"))
-                       ? Instant.parse(timestamp)
-                       : Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(timestamp));
+        this.point = new Point(getLat(), getLon(), getElevation(), TimestampUtils.parse(timestamp));
         return this;
     }
 
@@ -190,9 +211,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
      */
     public long getTimestampMillis()
     {
-        return (timestamp == null)
-             ? 0
-             : timestamp.toEpochMilli();
+        return point.getTimestampMillis();
     }
 
 
@@ -206,7 +225,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
      */
     public GpxPoint setTimestampMillis(long timestamp)
     {
-        this.timestamp = Instant.ofEpochMilli(timestamp);
+        this.point = new Point(getLat(), getLon(), getElevation(), Instant.ofEpochMilli(timestamp));
         return this;
     }
 
@@ -216,7 +235,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
      */
     public Double getElevation()
     {
-        return elevation;
+        return point.getElevation();
     }
 
 
@@ -225,7 +244,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
      */
     public GpxPoint setElevation(Double value)
     {
-        this.elevation = value;
+        this.point = new Point(getLat(), getLon(), value, getTimestamp());
         return this;
     }
 
@@ -328,75 +347,8 @@ extends com.kdgregory.geoutil.lib.shared.Point
     }
 
 //----------------------------------------------------------------------------
-//  Overrides
-//----------------------------------------------------------------------------
-
-    /**
-     *  Two instances are equal if all fields are equal.
-     */
-    @Override
-    public final boolean equals(Object obj)
-    {
-        if (this == obj)
-            return true;
-
-        else if (obj instanceof GpxPoint)
-        {
-            GpxPoint that = (GpxPoint)obj;
-            return super.equals(that)
-                && ObjectUtil.equals(this.elevation, that.elevation)
-                && ObjectUtil.equals(this.timestamp, that.timestamp)
-                && ObjectUtil.equals(this.variance,  that.variance);
-        }
-        return false;
-    }
-
-
-    /**
-     *  Hashcode is based on the latitude and longitude of the point.
-     */
-    @Override
-    public final int hashCode()
-    {
-        return super.hashCode();
-    }
-
-
-    /**
-     *  Comparison is based first on timestamp, then on latitude and longitude
-     *  per {@link com.kdgregory.geoutil.lib.shared.Point}. If the timestamp is
-     *  not set, it is treated as 0 for the purposes of comparison.
-     */
-    @Override
-    public int compareTo(com.kdgregory.geoutil.lib.shared.Point that)
-    {
-        if (that instanceof GpxPoint)
-        {
-            long thisTimestmap = getTimestampMillis();
-            long thatTimestamp = ((GpxPoint)that).getTimestampMillis();
-            return (thisTimestmap > thatTimestamp) ? 1
-                 : (thisTimestmap < thatTimestamp) ? -1
-                 : super.compareTo(that);
-        }
-        else
-        {
-            return super.compareTo(that);
-        }
-    }
-
-//----------------------------------------------------------------------------
 //  Other Public Methods
 //----------------------------------------------------------------------------
-
-    /**
-     *  Converts to the {@link com.kdgregory.geoutil.lib.shared.TimestampedPoint}
-     *  representation. Missing timestamps are converted to 0.
-     */
-    public TimestampedPoint toTimestampedPoint()
-    {
-        return new TimestampedPoint(getTimestampMillis(), getLat(), getLon());
-    }
-
 
     /**
      *  Converts to the <code>wptType</code> XML representation as specified by
@@ -432,6 +384,7 @@ extends com.kdgregory.geoutil.lib.shared.Point
      */
     public boolean isBetween(Instant start, Instant finish)
     {
+        Instant timestamp = point.getTimestamp();
         if (timestamp == null)
             return false;
 
