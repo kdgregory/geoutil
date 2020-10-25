@@ -1,3 +1,4 @@
+// Copyright Keith D Gregory
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -150,11 +151,12 @@ public class TrackSegment
 
 
     /**
-     *  Sorts the points in this segment by timestamp. This is primarily used
-     *  when combining segments from different tracks.
+     *  Sorts the points in this segment using the underlying <code>Point</code>.
+     *  This is primarily used when combining segments from different tracks.
      */
     public void sortPoints()
     {
-        Collections.sort(points);
+        Collections.sort(points,
+                         (p1, p2) -> p1.getPoint().compareTo(p2.getPoint()));
     }
 }

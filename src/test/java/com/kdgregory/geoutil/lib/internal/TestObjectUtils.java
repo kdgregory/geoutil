@@ -59,8 +59,8 @@ public class TestObjectUtils
     @Test
     public void testOptApply() throws Exception
     {
-        assertEquals("null value",      null,       ObjectUtils.optInvoke(null,           String::valueOf));
-        assertEquals("not-null value",  "12.0",     ObjectUtils.optInvoke(new Double(12), String::valueOf));
+        assertEquals("not-null value",  "12.0",         ObjectUtils.optInvoke(new Double(12), String::valueOf));
+        assertEquals("null value",      (String)null,   ObjectUtils.optInvoke((String)null,   String::valueOf));
     }
 
 

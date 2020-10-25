@@ -19,6 +19,7 @@ import java.util.function.Function;
 
 import net.sf.kdgcommons.lang.StringUtil;
 
+
 /**
  *  Utility methods for interacting with objects. These methods should end
  *  up in KDGCommons (but many require Java8, so a later version).

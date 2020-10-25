@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 import net.sf.practicalxml.DomUtil;
 import net.sf.practicalxml.builder.XmlBuilder;
 
-import com.kdgregory.geoutil.lib.shared.TimestampedPoint;
+import com.kdgregory.geoutil.lib.shared.Point;
 
 
 public class TestGpxPoint
@@ -86,6 +86,9 @@ public class TestGpxPoint
         assertEquals("timestamp as string",     "2019-12-28T15:43:48Z",                 p.getTimestampString());
         assertEquals("timestamp as millies",    1577547828000L,                         p.getTimestampMillis());
 
+        // ensure that lat/lon/elevation/timestamp are managed by the underlying Point object
+
+        assertEquals("underlying point",        new Point(12.34, 45.67, 12345.0, 1577547828000L),   p.getPoint());
     }
 
 
@@ -113,71 +116,6 @@ public class TestGpxPoint
 
 
     @Test
-    public void testEqualsAndHashcode() throws Exception
-    {
-        GpxPoint p1a = new GpxPoint(12,34);
-        GpxPoint p1b = new GpxPoint(12,34);
-        GpxPoint p2a = new GpxPoint(12,34).setTimestampMillis(1577547828000L);
-        GpxPoint p2b = new GpxPoint(12,34).setTimestampMillis(1577547828000L);
-        GpxPoint p2c = new GpxPoint(12,34).setTimestampMillis(1577547829000L);
-        GpxPoint p3a = new GpxPoint(12,34).setTimestampMillis(1577547828000L)
-                                    .setElevation(123.45)
-                                    .setMagneticVariance(15.5)
-                                    .setGeoidHeight(123.0);
-        GpxPoint p3b = new GpxPoint(12,34).setTimestampMillis(1577547828000L)
-                                    .setElevation(123.45)
-                                    .setMagneticVariance(15.5)
-                                    .setGeoidHeight(123.0);
-
-        GpxPoint p4  = new GpxPoint(34,56);
-
-        assertTrue("equal, identity",                       p1a.equals(p1a));
-        assertTrue("equal, lat/lon",                        p1a.equals(p1b));
-        assertTrue("equal, one field",                      p2a.equals(p2b));
-        assertTrue("equal, all fields",                     p3a.equals(p3b));
-
-        assertFalse("not equal, lat/lon",                   p1a.equals(p4));
-        assertFalse("not equal, missing fields 1",          p1a.equals(p2a));
-        assertFalse("not equal, missing fields 2",          p2a.equals(p1a));
-        assertFalse("not equal, missing fields 3",          p2a.equals(p3a));
-        assertFalse("not equal, missing fields 4",          p3a.equals(p2a));
-        assertFalse("not equal, different field values",    p2a.equals(p2c));
-
-        assertTrue("hashcode, same lat/lon",                p1a.hashCode() == p1b.hashCode());
-        assertTrue("hashcode, ignores fields",              p1a.hashCode() == p3b.hashCode());
-        assertTrue("hashcode, different lat/lon",           p1a.hashCode() != p4.hashCode());
-    }
-
-
-    @Test
-    public void testCompare() throws Exception
-    {
-        GpxPoint p1 = new GpxPoint(12,34);
-        GpxPoint p2 = new GpxPoint(12,34).setTimestampMillis(1577547827000L);
-        GpxPoint p3 = new GpxPoint(12,34).setTimestampMillis(1577547828000L);
-        GpxPoint p5 = new GpxPoint(56,78);
-        GpxPoint p6 = new GpxPoint(56,78).setTimestampMillis(1577547828000L);
-
-        com.kdgregory.geoutil.lib.shared.Point x1 = new com.kdgregory.geoutil.lib.shared.Point(12,34);
-        com.kdgregory.geoutil.lib.shared.Point x2 = new com.kdgregory.geoutil.lib.shared.Point(56,78);
-
-        assertEquals("lat/lon, ==",                             0,  p1.compareTo(p1));
-        assertEquals("lat/lon, <",                             -1,  p1.compareTo(p5));
-        assertEquals("lat/lon, >",                              1,  p5.compareTo(p1));
-        assertEquals("timestamp, ==",                           0,  p3.compareTo(p3));
-        assertEquals("timestamp, <",                           -1,  p2.compareTo(p3));
-        assertEquals("timestamp, >",                            1,  p3.compareTo(p2));
-        assertEquals("default timestamp, <",                   -1,  p1.compareTo(p2));
-        assertEquals("default timestamp, >",                    1,  p2.compareTo(p1));
-        assertEquals("same timestamp, different lat/lon, <",   -1,  p3.compareTo(p6));
-        assertEquals("same timestamp, different lat/lon, >",    1,  p6.compareTo(p3));
-        assertEquals("super, ==",                               0,  p1.compareTo(x1));
-        assertEquals("super, <",                               -1,  p1.compareTo(x2));
-        assertEquals("super, >",                                1,  x2.compareTo(p1));
-    }
-
-
-    @Test
     public void testIsBetween() throws Exception
     {
         GpxPoint p = new GpxPoint(12,34).setTimestampMillis(1577547827000L);
@@ -188,25 +126,6 @@ public class TestGpxPoint
 
         assertFalse("below range",       p.isBetween(Instant.ofEpochMilli(1577547828000L), Instant.ofEpochMilli(1577547829000L)));
         assertFalse("above range",       p.isBetween(Instant.ofEpochMilli(1577547828000L), Instant.ofEpochMilli(1577547827000L)));
-    }
-
-
-    @Test
-    public void testConvertToTimestampedPoint() throws Exception
-    {
-        GpxPoint p1 = new GpxPoint(12,34).setTimestampMillis(1577547828000L);
-        TimestampedPoint tp1 = p1.toTimestampedPoint();
-
-        assertEquals("timestamp",   1577547828000L,     tp1.getTimestamp());
-        assertEquals("lat",         12,                 tp1.getLat(), 0.0);
-        assertEquals("lon",         34,                 tp1.getLon(), 0.0);
-
-        GpxPoint p2 = new GpxPoint(12,34);
-        TimestampedPoint tp2 = p2.toTimestampedPoint();
-
-        assertEquals("timestamp",   0,                  tp2.getTimestamp());
-        assertEquals("lat",         12,                 tp2.getLat(), 0.0);
-        assertEquals("lon",         34,                 tp2.getLon(), 0.0);
     }
 
 

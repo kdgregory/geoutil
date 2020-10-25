@@ -14,6 +14,7 @@
 
 package com.kdgregory.geoutil.lib.shared;
 
+import java.time.Instant;
 
 /**
  *  Utility functions to work with individual points.
@@ -45,7 +46,7 @@ public class PointUtil
 
 
     /**
-     *  Calculates the Pythagorean distance (in meters) between two points, 
+     *  Calculates the Pythagorean distance (in meters) between two points,
      *  with arbitrary base degree length.
      */
     public static double pythagorean(double lat1, double lon1, double lat2, double lon2, double baseDegreeLength)
@@ -113,10 +114,10 @@ public class PointUtil
      *  Determines the velocity, in meters/second, to travel from one point to another
      *  (calculated using Pythagorean distance).
      */
-    public static double velocity(TimestampedPoint p1, TimestampedPoint p2)
+    public static double velocity(Point p1, Point p2)
     {
         double distMeters = PointUtil.pythagorean(p1, p2);
-        double elapsed = (p1.getTimestamp() - p2.getTimestamp()) / 1000.0;
+        double elapsed = (p1.getTimestampMillis() - p2.getTimestampMillis()) / 1000.0;
         return Math.abs(distMeters / elapsed);
     }
 
@@ -125,27 +126,37 @@ public class PointUtil
      *  Determines the velocity, in miles/hour, to travel from one point to another
      *  (calculated using Pythagorean distance).
      */
-    public static double velocityMPH(TimestampedPoint p1, TimestampedPoint p2)
+    public static double velocityMPH(Point p1, Point p2)
     {
         return velocity(p1, p2) * 39.37 / 12 / 5280 * 3600;
     }
 
 
     /**
-     *  Returns the midpoint of the two given points (simple average of lat/lon).
+     *  Returns the midpoint of the two given points. If both points have elevation
+     *  and/or timestamp, then these values are averaged as well. If only one (or
+     *  neither) have elevation/timestamp, the result is null.
      */
     public static Point midpoint(Point p1, Point p2)
     {
         double lat = (p2.getLat() + p1.getLat()) / 2;
         double lon = (p2.getLon() + p1.getLon()) / 2;
 
-        if ((p1 instanceof TimestampedPoint) && (p2 instanceof TimestampedPoint))
+        Double elevation = null;
+        if ((p1.getElevation() != null) && (p2.getElevation() != null))
         {
-            long t1 = ((TimestampedPoint)p1).getTimestamp();
-            long t2 = ((TimestampedPoint)p2).getTimestamp();
-            return new TimestampedPoint((t1 + t2) / 2, lat, lon); // this will overflow in the distant future
+            double avg = (p1.getElevation().doubleValue() + p2.getElevation().doubleValue()) / 2;
+            elevation = Double.valueOf(avg);
         }
 
-        return new Point(lat, lon);
+        Instant timestamp = null;
+        if ((p1.getTimestamp() != null) && (p2.getTimestamp() != null))
+        {
+            // this calculation will overflow in the distant future
+            long avg = (p1.getTimestampMillis() + p2.getTimestampMillis()) / 2;
+            timestamp = Instant.ofEpochMilli(avg);
+        }
+
+        return new Point(lat, lon, elevation, timestamp);
     }
 }

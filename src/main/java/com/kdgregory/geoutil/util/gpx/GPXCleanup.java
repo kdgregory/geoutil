@@ -64,7 +64,7 @@ public class GPXCleanup
         {
             for (TrackSegment seg : oldTrack.getSegments())
             {
-                logger.debug("adding segment with {} points from track {}", seg.getPoints().size(), oldTrack.getName());
+                logger.debug("loaded segment with {} points from track {}", seg.getPoints().size(), oldTrack.getName());
                 newTrack.addSegment(seg);
             }
         }
@@ -96,6 +96,7 @@ public class GPXCleanup
 
         gpx.setTracks(Arrays.asList(newTrack));
         gpx.write(file);
+        logger.info("file overwritten");
     }
 
 
