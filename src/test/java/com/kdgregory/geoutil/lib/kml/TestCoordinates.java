@@ -40,6 +40,19 @@ public class TestCoordinates
 
 
     @Test
+    public void testCopyConstructor() throws Exception
+    {
+        Coordinates c1 = new Coordinates(12, 34, 56);
+        Coordinates c2 = new Coordinates(c1);
+
+        assertEquals("c2 latitude",     12,     c2.getLat(), 0.0);
+        assertEquals("c2 longitude",    34,     c2.getLon(), 0.0);
+        assertEquals("c2 altitude",     56,     c2.getElevation().doubleValue(), 0.0);
+    }
+
+
+
+    @Test
     public void testStringSerialization() throws Exception
     {
         String c1s = new Coordinates(12, 34).toString();

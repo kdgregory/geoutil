@@ -87,6 +87,16 @@ public class TestPoint
         assertEquals("timestamp",               null,                                   p6.getTimestamp());
         assertEquals("timestamp (string)",      null,                                   p6.getTimestampAsString());
         assertEquals("timestamp (millis)",      0L,                                     p6.getTimestampMillis());
+
+        Point p7 = new Point(new Point(39.95229, -75.1657517, Double.valueOf(10.5), Instant.ofEpochMilli(1577547828000L)));
+
+        assertEquals("lat",                     39.95229,                               p7.getLat(), 0.00001);
+        assertEquals("lon",                     -75.1657517,                            p7.getLon(), 0.00001);
+        assertEquals("elevation",               Double.valueOf(10.5),                   p7.getElevation());
+        assertEquals("elevation (primitive)",   10.5,                                   p7.getElevationOrZero(), 0.0);
+        assertEquals("timestamp",               Instant.ofEpochMilli(1577547828000L),   p7.getTimestamp());
+        assertEquals("timestamp (string)",      "2019-12-28T15:43:48Z",                 p7.getTimestampAsString());
+        assertEquals("timestamp (millis)",      1577547828000L,                         p7.getTimestampMillis());
     }
 
 

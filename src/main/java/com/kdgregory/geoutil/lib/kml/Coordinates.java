@@ -32,12 +32,23 @@ extends Point
         super(lat, lon, Double.valueOf(alt), null);
     }
 
+
     /**
      *  Constructs an instance with latitude and longitude, no altitude.
      */
     public Coordinates(double lat, double lon)
     {
         super(lat, lon);
+    }
+
+
+    /**
+     *  Constructs an instance from an existing <code>Point</code> object
+     *  (including subclasses such as <code>Coordinate</code> itself).
+     */
+    public Coordinates(Point point)
+    {
+        super(point);
     }
 
 //----------------------------------------------------------------------------
