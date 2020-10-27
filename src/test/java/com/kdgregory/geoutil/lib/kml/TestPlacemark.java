@@ -14,6 +14,7 @@
 
 package com.kdgregory.geoutil.lib.kml;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -26,12 +27,13 @@ import net.sf.practicalxml.DomUtil;
 import net.sf.practicalxml.builder.XmlBuilder;
 
 
-// note: this is also the place where we test shared Feature capabilities
 public class TestPlacemark
 {
     @Test
     public void testAccessors() throws Exception
     {
+        // note: this is also the place where we test shared Feature capabilities
+
         Placemark m = new Placemark();
 
         assertNull("getName(), initial value",                                  m.getName());
@@ -91,7 +93,7 @@ public class TestPlacemark
     @Test
     public void testAppendAsXmlComplete() throws Exception
     {
-        KmlPoint p = new KmlPoint(12,34);
+        KmlPoint p = new KmlPoint(12, 34).setExtrude(Boolean.TRUE);
         Style s = new Style().setLineStyle(new LineStyle().setWidth(2));
         Placemark m = new Placemark()
                       .setName("example")
@@ -113,44 +115,79 @@ public class TestPlacemark
         // we care about order, so will retrieve all children and access via index
         List<Element> dataElements = DomUtil.getChildren(child);
 
-        assertEquals("number of data elements",     7,                                  dataElements.size());
+        assertEquals("number of data elements",                 7,                                  dataElements.size());
 
-        assertEquals("name namespace",              "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
-        assertEquals("name name",                   "name",                             dataElements.get(0).getNodeName());
-        assertEquals("name value",                  "example",                          dataElements.get(0).getTextContent());
+        assertEquals("first child namespace",                   "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
+        assertEquals("first child name",                        "name",                             dataElements.get(0).getNodeName());
+        assertEquals("first child value",                       "example",                          dataElements.get(0).getTextContent());
 
-        assertEquals("visibility namespace",        "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
-        assertEquals("visibility name",             "visibility",                       dataElements.get(1).getNodeName());
-        assertEquals("visibility value",            "1",                                dataElements.get(1).getTextContent());
+        assertEquals("second child namespace",                  "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
+        assertEquals("second child name",                       "visibility",                       dataElements.get(1).getNodeName());
+        assertEquals("second child value",                      "1",                                dataElements.get(1).getTextContent());
 
-        assertEquals("description namespace",       "http://www.opengis.net/kml/2.2",   dataElements.get(2).getNamespaceURI());
-        assertEquals("description name",            "description",                      dataElements.get(2).getNodeName());
-        assertEquals("description value",           "a description",                    dataElements.get(2).getTextContent());
+        assertEquals("third child namespace",                   "http://www.opengis.net/kml/2.2",   dataElements.get(2).getNamespaceURI());
+        assertEquals("third child name",                        "description",                      dataElements.get(2).getNodeName());
+        assertEquals("third child value",                       "a description",                    dataElements.get(2).getTextContent());
 
-        assertEquals("timestamp namespace",         "http://www.opengis.net/kml/2.2",   dataElements.get(3).getNamespaceURI());
-        assertEquals("timestamp name",              "TimeStamp",                        dataElements.get(3).getNodeName());
-        assertEquals("timestamp value",             "2019-12-28T15:43:48Z",             DomUtil.getChild(dataElements.get(3), "http://www.opengis.net/kml/2.2", "when").getTextContent());
+        assertEquals("fourth child namespace",                  "http://www.opengis.net/kml/2.2",   dataElements.get(3).getNamespaceURI());
+        assertEquals("fourth child name",                       "TimeStamp",                        dataElements.get(3).getNodeName());
+        assertEquals("fourth child value",                      "2019-12-28T15:43:48Z",             DomUtil.getChild(dataElements.get(3), "http://www.opengis.net/kml/2.2", "when").getTextContent());
 
-        assertEquals("styleUrl namespace",          "http://www.opengis.net/kml/2.2",   dataElements.get(4).getNamespaceURI());
-        assertEquals("styleUrl name",               "styleUrl",                         dataElements.get(4).getNodeName());
-        assertEquals("styleUrl value",              "styleId",                          dataElements.get(4).getTextContent());
+        assertEquals("fifth child namespace",                   "http://www.opengis.net/kml/2.2",   dataElements.get(4).getNamespaceURI());
+        assertEquals("fifth child name",                        "styleUrl",                         dataElements.get(4).getNodeName());
+        assertEquals("fifth child value",                       "styleId",                          dataElements.get(4).getTextContent());
 
-        assertEquals("Style namespace",             "http://www.opengis.net/kml/2.2",   dataElements.get(5).getNamespaceURI());
-        assertEquals("Style name",                  "Style",                            dataElements.get(5).getNodeName());
+        assertEquals("sixth child namespace",                   "http://www.opengis.net/kml/2.2",   dataElements.get(5).getNamespaceURI());
+        assertEquals("sixth child name",                        "Style",                            dataElements.get(5).getNodeName());
 
-        assertEquals("Point namespace",             "http://www.opengis.net/kml/2.2",   dataElements.get(6).getNamespaceURI());
-        assertEquals("Point name",                  "Point",                            dataElements.get(6).getNodeName());
+        assertEquals("seventh child namespace",                 "http://www.opengis.net/kml/2.2",   dataElements.get(6).getNamespaceURI());
+        assertEquals("seventh child name",                      "Point",                            dataElements.get(6).getNodeName());
 
         // rather than verify the Style element's contents, we'll try to convert it and verify its contents
 
-        assertEquals("nested style element",        2.0,                                Style.fromXml(dataElements.get(5)).getLineStyle().getWidth(), 0.0);
+        Style ss = Style.fromXml(dataElements.get(5));
 
-        // ditto with the Point element
+        assertEquals("nested style element",                    2.0,                                ss.getLineStyle().getWidth(), 0.0);
 
-        assertEquals("nested point coordinates",    "34.0,12.0",                        KmlPoint.fromXml(dataElements.get(6)).getCoordinates().toString());
+        // ditto with the nested Point
+
+        KmlPoint pp =  KmlPoint.fromXml(dataElements.get(6));
+
+        assertEquals("nested point coordinates",                new Coordinates(12,34),             pp.getCoordinates());
+        assertEquals("nested point extrude",                    Boolean.TRUE,                       pp.getExtrude());
+
     }
 
-    // TODO - test conversion to XML with a different geometry
+
+    @Test
+    public void testAppendAsXmlLineString() throws Exception
+    {
+        Coordinates c1 = new Coordinates(12,34);
+        Coordinates c2 = new Coordinates(23, 45, 67);
+
+        Placemark m = new Placemark()
+                      .setGeometry(new LineString(c1, c2));
+
+        Element parent = DomUtil.newDocument("irrelevant");
+        Element child = m.appendAsXml(parent);
+
+        assertEquals("added single child to existing parent",   1,                                  DomUtil.getChildren(parent).size());
+        assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
+        assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
+        assertEquals("child name",                              "Placemark",                        child.getNodeName());
+
+        // we care about order, so will retrieve all children and access via index
+        List<Element> dataElements = DomUtil.getChildren(child);
+
+        assertEquals("number of data elements",                 1,                                  dataElements.size());
+
+        assertEquals("data element 1 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
+        assertEquals("geometry name",                           "LineString",                       dataElements.get(0).getNodeName());
+
+        // let the LineString element parse itself and verify results
+
+        assertEquals("nested linestring coordinates",            Arrays.asList(c1, c2),              LineString.fromXml(dataElements.get(0)).getCoordinates());
+    }
 
 
     @Test
@@ -184,27 +221,41 @@ public class TestPlacemark
                                 XmlBuilder.element("http://earth.google.com/kml/2.1", "LineStyle",
                                     XmlBuilder.element("http://earth.google.com/kml/2.1", "width",      XmlBuilder.text("2.0")))),
                             XmlBuilder.element("http://earth.google.com/kml/2.1", "Point",
-                                XmlBuilder.element("http://earth.google.com/kml/2.1", "coordinates",    XmlBuilder.text("12.0,34.0,56.0"))))
+                                XmlBuilder.element("http://earth.google.com/kml/2.1", "coordinates",    XmlBuilder.text("34.0,12.0,56.0"))))
                        .toDOM();
 
         Placemark pm = Placemark.fromXml(dom.getDocumentElement());
 
-        assertEquals("name",                "example",          pm.getName());
-        assertEquals("visibility",          Boolean.TRUE,       pm.getVisibility());
-        assertEquals("description",         "a description",    pm.getDescription());
-        assertEquals("timestamp",           1577547828000L,     pm.getTimestamp().asMillis().longValue());
-        assertEquals("style ref",           "style-reference",  pm.getStyleRef());
+        assertEquals("name",                    "example",                  pm.getName());
+        assertEquals("visibility",              Boolean.TRUE,               pm.getVisibility());
+        assertEquals("description",             "a description",            pm.getDescription());
+        assertEquals("timestamp",               1577547828000L,             pm.getTimestamp().asMillis().longValue());
+        assertEquals("style ref",               "style-reference",          pm.getStyleRef());
 
         Style s = pm.getStyleSelector();
 
-        assertEquals("style (width)",       2.0,                s.getLineStyle().getWidth(), 0.0);
+        assertEquals("style (width)",           2.0,                        s.getLineStyle().getWidth(), 0.0);
 
         KmlPoint p = (KmlPoint)pm.getGeometry();
 
-        assertEquals("geometry, coordinates",   "12.0,34.0,56.0",   p.getCoordinates().toString());
+        assertEquals("geometry, coordinates",   new Coordinates(12,34,56),  p.getCoordinates());
     }
 
-    // TODO - test alternate geometries
+
+    @Test
+    public void testFromXmlLineString() throws Exception
+    {
+        Document dom = XmlBuilder.element("http://earth.google.com/kml/2.1", "Placemark",
+                            XmlBuilder.element("http://earth.google.com/kml/2.1", "LineString",
+                                XmlBuilder.element("http://earth.google.com/kml/2.1", "coordinates",    XmlBuilder.text("34.0,12.0,56.0"))))
+                       .toDOM();
+
+        Placemark pm = Placemark.fromXml(dom.getDocumentElement());
+        LineString g = (LineString)pm.getGeometry();
+
+        assertEquals("geometry, coordinates", Arrays.asList(new Coordinates(12,34,56)),  g.getCoordinates());
+    }
+
 
 
     @Test

@@ -84,10 +84,16 @@ extends Feature<Placemark>
 
         for (Element child : DomUtil.getChildren(elem))
         {
-            // TODO - support other geometries
-            if (DomUtil.getLocalName(child).equals(KmlConstants.E_POINT))
+            String childName = DomUtil.getLocalName(child);
+            switch (childName)
             {
-                pm.setGeometry(KmlPoint.fromXml(child));
+                case KmlConstants.E_POINT:
+                    pm.setGeometry(KmlPoint.fromXml(child));
+                    break;
+                case KmlConstants.E_LINESTRING:
+                    pm.setGeometry(LineString.fromXml(child));
+                    break;
+                // note: no default case, Placemark can have non-geometry children
             }
         }
 
@@ -102,7 +108,7 @@ extends Feature<Placemark>
     public Element appendAsXml(Element parent)
     {
         Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_PLACEMARK);
-        appendFeatureXml(elem);        
+        appendFeatureXml(elem);
         ObjectUtils.optSet(geometry, g -> g.appendAsXml(elem));
         return elem;
     }

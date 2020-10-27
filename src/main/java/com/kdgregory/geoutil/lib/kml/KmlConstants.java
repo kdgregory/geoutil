@@ -65,14 +65,21 @@ public class KmlConstants
     /** Point element name. */
     public final static String  E_POINT                 = "Point";
 
-    /** Point child element: extrude. */
-    public final static String  E_POINT_EXTRUDE         = "extrude";
+    /** Linestring element name. */
+    public final static String  E_LINESTRING            = "LineString";
 
-    /** Point child element: altitudeMode. */
-    public final static String  E_POINT_ALTMODE         = "altitudeMode";
 
-    /** Point child element: coordinates. */
-    public final static String  E_POINT_COORD           = "coordinates";
+    /** Common geomery element: altitudeMode. */
+    public final static String  E_GEOMETRY_ALTMODE      = "altitudeMode";
+
+    /** Common geomery element: coordinates. */
+    public final static String  E_GEOMETRY_COORD        = "coordinates";
+
+    /** Common geomery element: extrude. */
+    public final static String  E_GEOMETRY_EXTRUDE      = "extrude";
+
+    /** Common geomery element: tessellate. */
+    public final static String  E_GEOMETRY_TESSELLATE   = "tessellate";
 
 
     /** Timestamp element name. */

@@ -14,6 +14,9 @@
 
 package com.kdgregory.geoutil.lib.kml;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -51,7 +54,6 @@ public class TestCoordinates
     }
 
 
-
     @Test
     public void testStringSerialization() throws Exception
     {
@@ -72,5 +74,18 @@ public class TestCoordinates
         assertEquals("c2 latitude",     12,     c2.getLat(), 0.0);
         assertEquals("c2 longitude",    34,     c2.getLon(), 0.0);
         assertEquals("c2 altitude",     56,     c2.getElevation().doubleValue(), 0.0);
+    }
+
+
+    @Test
+    public void testStringListSerialization() throws Exception
+    {
+        Coordinates c1 = new Coordinates(12, 34);
+        Coordinates c2 = new Coordinates(34, 56, 78);
+
+        List<Coordinates> orig = Arrays.asList(c1, c2);
+
+        assertEquals("serialization",   "34.0,12.0 56.0,34.0,78.0",     Coordinates.stringify(orig));
+        assertEquals("deserialization", orig,                           Coordinates.fromStringList("34.0,12.0 56.0,34.0,78.0"));
     }
 }

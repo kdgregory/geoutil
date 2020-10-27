@@ -14,52 +14,67 @@
 
 package com.kdgregory.geoutil.lib.kml;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.w3c.dom.Element;
 
+import net.sf.kdgcommons.lang.ObjectUtil;
+import net.sf.kdgcommons.lang.StringUtil;
 import net.sf.practicalxml.DomUtil;
 
 import com.kdgregory.geoutil.lib.internal.ObjectUtils;
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
+import com.kdgregory.geoutil.lib.shared.Point;
 
 
 /**
- *  Represents a point on the map; used as the Geometry of a Placemark.
+ *  Represents a series of points on the map.
  *  <p>
  *  This object has identity equality semantics; for manipulation, extract
- *  the underlying <code>Point</code> object.
+ *  the underlying <code>Coordinates</code>.
  */
-public class KmlPoint
+public class LineString
 implements Geometry
 {
-    private Coordinates coordinates;
+    private List<Coordinates> coordinates;
     private AltitudeMode altitudeMode;
     private Boolean extrude;
+    private Boolean tessellate;
 
 
     /**
-     *  Creates an instance with latitude, longitude, and altitude.
+     *  Creates an instance from a list of <code>Point</code> (may also be used
+     *  for a list of <code>Coordinates</code>).
      */
-    public KmlPoint(double lat, double lon, double alt)
+    public LineString(List<? extends Point> points)
     {
-        this.coordinates = new Coordinates(lat, lon, alt);
+        points = ObjectUtil.defaultValue(points, Collections.<Point>emptyList());
+        coordinates = new ArrayList<>(points.size());
+        for (Point p : points)
+        {
+            coordinates.add(new Coordinates(p));
+        }
     }
 
 
     /**
-     *  Creates an instance with latitude and longitude but no altitude.
+     *  Creates an instance from individual points.
      */
-    public KmlPoint(double lat, double lon)
+    public LineString(Point... points)
     {
-        this.coordinates = new Coordinates(lat, lon);
+        this(Arrays.asList(points));
     }
 
 
     /**
-     *  Creates an instance from a set of serialized coordinates.
+     *  Creates an instance from serialized coordinates.
      */
-    public KmlPoint(String coords)
+    public LineString(String coords)
     {
-        this.coordinates = Coordinates.fromString(coords);
+        coordinates = Coordinates.fromStringList(coords);
     }
 
 //----------------------------------------------------------------------------
@@ -67,9 +82,9 @@ implements Geometry
 //----------------------------------------------------------------------------
 
     /**
-     *  Returns this point's coordinates.
+     *  Returns this line's coordinates.
      */
-    public Coordinates getCoordinates()
+    public List<Coordinates> getCoordinates()
     {
         return coordinates;
     }
@@ -87,11 +102,12 @@ implements Geometry
     /**
      *  Sets the point's altitude mode. Value may be null, to clear mode.
      */
-    public KmlPoint setAltitudeMode(AltitudeMode value)
+    public LineString setAltitudeMode(AltitudeMode value)
     {
         this.altitudeMode = value;
         return this;
     }
+
 
     /**
      *  Gets the extrude flag, if it is set; null otherwise.
@@ -105,15 +121,52 @@ implements Geometry
     /**
      *  Sets the extrude flag; may be null.
      */
-    public KmlPoint setExtrude(Boolean value)
+    public LineString setExtrude(Boolean value)
     {
         extrude = value;
+        return this;
+    }
+
+
+    /**
+     *  Gets the tessellate flag, if it is set; null otherwise.
+     */
+    public Boolean getTessellate()
+    {
+        return tessellate;
+    }
+
+
+    /**
+     *  Sets the tessellate flag; may be null.
+     */
+    public LineString setTessellate(Boolean value)
+    {
+        tessellate = value;
         return this;
     }
 
 //----------------------------------------------------------------------------
 //  Other Public Methods
 //----------------------------------------------------------------------------
+
+    /**
+     *  Appends this line's XML representation to the provided element.
+     */
+    @Override
+    public Element appendAsXml(Element parent)
+    {
+        Element child = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_LINESTRING);
+
+        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_EXTRUDE, extrude);
+        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_TESSELLATE, tessellate);
+        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_ALTMODE,
+                                          ObjectUtils.optInvoke(altitudeMode, AltitudeMode::name));
+        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_COORD, Coordinates.stringify(coordinates));
+
+        return child;
+    }
+
 
     /**
      *  Creates an instance from an element tree following the description in
@@ -128,38 +181,26 @@ implements Geometry
      *          the name "Point", or cannot be parsed according to the KML
      *          specification.
      */
-    public static KmlPoint fromXml(Element elem)
+    public static LineString fromXml(Element elem)
     {
-        if (! KmlConstants.E_POINT.equals(DomUtil.getLocalName(elem)))
+        if (! KmlConstants.E_LINESTRING.equals(DomUtil.getLocalName(elem)))
         {
             throw new IllegalArgumentException("incorrect element name: " + DomUtil.getLocalName(elem));
         }
 
         String namespace = elem.getNamespaceURI();
 
-        KmlPoint p = new KmlPoint(XmlUtils.getChildText(elem, namespace, KmlConstants.E_GEOMETRY_COORD));
+        String coords = XmlUtils.getChildText(elem, namespace, KmlConstants.E_GEOMETRY_COORD);
+        if (StringUtil.isEmpty(coords))
+            throw new IllegalArgumentException("LineString must have coordinates");
+
+        LineString p = new LineString(coords);
         p.setAltitudeMode(ObjectUtils.optInvoke(
             XmlUtils.getChildText(elem, namespace, KmlConstants.E_GEOMETRY_ALTMODE),
             AltitudeMode::fromString));
         p.setExtrude(XmlUtils.getChildTextAsBoolean(elem, namespace, KmlConstants.E_GEOMETRY_EXTRUDE));
+        p.setTessellate(XmlUtils.getChildTextAsBoolean(elem, namespace, KmlConstants.E_GEOMETRY_TESSELLATE));
 
         return p;
-    }
-
-
-    /**
-     *  Appends this point's XML representation to the provided element.
-     */
-    @Override
-    public Element appendAsXml(Element parent)
-    {
-        Element child = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_POINT);
-
-        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_EXTRUDE, extrude);
-        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_ALTMODE,
-                                          ObjectUtils.optInvoke(altitudeMode, AltitudeMode::name));
-        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_COORD, getCoordinates());
-
-        return child;
     }
 }

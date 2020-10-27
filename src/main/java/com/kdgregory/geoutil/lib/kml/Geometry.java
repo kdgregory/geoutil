@@ -24,6 +24,7 @@ public interface Geometry
 {
     /**
      *  Appends this object to a parent, using an implementation-defined element name.
+     *  Returns the appended element (to support testing).
      */
-    void appendAsXml(Element parent);
+    Element appendAsXml(Element parent);
 }

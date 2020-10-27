@@ -14,6 +14,9 @@
 
 package com.kdgregory.geoutil.lib.kml;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.kdgregory.geoutil.lib.shared.Point;
 
 
@@ -84,5 +87,38 @@ extends Point
         return (split.length == 2)
              ? new Coordinates(Double.parseDouble(split[1]), Double.parseDouble(split[0]))
              : new Coordinates(Double.parseDouble(split[1]), Double.parseDouble(split[0]), Double.valueOf(split[2]));
+    }
+
+
+    /**
+     *  Creates an instance from the stringified representation of a list of coordinates.
+     */
+    public static List<Coordinates> fromStringList(String value)
+    {
+        List<Coordinates> result = new ArrayList<>();
+        for (String s : value.split(" "))
+        {
+            s = s.trim();
+            if (! s.isEmpty())
+            {
+                result.add(Coordinates.fromString(s));
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     *  Creates the string representation of a list of coordinates.
+     */
+    public static String stringify(List<Coordinates> coords)
+    {
+        StringBuilder sb = new StringBuilder(256);
+        for (Coordinates coord : coords)
+        {
+            if (sb.length() > 0) sb.append(" ");
+            sb.append(coord.toString());
+        }
+        return sb.toString();
     }
 }
