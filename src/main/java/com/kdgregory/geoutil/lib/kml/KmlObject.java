@@ -71,6 +71,9 @@ public abstract class KmlObject<T extends KmlObject<T>>
      */
     protected void appendObjectXml(Element elem)
     {
-        elem.setAttribute(KmlConstants.A_OBJECT_ID, getId());
+        if (! StringUtil.isEmpty(id))
+        {
+            elem.setAttribute(KmlConstants.A_OBJECT_ID, id);
+        }
     }
 }

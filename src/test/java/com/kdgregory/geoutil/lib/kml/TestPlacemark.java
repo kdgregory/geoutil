@@ -85,6 +85,7 @@ public class TestPlacemark
         assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
         assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
         assertEquals("child name",                              "Placemark",                        child.getNodeName());
+        assertNull("child does not have ID",                                                        child.getAttributeNode("id"));
 
         assertEquals("number of data elements",                 0,                                  DomUtil.getChildren(child).size());
     }
@@ -96,6 +97,7 @@ public class TestPlacemark
         KmlPoint p = new KmlPoint(12, 34).setExtrude(Boolean.TRUE);
         Style s = new Style().setLineStyle(new LineStyle().setWidth(2));
         Placemark m = new Placemark()
+                      .setId("uniqueId")
                       .setName("example")
                       .setDescription("a description")
                       .setVisibility(Boolean.TRUE)
@@ -111,6 +113,7 @@ public class TestPlacemark
         assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
         assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
         assertEquals("child name",                              "Placemark",                        child.getNodeName());
+        assertEquals("id attribute",                            "uniqueId",                         child.getAttribute("id"));
 
         // we care about order, so will retrieve all children and access via index
         List<Element> dataElements = DomUtil.getChildren(child);
