@@ -118,17 +118,18 @@ public class XmlUtils
         if (value == null)
             return null;
 
-        if ("0".equals(value))
+        switch (value.toLowerCase())
         {
-            return Boolean.FALSE;
-        }
-        else if ("1".equals(value))
-        {
-            return Boolean.TRUE;
-        }
-        else
-        {
-            throw new IllegalArgumentException("invalid content for " + childName + ": " + value);
+            case "true":
+            case "1":
+                return Boolean.TRUE;
+
+            case "false":
+            case "0":
+                return Boolean.FALSE;
+
+            default:
+                throw new IllegalArgumentException("invalid content for " + childName + ": " + value);
         }
     }
 
