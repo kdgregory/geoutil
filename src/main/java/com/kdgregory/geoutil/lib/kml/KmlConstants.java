@@ -92,9 +92,24 @@ public class KmlConstants
     /** Style element name. */
     public final static String  E_STYLE                 = "Style";
 
+    /** IconStyle element name. */
+    public final static String  E_ICONSTYLE             = "IconStyle";
+
+    /** LabelStyle element name. */
+    public final static String  E_LABELSTYLE            = "LabelStyle";
 
     /** LineStyle element name. */
     public final static String  E_LINESTYLE             = "LineStyle";
+
+    /** PolyStyle element name. */
+    public final static String  E_POLYSTYLE             = "PolyStyle";
+
+    /** BalloonStyle element name. */
+    public final static String  E_BALLOONSTYLE          = "BalloonStyle";
+
+    /** ListStyle element name. */
+    public final static String  E_LISTSTYLE             = "ListStyle";
+
 
     /** LineStyle child elemnt: color */
     public final static String  E_LINESTYLE_COLOR       = "color";

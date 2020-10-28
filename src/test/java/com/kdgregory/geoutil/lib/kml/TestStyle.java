@@ -112,13 +112,21 @@ public class TestStyle
     @Test
     public void testFromXmlComplete() throws Exception
     {
+        // note: this creates empty references for all style types because real-world documents
+        //       include all; we ignore the ones that we don't handle
+
         Element root = XmlBuilder.element("http://earth.google.com/kml/2.1", "Style",
                             XmlBuilder.attribute("id", "somethingUnique"),
+                            XmlBuilder.element("http://earth.google.com/kml/2.1", "IconStyle"),
+                            XmlBuilder.element("http://earth.google.com/kml/2.1", "LabelStyle"),
                             XmlBuilder.element("http://earth.google.com/kml/2.1", "LineStyle",
                                 XmlBuilder.element("http://earth.google.com/kml/2.1", "color", XmlBuilder.text("12345678")),
                                 XmlBuilder.element("http://earth.google.com/kml/2.1", "colorMode", XmlBuilder.text("random")),
-                                XmlBuilder.element("http://earth.google.com/kml/2.1", "width", XmlBuilder.text("1.5")))
-                       ).toDOM().getDocumentElement();
+                                XmlBuilder.element("http://earth.google.com/kml/2.1", "width", XmlBuilder.text("1.5")),
+                            XmlBuilder.element("http://earth.google.com/kml/2.1", "PolyStyle"),
+                            XmlBuilder.element("http://earth.google.com/kml/2.1", "BalloonStyle"),
+                            XmlBuilder.element("http://earth.google.com/kml/2.1", "ListStyle")
+                       )).toDOM().getDocumentElement();
 
         Style s = Style.fromXml(root);
 

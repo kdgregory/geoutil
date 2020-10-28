@@ -88,6 +88,14 @@ extends KmlObject<Style>
                     s.setLineStyle(LineStyle.fromXml(child));
                     break;
 
+                case KmlConstants.E_ICONSTYLE:
+                case KmlConstants.E_LABELSTYLE:
+                case KmlConstants.E_POLYSTYLE:
+                case KmlConstants.E_BALLOONSTYLE:
+                case KmlConstants.E_LISTSTYLE:
+                    // TODO: implement
+                    break;
+
                 default:
                     throw new IllegalArgumentException("invalid Style child element: " + childName);
             }
