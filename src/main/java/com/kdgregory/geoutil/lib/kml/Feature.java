@@ -196,15 +196,36 @@ extends KmlObject<T>
     @Override
     protected void fromXmlHelper(Element elem)
     {
-        String namespace = elem.getNamespaceURI();
-
         super.fromXmlHelper(elem);
-        setName(XmlUtils.getChildText(elem, namespace, KmlConstants.E_FEATURE_NAME));
-        setVisibility(XmlUtils.getChildTextAsBoolean(elem, namespace, KmlConstants.E_FEATURE_VISIBILITY));
-        setDescription(XmlUtils.getChildText(elem, namespace, KmlConstants.E_FEATURE_DESCRIPTION));
-        setTimestamp(ObjectUtils.optInvoke(DomUtil.getChild(elem, namespace, KmlConstants.E_TIMESTAMP), Timestamp::fromXml));
-        setStyleRef(XmlUtils.getChildText(elem, namespace, KmlConstants.E_FEATURE_STYLEREF));
-        setStyleSelector(ObjectUtils.optInvoke(DomUtil.getChild(elem, namespace, KmlConstants.E_STYLE), Style::fromXml));
+     
+        // FIXME - validate namespace
+        for (Element child : DomUtil.getChildren(elem))
+        {
+            String childName = DomUtil.getLocalName(child);
+            String childText = DomUtil.getText(child);
+            switch (childName)
+            {
+                case KmlConstants.E_FEATURE_NAME:
+                    setName(childText);
+                    break;
+                case KmlConstants.E_FEATURE_VISIBILITY:
+                    setVisibility(ObjectUtils.parseAsBoolean(childText));
+                    break;
+                case KmlConstants.E_FEATURE_DESCRIPTION:
+                    setDescription(childText);
+                    break;
+                case KmlConstants.E_TIMESTAMP:
+                    setTimestamp(Timestamp.fromXml(child));
+                    break;
+                case KmlConstants.E_FEATURE_STYLEREF:
+                    setStyleRef(childText);
+                    break;
+                case KmlConstants.E_STYLE:
+                    setStyleSelector(Style.fromXml(child));
+                    break;
+                // no default; there may be other children
+            }
+        }
     }
 
 
