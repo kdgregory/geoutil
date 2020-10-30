@@ -89,6 +89,16 @@ public class KmlConstants
     public final static String  E_TIMESTAMP_WHEN        = "when";
 
 
+    /** Timespan element name. */
+    public final static String  E_TIMESPAN              = "TimeSpan";
+
+    /** Timespan child element: begin. */
+    public final static String  E_TIMESPAN_BEGIN        = "begin";
+
+    /** Timespan child element: end. */
+    public final static String  E_TIMESPAN_END          = "end";
+
+
     /** Style element name. */
     public final static String  E_STYLE                 = "Style";
 

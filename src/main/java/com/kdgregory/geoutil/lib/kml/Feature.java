@@ -33,6 +33,7 @@ extends KmlObject<T>
     private Boolean visibility;
     private String description;
     private Timestamp timestamp;
+    private TimeSpan timespan;
     private String styleRef;
     private Style styleSelector;
 
@@ -107,11 +108,32 @@ extends KmlObject<T>
 
 
     /**
-     *  Sets this feature's timestamp.
+     *  Sets this feature's timestamp. This will also clear any existing timespan.
      */
     public T setTimestamp(Timestamp value)
     {
         timestamp = value;
+        timespan = null;
+        return (T)this;
+    }
+
+
+    /**
+     *  Returns this feature's timespan, if any.
+     */
+    public TimeSpan getTimespan()
+    {
+        return timespan;
+    }
+
+
+    /**
+     *  Sets this feature's timestamp. This will also clear any existing timestamp.
+     */
+    public T setTimespan(TimeSpan value)
+    {
+        timespan = value;
+        timestamp = null;
         return (T)this;
     }
 
@@ -197,7 +219,7 @@ extends KmlObject<T>
     protected void fromXmlHelper(Element elem)
     {
         super.fromXmlHelper(elem);
-     
+
         // FIXME - validate namespace
         for (Element child : DomUtil.getChildren(elem))
         {
@@ -216,6 +238,9 @@ extends KmlObject<T>
                     break;
                 case KmlConstants.E_TIMESTAMP:
                     setTimestamp(Timestamp.fromXml(child));
+                    break;
+                case KmlConstants.E_TIMESPAN:
+                    setTimespan(TimeSpan.fromXml(child));
                     break;
                 case KmlConstants.E_FEATURE_STYLEREF:
                     setStyleRef(childText);
@@ -240,6 +265,7 @@ extends KmlObject<T>
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_VISIBILITY,  getVisibility());
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_DESCRIPTION, getDescription());
         ObjectUtils.optSet(getTimestamp(), t -> t.appendAsXml(elem));
+        ObjectUtils.optSet(getTimespan(),  t -> t.appendAsXml(elem));
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_STYLEREF,    getStyleRef());
         ObjectUtils.optSet(getStyleSelector(), s -> s.appendAsXml(elem));
     }

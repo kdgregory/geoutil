@@ -15,13 +15,13 @@
 package com.kdgregory.geoutil.lib.kml;
 
 import java.time.Instant;
-import java.time.format.DateTimeFormatter;
 
 import org.w3c.dom.Element;
 
 import net.sf.kdgcommons.lang.ObjectUtil;
 import net.sf.practicalxml.DomUtil;
 
+import com.kdgregory.geoutil.lib.internal.TimestampUtils;
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
 
 /**
@@ -72,11 +72,7 @@ public class Timestamp
      */
     public Timestamp(String value)
     {
-        this.timestamp = (value == null)
-                       ? null
-                       : (value.endsWith("Z"))
-                          ? Instant.parse(value)
-                          : Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(value));
+        this.timestamp = TimestampUtils.parse(value);
     }
 
 //----------------------------------------------------------------------------

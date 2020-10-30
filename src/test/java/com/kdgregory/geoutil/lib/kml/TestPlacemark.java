@@ -36,41 +36,68 @@ public class TestPlacemark
 
         Placemark m = new Placemark();
 
-        assertNull("getName(), initial value",                                  m.getName());
-        assertEquals("setName()",                           m,                  m.setName("test"));
-        assertEquals("getName()",                           "test",             m.getName());
+        assertNull("getName(), initial value",                                      m.getName());
+        assertEquals("setName()",                           m,                      m.setName("test"));
+        assertEquals("getName()",                           "test",                 m.getName());
 
-        assertNull("getVisibility(), initial value",                            m.getVisibility());
-        assertEquals("setVisibility()",                     m,                  m.setVisibility(Boolean.TRUE));
-        assertEquals("getVisibility()",                     Boolean.TRUE,       m.getVisibility());
+        assertNull("getVisibility(), initial value",                                m.getVisibility());
+        assertEquals("setVisibility()",                     m,                      m.setVisibility(Boolean.TRUE));
+        assertEquals("getVisibility()",                     Boolean.TRUE,           m.getVisibility());
 
-        assertNull("getDescription(), initial value",                           m.getDescription());
-        assertEquals("setDescription()",                    m,                  m.setDescription("example"));
-        assertEquals("getDescription()",                    "example",          m.getDescription());
+        assertNull("getDescription(), initial value",                               m.getDescription());
+        assertEquals("setDescription()",                    m,                      m.setDescription("example"));
+        assertEquals("getDescription()",                    "example",              m.getDescription());
 
-        assertNull("getTimestamp(), initial value",                             m.getTimestamp());
-        assertEquals("setTimestamp()",                      m,                  m.setTimestamp(new Timestamp(123)));
-        assertEquals("getTimestamp()",                      new Timestamp(123), m.getTimestamp());
+        assertNull("getTimestamp(), initial value",                                 m.getTimestamp());
+        assertEquals("setTimestamp()",                      m,                      m.setTimestamp(new Timestamp(123)));
+        assertEquals("getTimestamp()",                      new Timestamp(123),     m.getTimestamp());
 
-        assertNull("getStyleRef(), initial value",                              m.getStyleRef());
-        assertEquals("setStyleRef()",                       m,                  m.setStyleRef("uniqueRef"));
-        assertEquals("getStyleRef()",                       "uniqueRef",        m.getStyleRef());
+        assertNull("getTimespan(), initial value",                                  m.getTimespan());
+        assertEquals("setTimespan()",                      m,                       m.setTimespan(new TimeSpan(123, 456)));
+        assertEquals("getTimespan()",                      new TimeSpan(123, 456),  m.getTimespan());
 
-        assertEquals("setLocalStyleRef()",                  m,                  m.setLocalStyleRef("uniqueRef"));
-        assertEquals("getStyleRef() (local)",               "#uniqueRef",       m.getStyleRef());
+        assertNull("getStyleRef(), initial value",                                  m.getStyleRef());
+        assertEquals("setStyleRef()",                       m,                      m.setStyleRef("uniqueRef"));
+        assertEquals("getStyleRef()",                       "uniqueRef",            m.getStyleRef());
+
+        assertEquals("setLocalStyleRef()",                  m,                      m.setLocalStyleRef("uniqueRef"));
+        assertEquals("getStyleRef() (local)",               "#uniqueRef",           m.getStyleRef());
 
         KmlPoint p = new KmlPoint(12, 34);
 
-        assertNull("getGeometry(), initial value",                              m.getGeometry());
-        assertEquals("setGeometry()",                       m,                  m.setGeometry(p));
-        assertSame("getGeometry()",                         p,                  m.getGeometry());
+        assertNull("getGeometry(), initial value",                                  m.getGeometry());
+        assertEquals("setGeometry()",                       m,                      m.setGeometry(p));
+        assertSame("getGeometry()",                         p,                      m.getGeometry());
 
         Style s = new Style();
 
-        assertNull("getStyleSelector(), initial value",                         m.getStyleSelector());
-        assertEquals("setStyleSelector()",                  m,                  m.setStyleSelector(s));
-        assertSame("getStyleSelector()",                    s,                  m.getStyleSelector());
+        assertNull("getStyleSelector(), initial value",                             m.getStyleSelector());
+        assertEquals("setStyleSelector()",                  m,                      m.setStyleSelector(s));
+        assertSame("getStyleSelector()",                    s,                      m.getStyleSelector());
     }
+
+
+    @Test
+    public void testTimespanTimestampInteracton() throws Exception
+    {
+        Placemark pm = new Placemark();
+
+        pm.setTimestamp(new Timestamp(123));
+
+        assertEquals("timestamp, after initial setTimestamp()", new Timestamp(123),     pm.getTimestamp());
+        assertEquals("timespan, after initial setTimestamp()",  null,                   pm.getTimespan());
+
+        pm.setTimespan(new TimeSpan(123, 456));
+
+        assertEquals("timestamp, after initial setTimespan()",  null,                   pm.getTimestamp());
+        assertEquals("timespan, after initial setTimespan()",   new TimeSpan(123, 456), pm.getTimespan());
+
+        pm.setTimestamp(new Timestamp(123));
+
+        assertEquals("timestamp, after second setTimestamp()",  new Timestamp(123),     pm.getTimestamp());
+        assertEquals("timespan, after second setTimestamp()",   null,                   pm.getTimespan());
+    }
+
 
 
     @Test
@@ -120,33 +147,36 @@ public class TestPlacemark
 
         assertEquals("number of data elements",                 7,                                  dataElements.size());
 
-        assertEquals("first child namespace",                   "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
-        assertEquals("first child name",                        "name",                             dataElements.get(0).getNodeName());
-        assertEquals("first child value",                       "example",                          dataElements.get(0).getTextContent());
+        assertEquals("first data element namespace",            "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
+        assertEquals("first data element name",                 "name",                             dataElements.get(0).getNodeName());
+        assertEquals("first data element value",                "example",                          dataElements.get(0).getTextContent());
 
-        assertEquals("second child namespace",                  "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
-        assertEquals("second child name",                       "visibility",                       dataElements.get(1).getNodeName());
-        assertEquals("second child value",                      "1",                                dataElements.get(1).getTextContent());
+        assertEquals("second data element namespace",           "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
+        assertEquals("second data element name",                "visibility",                       dataElements.get(1).getNodeName());
+        assertEquals("second data element value",               "1",                                dataElements.get(1).getTextContent());
 
-        assertEquals("third child namespace",                   "http://www.opengis.net/kml/2.2",   dataElements.get(2).getNamespaceURI());
-        assertEquals("third child name",                        "description",                      dataElements.get(2).getNodeName());
-        assertEquals("third child value",                       "a description",                    dataElements.get(2).getTextContent());
+        assertEquals("third data element namespace",            "http://www.opengis.net/kml/2.2",   dataElements.get(2).getNamespaceURI());
+        assertEquals("third data element name",                 "description",                      dataElements.get(2).getNodeName());
+        assertEquals("third data element value",                "a description",                    dataElements.get(2).getTextContent());
 
-        assertEquals("fourth child namespace",                  "http://www.opengis.net/kml/2.2",   dataElements.get(3).getNamespaceURI());
-        assertEquals("fourth child name",                       "TimeStamp",                        dataElements.get(3).getNodeName());
-        assertEquals("fourth child value",                      "2019-12-28T15:43:48Z",             DomUtil.getChild(dataElements.get(3), "http://www.opengis.net/kml/2.2", "when").getTextContent());
+        assertEquals("fourth data element namespace",           "http://www.opengis.net/kml/2.2",   dataElements.get(3).getNamespaceURI());
+        assertEquals("fourth data element name",                "TimeStamp",                        dataElements.get(3).getNodeName());
 
-        assertEquals("fifth child namespace",                   "http://www.opengis.net/kml/2.2",   dataElements.get(4).getNamespaceURI());
-        assertEquals("fifth child name",                        "styleUrl",                         dataElements.get(4).getNodeName());
-        assertEquals("fifth child value",                       "styleId",                          dataElements.get(4).getTextContent());
+        assertEquals("fifth data element namespace",            "http://www.opengis.net/kml/2.2",   dataElements.get(4).getNamespaceURI());
+        assertEquals("fifth data element name",                 "styleUrl",                         dataElements.get(4).getNodeName());
+        assertEquals("fifth data element value",                "styleId",                          dataElements.get(4).getTextContent());
 
-        assertEquals("sixth child namespace",                   "http://www.opengis.net/kml/2.2",   dataElements.get(5).getNamespaceURI());
-        assertEquals("sixth child name",                        "Style",                            dataElements.get(5).getNodeName());
+        assertEquals("sixth data element namespace",            "http://www.opengis.net/kml/2.2",   dataElements.get(5).getNamespaceURI());
+        assertEquals("sixth data element name",                 "Style",                            dataElements.get(5).getNodeName());
 
-        assertEquals("seventh child namespace",                 "http://www.opengis.net/kml/2.2",   dataElements.get(6).getNamespaceURI());
-        assertEquals("seventh child name",                      "Point",                            dataElements.get(6).getNodeName());
+        assertEquals("seventh data element namespace",          "http://www.opengis.net/kml/2.2",   dataElements.get(6).getNamespaceURI());
+        assertEquals("seventh data element name",               "Point",                            dataElements.get(6).getNodeName());
 
-        // rather than verify the Style element's contents, we'll try to convert it and verify its contents
+        // for nested objects, rather than verify them in the DOM, we'll try to parse and assert the expected contents
+
+        Timestamp ts = Timestamp.fromXml(dataElements.get(3));
+
+        assertEquals("nested timestamp",                        new Timestamp(1577547828000L),      ts);
 
         Style ss = Style.fromXml(dataElements.get(5));
 
@@ -163,12 +193,14 @@ public class TestPlacemark
 
 
     @Test
-    public void testAppendAsXmlLineString() throws Exception
+    public void testAppendAsXmlAltGeometry() throws Exception
     {
         Coordinates c1 = new Coordinates(12,34);
         Coordinates c2 = new Coordinates(23, 45, 67);
+        TimeSpan ts = new TimeSpan(1577547828000L, 1577547829000L);
 
         Placemark m = new Placemark()
+                      .setTimespan(ts)
                       .setGeometry(new LineString(c1, c2));
 
         Element parent = DomUtil.newDocument("irrelevant");
@@ -182,14 +214,18 @@ public class TestPlacemark
         // we care about order, so will retrieve all children and access via index
         List<Element> dataElements = DomUtil.getChildren(child);
 
-        assertEquals("number of data elements",                 1,                                  dataElements.size());
+        assertEquals("number of data elements",                 2,                                  dataElements.size());
 
-        assertEquals("data element 1 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
-        assertEquals("geometry name",                           "LineString",                       dataElements.get(0).getNodeName());
+        assertEquals("first data element namespace",            "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
+        assertEquals("first data element name",                 "TimeSpan",                         dataElements.get(0).getNodeName());
 
-        // let the LineString element parse itself and verify results
+        assertEquals("second data element namespace",           "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
+        assertEquals("second data element name",                "LineString",                       dataElements.get(1).getNodeName());
 
-        assertEquals("nested linestring coordinates",            Arrays.asList(c1, c2),              LineString.fromXml(dataElements.get(0)).getCoordinates());
+        // for nested objects, rather than verify them in the DOM, we'll try to parse and assert the expected contents
+
+        assertEquals("nested timespan",                         ts,                                 TimeSpan.fromXml(dataElements.get(0)));
+        assertEquals("nested linestring coordinates",           Arrays.asList(c1, c2),              LineString.fromXml(dataElements.get(1)).getCoordinates());
     }
 
 
@@ -246,17 +282,21 @@ public class TestPlacemark
 
 
     @Test
-    public void testFromXmlLineString() throws Exception
+    public void testFromXmlAlt() throws Exception
     {
         Document dom = XmlBuilder.element("http://earth.google.com/kml/2.1", "Placemark",
+                            XmlBuilder.element("http://earth.google.com/kml/2.1", "TimeSpan",
+                                XmlBuilder.element("http://earth.google.com/kml/2.1", "begin",          XmlBuilder.text("2019-12-28T15:43:48Z")),
+                                XmlBuilder.element("http://earth.google.com/kml/2.1", "end",            XmlBuilder.text("2019-12-28T15:43:49Z"))),
                             XmlBuilder.element("http://earth.google.com/kml/2.1", "LineString",
                                 XmlBuilder.element("http://earth.google.com/kml/2.1", "coordinates",    XmlBuilder.text("34.0,12.0,56.0"))))
                        .toDOM();
 
         Placemark pm = Placemark.fromXml(dom.getDocumentElement());
-        LineString g = (LineString)pm.getGeometry();
 
-        assertEquals("geometry, coordinates", Arrays.asList(new Coordinates(12,34,56)),  g.getCoordinates());
+        assertEquals("timespan",    new TimeSpan("2019-12-28T15:43:48Z", "2019-12-28T15:43:49Z"),   pm.getTimespan());
+        assertEquals("timestamp",   null,                                                           pm.getTimestamp());
+        assertEquals("geometry",    Arrays.asList(new Coordinates(12,34,56)),                       ((LineString)pm.getGeometry()).getCoordinates());
     }
 
 
