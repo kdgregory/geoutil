@@ -32,7 +32,7 @@ extends KmlObject<T>
     private String name;
     private Boolean visibility;
     private String description;
-    private Timestamp timestamp;
+    private TimeStamp timestamp;
     private TimeSpan timespan;
     private String styleRef;
     private Style styleSelector;
@@ -101,7 +101,7 @@ extends KmlObject<T>
     /**
      *  Returns this feature's timestamp, if any.
      */
-    public Timestamp getTimestamp()
+    public TimeStamp getTimestamp()
     {
         return timestamp;
     }
@@ -110,7 +110,7 @@ extends KmlObject<T>
     /**
      *  Sets this feature's timestamp. This will also clear any existing timespan.
      */
-    public T setTimestamp(Timestamp value)
+    public T setTimestamp(TimeStamp value)
     {
         timestamp = value;
         timespan = null;
@@ -237,7 +237,7 @@ extends KmlObject<T>
                     setDescription(childText);
                     break;
                 case KmlConstants.E_TIMESTAMP:
-                    setTimestamp(Timestamp.fromXml(child));
+                    setTimestamp(TimeStamp.fromXml(child));
                     break;
                 case KmlConstants.E_TIMESPAN:
                     setTimespan(TimeSpan.fromXml(child));

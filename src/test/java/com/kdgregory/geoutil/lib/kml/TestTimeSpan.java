@@ -213,6 +213,6 @@ public class TestTimeSpan
     @Test
     public void testFromXmlNull() throws Exception
     {
-        assertNull(Timestamp.fromXml(null));
+        assertNull(TimeStamp.fromXml(null));
     }
 }

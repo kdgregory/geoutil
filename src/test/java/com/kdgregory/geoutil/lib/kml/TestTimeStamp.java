@@ -26,7 +26,7 @@ import net.sf.practicalxml.DomUtil;
 import net.sf.practicalxml.builder.XmlBuilder;
 
 
-public class TestTimestamp
+public class TestTimeStamp
 {
     private static Instant TEST_INSTANT = Instant.ofEpochMilli(1577547828000L);
     private static Long TEST_MILLIS     = Long.valueOf(1577547828000L);
@@ -36,25 +36,25 @@ public class TestTimestamp
     @Test
     public void testConstructorsAndAccessorts() throws Exception
     {
-        Timestamp t1 = new Timestamp();
+        TimeStamp t1 = new TimeStamp();
 
         assertNull("default constructor, asInstant",                    t1.asInstant());
         assertNull("default constructor, asMillis",                     t1.asMillis());
         assertNull("default constructor, asString",                     t1.asString());
 
-        Timestamp t2 = new Timestamp(TEST_INSTANT);
+        TimeStamp t2 = new TimeStamp(TEST_INSTANT);
 
         assertEquals("set from Instant, asInstant",     TEST_INSTANT,    t2.asInstant());
         assertEquals("set from Instant, asMillis",      TEST_MILLIS,     t2.asMillis());
         assertEquals("set from Instant, asString",      TEST_STRING,     t2.asString());
 
-        Timestamp t3 = new Timestamp(TEST_MILLIS.longValue());
+        TimeStamp t3 = new TimeStamp(TEST_MILLIS.longValue());
 
         assertEquals("set from millis, asInstant",      TEST_INSTANT,    t3.asInstant());
         assertEquals("set from millis, asMillis",       TEST_MILLIS,     t3.asMillis());
         assertEquals("set from millis, asString",       TEST_STRING,     t3.asString());
 
-        Timestamp t4 = new Timestamp(TEST_STRING);
+        TimeStamp t4 = new TimeStamp(TEST_STRING);
 
         assertEquals("set from string, asInstant",      TEST_INSTANT,    t4.asInstant());
         assertEquals("set from string, asMillis",       TEST_MILLIS,     t4.asMillis());
@@ -65,11 +65,11 @@ public class TestTimestamp
     @Test
     public void testEqualityAndHashcode() throws Exception
     {
-        Timestamp t1 = new Timestamp(TEST_INSTANT);
-        Timestamp t2 = new Timestamp(TEST_MILLIS);
-        Timestamp t3 = new Timestamp(TEST_MILLIS + 1);
-        Timestamp t4a = new Timestamp();
-        Timestamp t4b = new Timestamp();
+        TimeStamp t1 = new TimeStamp(TEST_INSTANT);
+        TimeStamp t2 = new TimeStamp(TEST_MILLIS);
+        TimeStamp t3 = new TimeStamp(TEST_MILLIS + 1);
+        TimeStamp t4a = new TimeStamp();
+        TimeStamp t4b = new TimeStamp();
 
         assertTrue("identity", t1.equals(t1));
         assertTrue("equal values", t1.equals(t2));
@@ -88,7 +88,7 @@ public class TestTimestamp
     public void testAppendAsXml() throws Exception
     {
         Element parent = DomUtil.newDocument("irrelevant");
-        Element child = new Timestamp(TEST_INSTANT).appendAsXml(parent);
+        Element child = new TimeStamp(TEST_INSTANT).appendAsXml(parent);
 
         assertEquals("added single child to existing parent",   1,                                  DomUtil.getChildren(parent).size());
         assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
@@ -106,7 +106,7 @@ public class TestTimestamp
     public void testAppendAsXmlNullTimestamp() throws Exception
     {
         Element parent = DomUtil.newDocument("irrelevant");
-        Element child = new Timestamp().appendAsXml(parent);
+        Element child = new TimeStamp().appendAsXml(parent);
 
         assertNull("append returned null",                                                          child);
         assertEquals("did not add child to existing parent",    0,                                  DomUtil.getChildren(parent).size());
@@ -120,7 +120,7 @@ public class TestTimestamp
                             XmlBuilder.element("http://earth.google.com/kml/2.1", "when", XmlBuilder.text("2019-12-28T15:43:48Z")))
                        .toDOM().getDocumentElement();
 
-        Timestamp ts = Timestamp.fromXml(elem);
+        TimeStamp ts = TimeStamp.fromXml(elem);
         assertEquals("value", TEST_INSTANT, ts.asInstant());
     }
 
@@ -132,7 +132,7 @@ public class TestTimestamp
                             XmlBuilder.element("when", XmlBuilder.text("2019-12-28T15:43:48Z")))
                        .toDOM().getDocumentElement();
 
-        Timestamp ts = Timestamp.fromXml(elem);
+        TimeStamp ts = TimeStamp.fromXml(elem);
         assertEquals("value", TEST_INSTANT, ts.asInstant());
     }
 
@@ -140,6 +140,6 @@ public class TestTimestamp
     @Test
     public void testFromXmlNull() throws Exception
     {
-        assertNull(Timestamp.fromXml(null));
+        assertNull(TimeStamp.fromXml(null));
     }
 }

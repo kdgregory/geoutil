@@ -49,8 +49,8 @@ public class TestPlacemark
         assertEquals("getDescription()",                    "example",              m.getDescription());
 
         assertNull("getTimestamp(), initial value",                                 m.getTimestamp());
-        assertEquals("setTimestamp()",                      m,                      m.setTimestamp(new Timestamp(123)));
-        assertEquals("getTimestamp()",                      new Timestamp(123),     m.getTimestamp());
+        assertEquals("setTimestamp()",                      m,                      m.setTimestamp(new TimeStamp(123)));
+        assertEquals("getTimestamp()",                      new TimeStamp(123),     m.getTimestamp());
 
         assertNull("getTimespan(), initial value",                                  m.getTimespan());
         assertEquals("setTimespan()",                      m,                       m.setTimespan(new TimeSpan(123, 456)));
@@ -82,9 +82,9 @@ public class TestPlacemark
     {
         Placemark pm = new Placemark();
 
-        pm.setTimestamp(new Timestamp(123));
+        pm.setTimestamp(new TimeStamp(123));
 
-        assertEquals("timestamp, after initial setTimestamp()", new Timestamp(123),     pm.getTimestamp());
+        assertEquals("timestamp, after initial setTimestamp()", new TimeStamp(123),     pm.getTimestamp());
         assertEquals("timespan, after initial setTimestamp()",  null,                   pm.getTimespan());
 
         pm.setTimespan(new TimeSpan(123, 456));
@@ -92,9 +92,9 @@ public class TestPlacemark
         assertEquals("timestamp, after initial setTimespan()",  null,                   pm.getTimestamp());
         assertEquals("timespan, after initial setTimespan()",   new TimeSpan(123, 456), pm.getTimespan());
 
-        pm.setTimestamp(new Timestamp(123));
+        pm.setTimestamp(new TimeStamp(123));
 
-        assertEquals("timestamp, after second setTimestamp()",  new Timestamp(123),     pm.getTimestamp());
+        assertEquals("timestamp, after second setTimestamp()",  new TimeStamp(123),     pm.getTimestamp());
         assertEquals("timespan, after second setTimestamp()",   null,                   pm.getTimespan());
     }
 
@@ -129,7 +129,7 @@ public class TestPlacemark
                       .setDescription("a description")
                       .setVisibility(Boolean.TRUE)
                       .setGeometry(p)
-                      .setTimestamp(new Timestamp(1577547828000L))
+                      .setTimestamp(new TimeStamp(1577547828000L))
                       .setStyleRef("styleId")
                       .setStyleSelector(s);
 
@@ -174,9 +174,9 @@ public class TestPlacemark
 
         // for nested objects, rather than verify them in the DOM, we'll try to parse and assert the expected contents
 
-        Timestamp ts = Timestamp.fromXml(dataElements.get(3));
+        TimeStamp ts = TimeStamp.fromXml(dataElements.get(3));
 
-        assertEquals("nested timestamp",                        new Timestamp(1577547828000L),      ts);
+        assertEquals("nested timestamp",                        new TimeStamp(1577547828000L),      ts);
 
         Style ss = Style.fromXml(dataElements.get(5));
 

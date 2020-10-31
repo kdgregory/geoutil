@@ -31,7 +31,7 @@ import com.kdgregory.geoutil.lib.internal.XmlUtils;
  *  This is an immutable object; its value is set on construction. Null
  *  values are supported.
  */
-public class Timestamp
+public class TimeStamp
 {
     private Instant timestamp;
 
@@ -39,7 +39,7 @@ public class Timestamp
     /**
      *  Constructs an instance that has no value.
      */
-    public Timestamp()
+    public TimeStamp()
     {
         // nothing here
     }
@@ -49,7 +49,7 @@ public class Timestamp
      *  Constructs an instance from a Java8 Instant. May pass null to create
      *  an empty instance.
      */
-    public Timestamp(Instant value)
+    public TimeStamp(Instant value)
     {
         this.timestamp = value;
     }
@@ -60,7 +60,7 @@ public class Timestamp
      *  this constructor is passed a primitive, while the related accessor
      *  returns an object.
      */
-    public Timestamp(long value)
+    public TimeStamp(long value)
     {
         this.timestamp = Instant.ofEpochMilli(value);
     }
@@ -70,7 +70,7 @@ public class Timestamp
      *  Constructs an instance from an ISO-8601 formatted string. May pass
      *  null to create an empty instance.
      */
-    public Timestamp(String value)
+    public TimeStamp(String value)
     {
         this.timestamp = TimestampUtils.parse(value);
     }
@@ -122,9 +122,9 @@ public class Timestamp
     {
         if (this == obj)
             return true;
-        else if (obj instanceof Timestamp)
+        else if (obj instanceof TimeStamp)
         {
-            Timestamp that = (Timestamp)obj;
+            TimeStamp that = (TimeStamp)obj;
             return ObjectUtil.equals(this.timestamp, that.timestamp);
         }
         return false;
@@ -164,7 +164,7 @@ public class Timestamp
      *  name and namespace of the passed element are not verified, but the
      *  "when" element namespace must match the passed element's namespace.
      */
-    public static Timestamp fromXml(Element elem)
+    public static TimeStamp fromXml(Element elem)
     {
         if (elem == null)
             return null;
@@ -173,6 +173,6 @@ public class Timestamp
         if (when == null)
             throw new IllegalArgumentException("TimeStamp missing \"when\" child element");
 
-        return new Timestamp(when);
+        return new TimeStamp(when);
     }
 }
