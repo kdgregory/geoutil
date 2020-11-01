@@ -300,7 +300,6 @@ public class TestPlacemark
     }
 
 
-
     @Test
     public void testFromXmlInvalidName() throws Exception
     {

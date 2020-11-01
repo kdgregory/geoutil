@@ -91,7 +91,7 @@ implements Geometry
 
 
     /**
-     *  Returns the point's altitude mode, if it is set; null otherwise.
+     *  Returns this line's altitude mode, if it is set; null otherwise.
      */
     public AltitudeMode getAltitudeMode()
     {
@@ -100,11 +100,30 @@ implements Geometry
 
 
     /**
-     *  Sets the point's altitude mode. Value may be null, to clear mode.
+     *  Sets this line's altitude mode. Value may be null, to clear mode.
      */
     public LineString setAltitudeMode(AltitudeMode value)
     {
         this.altitudeMode = value;
+        return this;
+    }
+
+
+    /**
+     *  Returns this line's altitude mode, if set, as a string; null otherwise.
+     */
+    public String getAltitudeModeString()
+    {
+        return (altitudeMode == null) ? null : altitudeMode.name();
+    }
+
+
+    /**
+     *  Sets this line's altitude mode, given a string value. Value may be null, to clear mode.
+     */
+    public LineString setAltitudeModeString(String value)
+    {
+        this.altitudeMode = AltitudeMode.fromString(value);
         return this;
     }
 

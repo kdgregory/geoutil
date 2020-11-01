@@ -43,19 +43,26 @@ public class TestLineString
     @Test
     public void testAccessors() throws Exception
     {
-        LineString ls = new LineString(new Coordinates(12,34), new Coordinates(12,34,56));
+        Coordinates c1 = new Coordinates(12,34);
+        Coordinates c2 = new Coordinates(12,34,56);
+        
+        LineString ls = new LineString(c1, c2);
+        
+        assertEquals("coordinates",                 Arrays.asList(c1, c2),      ls.getCoordinates());
 
         assertNull("default altitudeMode",                                      ls.getAltitudeMode());
-        assertEquals("setAltitudeMode()",       ls,                             ls.setAltitudeMode(AltitudeMode.clampToGround));
-        assertEquals("getAltitudeMode()",       AltitudeMode.clampToGround,     ls.getAltitudeMode());
+        assertEquals("setAltitudeMode()",           ls,                         ls.setAltitudeMode(AltitudeMode.clampToGround));
+        assertEquals("getAltitudeModeString()",     "clampToGround",            ls.getAltitudeModeString());
+        assertEquals("setAltitudeModeString()",     ls,                         ls.setAltitudeModeString("absolute"));
+        assertEquals("getAltitudeMode()",           AltitudeMode.absolute,      ls.getAltitudeMode());
 
         assertNull("default extrude",                                           ls.getExtrude());
-        assertEquals("setExtrude()",            ls,                             ls.setExtrude(Boolean.FALSE));
-        assertEquals("getExtrude()",            Boolean.FALSE,                  ls.getExtrude());
+        assertEquals("setExtrude()",                ls,                         ls.setExtrude(Boolean.FALSE));
+        assertEquals("getExtrude()",                Boolean.FALSE,              ls.getExtrude());
 
         assertNull("default tessellate",                                        ls.getTessellate());
-        assertEquals("setTessellate()",         ls,                             ls.setTessellate(Boolean.TRUE));
-        assertEquals("getTessellate()",         Boolean.TRUE,                   ls.getTessellate());
+        assertEquals("setTessellate()",             ls,                         ls.setTessellate(Boolean.TRUE));
+        assertEquals("getTessellate()",             Boolean.TRUE,               ls.getTessellate());
     }
 
 

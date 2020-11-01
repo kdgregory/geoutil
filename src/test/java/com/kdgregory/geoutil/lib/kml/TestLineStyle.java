@@ -39,7 +39,9 @@ public class TestLineStyle
 
         assertNull("getColorMode(), initial value",                         s.getColorMode());
         assertEquals("setColorMode()",                  s,                  s.setColorMode(ColorMode.random));
-        assertEquals("getColorMode()",                  ColorMode.random,   s.getColorMode());
+        assertEquals("getColorModeString()",            "random",           s.getColorModeString());
+        assertEquals("setColorModeString()",            s,                  s.setColorModeString("normal"));
+        assertEquals("getColorMode()",                  ColorMode.normal,   s.getColorMode());
 
         assertEquals("getWidth(), initial value",       0.0,                s.getWidth(),   0.0);
         assertEquals("setWidth()",                      s,                  s.setWidth(1.5));

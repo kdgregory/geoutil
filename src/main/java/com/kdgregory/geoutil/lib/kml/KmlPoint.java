@@ -93,6 +93,26 @@ implements Geometry
         return this;
     }
 
+
+    /**
+     *  Returns the point's altitude mode, if set, as a string; null otherwise.
+     */
+    public String getAltitudeModeString()
+    {
+        return (altitudeMode == null) ? null : altitudeMode.name();
+    }
+
+
+    /**
+     *  Sets the point's altitude mode, given a string value. Value may be null, to clear mode.
+     */
+    public KmlPoint setAltitudeModeString(String value)
+    {
+        this.altitudeMode = AltitudeMode.fromString(value);
+        return this;
+    }
+
+    
     /**
      *  Gets the extrude flag, if it is set; null otherwise.
      */
@@ -138,10 +158,8 @@ implements Geometry
         String namespace = elem.getNamespaceURI();
 
         KmlPoint p = new KmlPoint(XmlUtils.getChildText(elem, namespace, KmlConstants.E_GEOMETRY_COORD));
-        p.setAltitudeMode(ObjectUtils.optInvoke(
-            XmlUtils.getChildText(elem, namespace, KmlConstants.E_GEOMETRY_ALTMODE),
-            AltitudeMode::fromString));
-        p.setExtrude(XmlUtils.getChildTextAsBoolean(elem, namespace, KmlConstants.E_GEOMETRY_EXTRUDE));
+        ObjectUtils.optSet(XmlUtils.getChildText(elem, namespace, KmlConstants.E_GEOMETRY_ALTMODE),          p::setAltitudeModeString);
+        ObjectUtils.optSet(XmlUtils.getChildTextAsBoolean(elem, namespace, KmlConstants.E_GEOMETRY_EXTRUDE), p::setExtrude);
 
         return p;
     }
@@ -155,10 +173,9 @@ implements Geometry
     {
         Element child = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_POINT);
 
-        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_EXTRUDE, extrude);
-        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_ALTMODE,
-                                          ObjectUtils.optInvoke(altitudeMode, AltitudeMode::name));
-        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_COORD, getCoordinates());
+        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_EXTRUDE, getExtrude());
+        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_ALTMODE, getAltitudeModeString());
+        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_COORD,   getCoordinates());
 
         return child;
     }

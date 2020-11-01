@@ -84,6 +84,25 @@ extends KmlObject<IconStyle>
 
 
     /**
+     *  Returns the color mode assigned by this style, as a string.
+     */
+    public String getColorModeString()
+    {
+        return (colorMode == null) ? null : colorMode.name();
+    }
+
+
+    /**
+     *  Updates the color mode assigned by this style, using a string.
+     */
+    public IconStyle setColorModeString(String value)
+    {
+        colorMode = ColorMode.fromString(value);
+        return this;
+    }
+
+
+    /**
      *  Returns the scaling factor for this icon, in pixels. May be null.
      */
     public Double getScale()
@@ -166,15 +185,9 @@ extends KmlObject<IconStyle>
         IconStyle s = new IconStyle();
         s.fromXmlHelper(elem);
 
-        ObjectUtils.optSetString(XmlUtils.getChildText(elem, namespace, KmlConstants.E_COLORSTYLE_COLOR), s::setColor);
-
-        String colorMode = XmlUtils.getChildText(elem, namespace, KmlConstants.E_COLORSTYLE_MODE);
-        if (colorMode != null)
-        {
-            s.setColorMode(ColorMode.fromString(colorMode));
-        }
-
-        ObjectUtils.optSet(XmlUtils.getChildTextAsDouble(elem, namespace, KmlConstants.E_ICONSTYLE_SCALE), s::setScale);
+        ObjectUtils.optSetString(XmlUtils.getChildText(elem, namespace, KmlConstants.E_COLORSTYLE_COLOR),    s::setColor);
+        ObjectUtils.optSetString(XmlUtils.getChildText(elem, namespace, KmlConstants.E_COLORSTYLE_MODE),     s::setColorModeString);
+        ObjectUtils.optSet(XmlUtils.getChildTextAsDouble(elem, namespace, KmlConstants.E_ICONSTYLE_SCALE),   s::setScale);
         ObjectUtils.optSet(XmlUtils.getChildTextAsDouble(elem, namespace, KmlConstants.E_ICONSTYLE_HEADING), s::setHeading);
 
         Element eIcon = DomUtil.getChild(elem, namespace, KmlConstants.E_ICONSTYLE_ICON);
@@ -196,7 +209,7 @@ extends KmlObject<IconStyle>
         super.appendObjectXml(elem);
 
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_COLOR,    getColor());
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_MODE,     getColorMode());
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_MODE,     getColorModeString());
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_ICONSTYLE_SCALE,     getScale());
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_ICONSTYLE_HEADING,   getHeading());
 

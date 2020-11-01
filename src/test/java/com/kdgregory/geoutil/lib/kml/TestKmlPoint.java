@@ -44,15 +44,17 @@ public class TestKmlPoint
     {
         KmlPoint p = new KmlPoint(12, 34);
 
-        assertEquals("getCoordinates()",        "34.0,12.0",                    p.getCoordinates().toString());
+        assertEquals("getCoordinates()",            "34.0,12.0",                        p.getCoordinates().toString());
 
-        assertNull("default altitudeMode",                                      p.getAltitudeMode());
-        assertEquals("setAltitudeMode()",       p,                              p.setAltitudeMode(AltitudeMode.clampToGround));
-        assertEquals("getAltitudeMode()",       AltitudeMode.clampToGround,     p.getAltitudeMode());
+        assertNull("default altitudeMode",                                              p.getAltitudeMode());
+        assertEquals("setAltitudeMode()",           p,                                  p.setAltitudeMode(AltitudeMode.clampToGround));
+        assertEquals("getAltitudeModeString()",     "clampToGround",                    p.getAltitudeModeString());
+        assertEquals("setAltitudeModeString()",     p,                                  p.setAltitudeModeString("absolute"));
+        assertEquals("getAltitudeMode()",           AltitudeMode.absolute,              p.getAltitudeMode());
 
-        assertNull("default extrude",                                           p.getExtrude());
-        assertEquals("setExtrude()",            p,                              p.setExtrude(Boolean.FALSE));
-        assertEquals("getExtrude()",            Boolean.FALSE,                  p.getExtrude());
+        assertNull("default extrude",                                                   p.getExtrude());
+        assertEquals("setExtrude()",                p,                                  p.setExtrude(Boolean.FALSE));
+        assertEquals("getExtrude()",                Boolean.FALSE,                      p.getExtrude());
     }
 
 
@@ -82,9 +84,9 @@ public class TestKmlPoint
 
         KmlPoint p = KmlPoint.fromXml(dom.getDocumentElement());
 
-        assertEquals("coordinates",     "12.0,34.0,56.0",               p.getCoordinates().toString());
-        assertEquals("extrude",         Boolean.TRUE,                   p.getExtrude());
-        assertEquals("altitudeMode",    AltitudeMode.relativeToGround,  p.getAltitudeMode());
+        assertEquals("coordinates",     "12.0,34.0,56.0",                   p.getCoordinates().toString());
+        assertEquals("extrude",         Boolean.TRUE,                       p.getExtrude());
+        assertEquals("altitudeMode",    AltitudeMode.relativeToGround,      p.getAltitudeMode());
     }
 
 

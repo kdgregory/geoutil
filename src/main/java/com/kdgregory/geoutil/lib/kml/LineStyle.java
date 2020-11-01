@@ -82,6 +82,25 @@ extends KmlObject<LineStyle>
 
 
     /**
+     *  Returns the color mode assigned by this style, as a string.
+     */
+    public String getColorModeString()
+    {
+        return (colorMode == null) ? null : colorMode.name();
+    }
+
+
+    /**
+     *  Updates the color mode assigned by this style, using a string.
+     */
+    public LineStyle setColorModeString(String value)
+    {
+        colorMode = ColorMode.fromString(value);
+        return this;
+    }
+
+
+    /**
      *  Returns the width of this line, in pixels. The default width is 0.
      */
     public double getWidth()
@@ -128,12 +147,7 @@ extends KmlObject<LineStyle>
         s.fromXmlHelper(elem);
 
         ObjectUtils.optSetString(XmlUtils.getChildText(elem, namespace, KmlConstants.E_COLORSTYLE_COLOR), s::setColor);
-
-        String colorMode = XmlUtils.getChildText(elem, namespace, KmlConstants.E_COLORSTYLE_MODE);
-        if (colorMode != null)
-        {
-            s.setColorMode(ColorMode.fromString(colorMode));
-        }
+        ObjectUtils.optSetString(XmlUtils.getChildText(elem, namespace, KmlConstants.E_COLORSTYLE_MODE),  s::setColorModeString);
 
         Double width = XmlUtils.getChildTextAsDouble(elem, namespace, KmlConstants.E_LINESTYLE_WIDTH);
         if (width != null)
@@ -153,8 +167,8 @@ extends KmlObject<LineStyle>
         Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_LINESTYLE);
         super.appendObjectXml(elem);
 
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_COLOR,     getColor());
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_MODE, getColorMode());
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_COLOR,    getColor());
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_MODE,     getColorModeString());
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_LINESTYLE_WIDTH,     String.valueOf(getWidth()));
 
         return elem;

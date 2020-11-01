@@ -39,7 +39,9 @@ public class TestIconStyle
 
         assertNull("getColorMode(), initial value",                                     s.getColorMode());
         assertEquals("setColorMode()",                  s,                              s.setColorMode(ColorMode.random));
-        assertEquals("getColorMode()",                  ColorMode.random,               s.getColorMode());
+        assertEquals("getColorModeString()",            "random",                       s.getColorModeString());
+        assertEquals("setColorModeString()",            s,                              s.setColorModeString("normal"));
+        assertEquals("getColorMode()",                  ColorMode.normal,               s.getColorMode());
 
         assertNull("getScale(), initial value",                                         s.getScale());
         assertEquals("setScale()",                      s,                              s.setScale(Double.valueOf(1.5)));
