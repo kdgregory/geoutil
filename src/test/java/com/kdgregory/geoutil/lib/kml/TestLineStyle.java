@@ -33,19 +33,19 @@ public class TestLineStyle
     {
         LineStyle s = new LineStyle();
 
-        assertEquals("getColor(), initial value",       "00000000",         s.getColor());
-        assertEquals("setColor()",                      s,                  s.setColor("12345678"));
-        assertEquals("getColor()",                      "12345678",         s.getColor());
+        assertEquals("getColor(), initial value",       "00000000",             s.getColor());
+        assertEquals("setColor()",                      s,                      s.setColor("12345678"));
+        assertEquals("getColor()",                      "12345678",             s.getColor());
 
-        assertNull("getColorMode(), initial value",                         s.getColorMode());
-        assertEquals("setColorMode()",                  s,                  s.setColorMode(ColorMode.random));
-        assertEquals("getColorModeString()",            "random",           s.getColorModeString());
-        assertEquals("setColorModeString()",            s,                  s.setColorModeString("normal"));
-        assertEquals("getColorMode()",                  ColorMode.normal,   s.getColorMode());
+        assertNull("getColorMode(), initial value",                             s.getColorMode());
+        assertEquals("setColorMode()",                  s,                      s.setColorMode(ColorMode.random));
+        assertEquals("getColorModeString()",            "random",               s.getColorModeString());
+        assertEquals("setColorModeString()",            s,                      s.setColorModeString("normal"));
+        assertEquals("getColorMode()",                  ColorMode.normal,       s.getColorMode());
 
-        assertEquals("getWidth(), initial value",       0.0,                s.getWidth(),   0.0);
-        assertEquals("setWidth()",                      s,                  s.setWidth(1.5));
-        assertEquals("getWidth()",                      1.5,                s.getWidth(),   0.0);
+        assertEquals("getWidth(), initial value",       null,                   s.getWidth());
+        assertEquals("setWidth()",                      s,                      s.setWidth(1.5));
+        assertEquals("getWidth()",                      Double.valueOf(1.5),    s.getWidth());
     }
 
 
@@ -60,7 +60,7 @@ public class TestLineStyle
         assertNull("getId()",                           s.getId());
         assertEquals("getColor()",      "00000000",     s.getColor());
         assertNull("getColorMode()",                    s.getColorMode());
-        assertEquals("getWidth()",      0.0,            s.getWidth(),   0.0);
+        assertNull("getWidth()",                        s.getWidth());
     }
 
 
@@ -121,15 +121,11 @@ public class TestLineStyle
 
         List<Element> children = DomUtil.getChildren(child);
 
-        assertEquals("number of data elements",                 2,                                  children.size());
+        assertEquals("number of data elements",                 1,                                  children.size());
 
         assertEquals("color namespace",                         "http://www.opengis.net/kml/2.2",   children.get(0).getNamespaceURI());
         assertEquals("color name",                              "color",                            children.get(0).getNodeName());
         assertEquals("color value",                             "00000000",                         children.get(0).getTextContent());
-
-        assertEquals("width namespace",                         "http://www.opengis.net/kml/2.2",   children.get(1).getNamespaceURI());
-        assertEquals("width name",                              "width",                            children.get(1).getNodeName());
-        assertEquals("width value",                             "0.0",                              children.get(1).getTextContent());
     }
 
 

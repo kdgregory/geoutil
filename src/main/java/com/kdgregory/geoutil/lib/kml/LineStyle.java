@@ -32,7 +32,7 @@ extends KmlObject<LineStyle>
 {
     private String color = "00000000";
     private ColorMode colorMode;
-    private double width = 0.0;
+    private Double width;
 
 
 //----------------------------------------------------------------------------
@@ -101,9 +101,9 @@ extends KmlObject<LineStyle>
 
 
     /**
-     *  Returns the width of this line, in pixels. The default width is 0.
+     *  Returns the width of this line, in pixels. May be null.
      */
-    public double getWidth()
+    public Double getWidth()
     {
         return width;
     }
@@ -113,7 +113,7 @@ extends KmlObject<LineStyle>
      *  Sets the width of this line, in pixels. Note that fractional widths
      *  are supported.
      */
-    public LineStyle setWidth(double value)
+    public LineStyle setWidth(Double value)
     {
         width = value;
         return this;
@@ -146,14 +146,9 @@ extends KmlObject<LineStyle>
         LineStyle s = new LineStyle();
         s.fromXmlHelper(elem);
 
-        ObjectUtils.optSetString(XmlUtils.getChildText(elem, namespace, KmlConstants.E_COLORSTYLE_COLOR), s::setColor);
-        ObjectUtils.optSetString(XmlUtils.getChildText(elem, namespace, KmlConstants.E_COLORSTYLE_MODE),  s::setColorModeString);
-
-        Double width = XmlUtils.getChildTextAsDouble(elem, namespace, KmlConstants.E_LINESTYLE_WIDTH);
-        if (width != null)
-        {
-            s.setWidth(width.doubleValue());
-        }
+        ObjectUtils.optSetString(XmlUtils.getChildText(elem, namespace, KmlConstants.E_COLORSTYLE_COLOR),   s::setColor);
+        ObjectUtils.optSetString(XmlUtils.getChildText(elem, namespace, KmlConstants.E_COLORSTYLE_MODE),    s::setColorModeString);
+        ObjectUtils.optSet(XmlUtils.getChildTextAsDouble(elem, namespace, KmlConstants.E_LINESTYLE_WIDTH),  s::setWidth);
 
         return s;
     }
@@ -169,7 +164,7 @@ extends KmlObject<LineStyle>
 
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_COLOR,    getColor());
         XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_MODE,     getColorModeString());
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_LINESTYLE_WIDTH,     String.valueOf(getWidth()));
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_LINESTYLE_WIDTH,     getWidth());
 
         return elem;
     }

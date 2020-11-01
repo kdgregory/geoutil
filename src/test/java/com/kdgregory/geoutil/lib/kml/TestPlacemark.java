@@ -122,7 +122,7 @@ public class TestPlacemark
     public void testAppendAsXmlComplete() throws Exception
     {
         KmlPoint p = new KmlPoint(12, 34).setExtrude(Boolean.TRUE);
-        Style s = new Style().setLineStyle(new LineStyle().setWidth(2));
+        Style s = new Style().setLineStyle(new LineStyle().setWidth(2.0));
         Placemark m = new Placemark()
                       .setId("uniqueId")
                       .setName("example")

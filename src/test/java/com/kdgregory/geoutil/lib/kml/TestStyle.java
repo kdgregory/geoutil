@@ -82,7 +82,7 @@ public class TestStyle
                   .setLineStyle(
                       new LineStyle()
                       .setColor("12345678")
-                      .setWidth(12));
+                      .setWidth(12.0));
 
         Element parent = DomUtil.newDocument("irrelevant");
         Element child = s.appendAsXml(parent);
