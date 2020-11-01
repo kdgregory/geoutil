@@ -27,12 +27,14 @@ import com.kdgregory.geoutil.lib.internal.XmlUtils;
  *  <p>
  *  See https://developers.google.com/kml/documentation/kmlreference#style.
  */
-public class LineStyle
-extends KmlObject<LineStyle>
+public class IconStyle
+extends KmlObject<IconStyle>
 {
     private String color = "00000000";
     private ColorMode colorMode;
-    private double width = 0.0;
+    private Double scale;
+    private Double heading;
+    private String href;
 
 
 //----------------------------------------------------------------------------
@@ -55,7 +57,7 @@ extends KmlObject<LineStyle>
      *  green, and "rr" is red. Note that this is <em>not</em> the same order
      *  as used by HTML.
      */
-    public LineStyle setColor(String value)
+    public IconStyle setColor(String value)
     {
         color = value;
         return this;
@@ -74,7 +76,7 @@ extends KmlObject<LineStyle>
     /**
      *  Updates the color mode assigned by this style.
      */
-    public LineStyle setColorMode(ColorMode value)
+    public IconStyle setColorMode(ColorMode value)
     {
         colorMode = value;
         return this;
@@ -82,21 +84,58 @@ extends KmlObject<LineStyle>
 
 
     /**
-     *  Returns the width of this line, in pixels. The default width is 0.
+     *  Returns the scaling factor for this icon, in pixels. May be null.
      */
-    public double getWidth()
+    public Double getScale()
     {
-        return width;
+        return scale;
     }
 
 
     /**
-     *  Sets the width of this line, in pixels. Note that fractional widths
-     *  are supported.
+     *  Sets the scaling fractor for this icon.
      */
-    public LineStyle setWidth(double value)
+    public IconStyle setScale(Double value)
     {
-        width = value;
+        scale = value;
+        return this;
+    }
+
+
+    /**
+     *  Returns the orientation of this icon, from 0 to 360 degrees. May be null.
+     */
+    public Double getHeading()
+    {
+        return heading;
+    }
+
+
+    /**
+     *  Sets the orientation of this icon.
+     */
+    public IconStyle setHeading(Double value)
+    {
+        heading = value;
+        return this;
+    }
+
+
+    /**
+     *  Returns the reference to the icon content. May be null.
+     */
+    public String getHref()
+    {
+        return href;
+    }
+
+
+    /**
+     *  Sets the reference to the icon content. May be null.
+     */
+    public IconStyle setHref(String value)
+    {
+        href = value;
         return this;
     }
 
@@ -115,16 +154,16 @@ extends KmlObject<LineStyle>
      *          the name "Style", or cannot be parsed according to the KML
      *          specification.
      */
-    public static LineStyle fromXml(Element elem)
+    public static IconStyle fromXml(Element elem)
     {
-        if (! KmlConstants.E_LINESTYLE.equals(DomUtil.getLocalName(elem)))
+        if (! KmlConstants.E_ICONSTYLE.equals(DomUtil.getLocalName(elem)))
         {
             throw new IllegalArgumentException("incorrect element name: " + DomUtil.getLocalName(elem));
         }
 
         String namespace = elem.getNamespaceURI();
 
-        LineStyle s = new LineStyle();
+        IconStyle s = new IconStyle();
         s.fromXmlHelper(elem);
 
         ObjectUtils.optSetString(XmlUtils.getChildText(elem, namespace, KmlConstants.E_COLORSTYLE_COLOR), s::setColor);
@@ -135,10 +174,13 @@ extends KmlObject<LineStyle>
             s.setColorMode(ColorMode.fromString(colorMode));
         }
 
-        Double width = XmlUtils.getChildTextAsDouble(elem, namespace, KmlConstants.E_LINESTYLE_WIDTH);
-        if (width != null)
+        ObjectUtils.optSet(XmlUtils.getChildTextAsDouble(elem, namespace, KmlConstants.E_ICONSTYLE_SCALE), s::setScale);
+        ObjectUtils.optSet(XmlUtils.getChildTextAsDouble(elem, namespace, KmlConstants.E_ICONSTYLE_HEADING), s::setHeading);
+
+        Element eIcon = DomUtil.getChild(elem, namespace, KmlConstants.E_ICONSTYLE_ICON);
+        if (eIcon != null)
         {
-            s.setWidth(width.doubleValue());
+            ObjectUtils.optSet(XmlUtils.getChildText(eIcon, namespace, KmlConstants.E_ICONSTYLE_ICON_HREF), s::setHref);
         }
 
         return s;
@@ -150,12 +192,19 @@ extends KmlObject<LineStyle>
      */
     public Element appendAsXml(Element parent)
     {
-        Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_LINESTYLE);
+        Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_ICONSTYLE);
         super.appendObjectXml(elem);
 
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_COLOR,     getColor());
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_MODE, getColorMode());
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_LINESTYLE_WIDTH,     String.valueOf(getWidth()));
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_COLOR,    getColor());
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_MODE,     getColorMode());
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_ICONSTYLE_SCALE,     getScale());
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_ICONSTYLE_HEADING,   getHeading());
+
+        if (getHref() != null)
+        {
+            Element eIcon = DomUtil.appendChild(elem, KmlConstants.NAMESPACE, KmlConstants.E_ICONSTYLE_ICON);
+            XmlUtils.optAppendDataElement(eIcon, KmlConstants.NAMESPACE, KmlConstants.E_ICONSTYLE_ICON_HREF, getHref());
+        }
 
         return elem;
     }

@@ -121,11 +121,25 @@ public class KmlConstants
     public final static String  E_LISTSTYLE             = "ListStyle";
 
 
-    /** LineStyle child elemnt: color */
-    public final static String  E_LINESTYLE_COLOR       = "color";
+    /** Shared style child elemnt: color */
+    public final static String  E_COLORSTYLE_COLOR      = "color";
 
-    /** LineStyle child elemnt: colorMode */
-    public final static String  E_LINESTYLE_COLORMODE   = "colorMode";
+    /** Shared style child elemnt: colorMode */
+    public final static String  E_COLORSTYLE_MODE       = "colorMode";
+
+
+    /** IconStyle child element: scale */
+    public final static String  E_ICONSTYLE_SCALE       = "scale";
+
+    /** IconStyle child element: heading */
+    public final static String  E_ICONSTYLE_HEADING     = "heading";
+
+    /** IconStyle child element: Icon */
+    public final static String  E_ICONSTYLE_ICON        = "Icon";
+
+    /** IconStyle child element: Icon reference */
+    public final static String  E_ICONSTYLE_ICON_HREF   = "href";
+
 
     /** LineStyle child elemnt: width */
     public final static String  E_LINESTYLE_WIDTH       = "width";

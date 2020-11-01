@@ -29,12 +29,30 @@ import com.kdgregory.geoutil.lib.internal.ObjectUtils;
 public class Style
 extends KmlObject<Style>
 {
+    private IconStyle iconStyle;
     private LineStyle lineStyle;
-
 
 //----------------------------------------------------------------------------
 //  Accessors
 //----------------------------------------------------------------------------
+
+    /**
+     *  Returns the IconStyle attached to this container. May be null.
+     */
+    public IconStyle getIconStyle()
+    {
+        return iconStyle;
+    }
+
+
+    /**
+     *  Attaches an IconStyle to this container.
+     */
+    public Style setIconStyle(IconStyle value)
+    {
+        iconStyle = value;
+        return this;
+    }
 
     /**
      *  Returns the LineStyle attached to this container. May be null.
@@ -84,11 +102,14 @@ extends KmlObject<Style>
             String childName = DomUtil.getLocalName(child);
             switch (childName)
             {
+                case KmlConstants.E_ICONSTYLE:
+                    s.setIconStyle(IconStyle.fromXml(child));
+                    break;
+
                 case KmlConstants.E_LINESTYLE:
                     s.setLineStyle(LineStyle.fromXml(child));
                     break;
 
-                case KmlConstants.E_ICONSTYLE:
                 case KmlConstants.E_LABELSTYLE:
                 case KmlConstants.E_POLYSTYLE:
                 case KmlConstants.E_BALLOONSTYLE:
@@ -112,6 +133,7 @@ extends KmlObject<Style>
     {
         Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_STYLE);
         super.appendObjectXml(elem);
+        ObjectUtils.optSet(iconStyle, s -> s.appendAsXml(elem));
         ObjectUtils.optSet(lineStyle, s -> s.appendAsXml(elem));
         return elem;
     }

@@ -39,6 +39,12 @@ public class TestStyle
         assertEquals("setId()",                     s,                      s.setId("argle"));
         assertEquals("getId()",                     "argle",                s.getId());
 
+        IconStyle is = new IconStyle();
+
+        assertNull("getIconStyle() initial value",                          s.getIconStyle());
+        assertEquals("setIconStyle()",              s,                      s.setIconStyle(is));
+        assertSame("getIconStyle()",                is,                     s.getIconStyle());
+
         LineStyle ls = new LineStyle();
 
         assertNull("getLineStyle() initial value",                          s.getLineStyle());
@@ -69,10 +75,13 @@ public class TestStyle
     {
         Style s = new Style()
                   .setId("uniqueId")
+                  .setIconStyle(
+                      new IconStyle()
+                      .setColor("87654321")
+                      .setHeading(178.0))
                   .setLineStyle(
                       new LineStyle()
                       .setColor("12345678")
-                      .setColorMode(ColorMode.random)
                       .setWidth(12));
 
         Element parent = DomUtil.newDocument("irrelevant");
@@ -86,13 +95,17 @@ public class TestStyle
 
         List<Element> children = DomUtil.getChildren(child);
 
-        assertEquals("number of style elements",                1,                                  children.size());
+        assertEquals("number of style elements",                2,                                  children.size());
 
         assertEquals("element 1 namespace",                     "http://www.opengis.net/kml/2.2",   children.get(0).getNamespaceURI());
-        assertEquals("element 1 name",                          "LineStyle",                        children.get(0).getNodeName());
-        assertEquals("element 1 color",                         "12345678",                         XmlUtils.getChildText(children.get(0), "http://www.opengis.net/kml/2.2", "color"));
-        assertEquals("element 1 colorMode",                     "random",                           XmlUtils.getChildText(children.get(0), "http://www.opengis.net/kml/2.2", "colorMode"));
-        assertEquals("element 1 width",                         "12.0",                             XmlUtils.getChildText(children.get(0), "http://www.opengis.net/kml/2.2", "width"));
+        assertEquals("element 1 name",                          "IconStyle",                        children.get(0).getNodeName());
+        assertEquals("element 1 color",                         "87654321",                         XmlUtils.getChildText(children.get(0), "http://www.opengis.net/kml/2.2", "color"));
+        assertEquals("element 1 heading",                       "178.0",                            XmlUtils.getChildText(children.get(0), "http://www.opengis.net/kml/2.2", "heading"));
+
+        assertEquals("element 2 namespace",                     "http://www.opengis.net/kml/2.2",   children.get(1).getNamespaceURI());
+        assertEquals("element 2 name",                          "LineStyle",                        children.get(1).getNodeName());
+        assertEquals("element 2 color",                         "12345678",                         XmlUtils.getChildText(children.get(1), "http://www.opengis.net/kml/2.2", "color"));
+        assertEquals("element 2 width",                         "12.0",                             XmlUtils.getChildText(children.get(1), "http://www.opengis.net/kml/2.2", "width"));
     }
 
 
@@ -105,6 +118,7 @@ public class TestStyle
         Style s = Style.fromXml(root);
 
         assertNull("id",            s.getId());
+        assertNull("iconStyle",     s.getIconStyle());
         assertNull("lineStyle",     s.getLineStyle());
     }
 
@@ -117,7 +131,11 @@ public class TestStyle
 
         Element root = XmlBuilder.element("http://earth.google.com/kml/2.1", "Style",
                             XmlBuilder.attribute("id", "somethingUnique"),
-                            XmlBuilder.element("http://earth.google.com/kml/2.1", "IconStyle"),
+                            XmlBuilder.element("http://earth.google.com/kml/2.1", "IconStyle",
+                                XmlBuilder.element("http://earth.google.com/kml/2.1", "color",      XmlBuilder.text("87654321")),
+                                XmlBuilder.element("http://earth.google.com/kml/2.1", "heading",    XmlBuilder.text("122")),
+                                XmlBuilder.element("http://earth.google.com/kml/2.1", "Icon",
+                                    XmlBuilder.element("http://earth.google.com/kml/2.1", "href",   XmlBuilder.text("http://www.example.com/icon")))),
                             XmlBuilder.element("http://earth.google.com/kml/2.1", "LabelStyle"),
                             XmlBuilder.element("http://earth.google.com/kml/2.1", "LineStyle",
                                 XmlBuilder.element("http://earth.google.com/kml/2.1", "color", XmlBuilder.text("12345678")),
@@ -130,10 +148,15 @@ public class TestStyle
 
         Style s = Style.fromXml(root);
 
-        assertEquals("id",                      "somethingUnique",          s.getId());
-        assertEquals("lineStyle color",         "12345678",                 s.getLineStyle().getColor());
-        assertEquals("lineStyle colorMode",     ColorMode.random,           s.getLineStyle().getColorMode());
-        assertEquals("lineStyle width",         1.5,                        s.getLineStyle().getWidth(), 0.0);
+        assertEquals("id",                      "somethingUnique",              s.getId());
+
+        assertEquals("iconStyle color",         "87654321",                     s.getIconStyle().getColor());
+        assertEquals("iconStyle heading",       Double.valueOf(122.0),          s.getIconStyle().getHeading());
+        assertEquals("iconStyle href",          "http://www.example.com/icon",  s.getIconStyle().getHref());
+
+        assertEquals("lineStyle color",         "12345678",                     s.getLineStyle().getColor());
+        assertEquals("lineStyle colorMode",     ColorMode.random,               s.getLineStyle().getColorMode());
+        assertEquals("lineStyle width",         1.5,                            s.getLineStyle().getWidth(), 0.0);
     }
 
 
