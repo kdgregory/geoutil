@@ -22,21 +22,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.practicalxml.DomUtil;
-import net.sf.practicalxml.OutputUtil;
-import net.sf.practicalxml.ParseUtil;
-import net.sf.practicalxml.xpath.XPathWrapperFactory;
-import net.sf.practicalxml.xpath.XPathWrapperFactory.CacheType;
-
+import com.kdgregory.geoutil.lib.kml.*;
 import com.kdgregory.geoutil.lib.shared.Point;
 import com.kdgregory.geoutil.lib.shared.SegmentUtil;
 
@@ -53,103 +42,82 @@ public class GarminTrackMerge
 {
     private static Logger logger = LoggerFactory.getLogger(GarminTrackMerge.class);
 
-    private static XPathWrapperFactory xpFact = new XPathWrapperFactory(CacheType.SIMPLE)
-                                                .bindNamespace("ns", "http://earth.google.com/kml/2.1");
-
     public static void main(String[] argv)
     throws Exception
     {
         logger.info("starting");
 
-        Document[] sources = new Document[2];
+        KmlFile[] sources = new KmlFile[2];
         List<Point>[] srcTracks = new List[2];
 
         for (int argidx = 0 ; argidx < 2 ; argidx++)
         {
-            String filename = argv[argidx];
-            sources[argidx] = ParseUtil.parse(new File(filename));
+            File file = new File(argv[argidx]);
+            sources[argidx] = KmlFile.parse(file);
             srcTracks[argidx] = extractTrack(sources[argidx]);
-            logger.info("extracted {} points from {}", srcTracks[argidx].size(), filename);
+            logger.info("extracted {} points from {}", srcTracks[argidx].size(), file);
         }
 
         List<Point[]> aligned = SegmentUtil.align(srcTracks[0], srcTracks[1], 25, 100);
         logger.info("after alignment: {} points", aligned.size());
 
-        Document result = buildOutput(aligned);
+        KmlFile result = buildOutput(aligned);
 
-        String filename = argv[2];
-        OutputUtil.indented(new DOMSource(result), new StreamResult(filename), 4);
-        logger.info("output written to {}", filename);
+        result.write(new File(argv[2]));
+        logger.info("output written to {}", argv[2]);
     }
 
 
-    private static List<Point> extractTrack(Document dom)
+    private static List<Point> extractTrack(KmlFile kmlfile)
     throws Exception
     {
         List<Point> result = new ArrayList<>();
 
-        List<Element> points = xpFact.newXPath("//ns:Folder/ns:name[text()='Track Points']/../ns:Placemark").evaluate(dom, Element.class);
-        for (Element point : points)
+        for (Folder folder : kmlfile.find(Folder.class, "Track Points"))
         {
-            String srcTimestamp = xpFact.newXPath("ns:TimeSpan/ns:begin").evaluateAsString(point);
-            Instant timestamp = Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(srcTimestamp));
-
-            String srcCoordinates = xpFact.newXPath("ns:Point/ns:coordinates").evaluateAsString(point);
-            String[] parsedCoordinates = srcCoordinates.split(",");
-            double lon = Double.valueOf(parsedCoordinates[0].trim());
-            double lat = Double.valueOf(parsedCoordinates[1].trim());
-
-            result.add(new Point(lat, lon, timestamp));
+            for (Placemark pm : folder.find(Placemark.class, null))
+            {
+                // these files represent the path as points, but with a timespan rather than a timestamp
+                if ((pm.getGeometry() instanceof KmlPoint) && (pm.getTimespan() != null))
+                {
+                    Coordinates coord = ((KmlPoint)pm.getGeometry()).getCoordinates();
+                    Point p = new Point(coord.getLat(), coord.getLon(), coord.getElevation(), pm.getTimespan().getBegin());
+                    result.add(p);
+                }
+            }
         }
 
         return result;
     }
 
 
-    private static Document buildOutput(List<Point[]> pairs)
+    private static KmlFile buildOutput(List<Point[]> pairs)
     {
-        Element root = DomUtil.newDocument("http://www.opengis.net/kml/2.2", "kml");
 
-        Element kdoc = DomUtil.appendChildInheritNamespace(root, "Document");
-        appendStyleDef(kdoc, 1, "FF00FF00");
-        appendStyleDef(kdoc, 2, "FFFF0000");
+        Document doc = new Document()
+                       .addSharedStyle(
+                           new Style().setId("path_1_styles")
+                               .setIconStyle(
+                                   new IconStyle().setColor("FF00FF00")))
+                       .addSharedStyle(
+                           new Style().setId("path_2_styles")
+                               .setIconStyle(
+                                   new IconStyle().setColor("FFFF0000")));
 
         for (Point[] pair : pairs)
         {
-            appendPoint(kdoc, pair[0], 1);
-            appendPoint(kdoc, pair[1], 2);
+            for (int path = 0 ; path <= 1 ; path++)
+            {
+                Point p = pair[path];
+                doc.addFeature(
+                    new Placemark()
+                        .setDescription("path " + path + ": " + formatTimestamp(p))
+                        .setStyleRef("path_" + (path + 1) + "_styles")
+                        .setGeometry(new KmlPoint(p.getLat(), p.getLon())));
+            }
         }
 
-//        OutputUtil.indented(new DOMSource(root.getOwnerDocument()), new StreamResult("/tmp/test.xml"), 4);
-
-        return root.getOwnerDocument();
-    }
-
-
-    private static void appendStyleDef(Element kdoc, int pathNumber, String color)
-    {
-        Element style = DomUtil.appendChildInheritNamespace(kdoc, "Style");
-        style.setAttribute("id", "path_" + pathNumber);
-
-        Element iconStyle = DomUtil.appendChildInheritNamespace(style, "IconStyle");
-        Element iconColor = DomUtil.appendChildInheritNamespace(iconStyle, "color");
-        iconColor.setTextContent(color);
-    }
-
-
-    private static void appendPoint(Element path, Point p, int pathNumber)
-    {
-        Element pm = DomUtil.appendChildInheritNamespace(path, "Placemark");
-
-        Element desc = DomUtil.appendChildInheritNamespace(pm, "description");
-        desc.setTextContent("path " + pathNumber + ": " + formatTimestamp(p));
-
-        Element style = DomUtil.appendChildInheritNamespace(pm, "styleUrl");
-        style.setTextContent("#" +  "path_" + pathNumber);
-
-        Element pt = DomUtil.appendChildInheritNamespace(pm, "Point");
-        Element coord = DomUtil.appendChildInheritNamespace(pt, "coordinates");
-        coord.setTextContent(p.getLon() + "," + p.getLat());
+        return new KmlFile().addFeature(doc);
     }
 
 
