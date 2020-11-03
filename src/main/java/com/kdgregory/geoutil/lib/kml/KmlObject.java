@@ -30,7 +30,6 @@ public abstract class KmlObject<T extends KmlObject<T>>
 //----------------------------------------------------------------------------
 //  Accessors
 //----------------------------------------------------------------------------
-//----------------------------------------------------------------------------
 
     /**
      *  Returns this folder's unique ID. May be null.
@@ -50,6 +49,15 @@ public abstract class KmlObject<T extends KmlObject<T>>
         id = value;
         return (T)this;
     }
+    
+//----------------------------------------------------------------------------
+//  Abstract methods
+//----------------------------------------------------------------------------
+    
+    /**
+     *  Serializes this object to XML and appends it to an existing DOM tree.
+     */
+    public abstract Element appendAsXml(Element parent);
 
 //----------------------------------------------------------------------------
 //  Helpers for subclasses
