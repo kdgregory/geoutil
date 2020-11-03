@@ -29,7 +29,7 @@ import com.kdgregory.geoutil.lib.internal.XmlUtils;
  *  the underlying <code>Point</code> object.
  */
 public class KmlPoint
-implements Geometry
+extends Geometry<KmlPoint>
 {
     private Coordinates coordinates;
     private AltitudeMode altitudeMode;

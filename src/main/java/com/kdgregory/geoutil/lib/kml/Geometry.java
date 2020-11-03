@@ -14,17 +14,12 @@
 
 package com.kdgregory.geoutil.lib.kml;
 
-import org.w3c.dom.Element;
 
 /**
- *  This is a marker interface that corresponds to the Geometry abstract element
- *  defined in https://developers.google.com/kml/documentation/kmlreference#geometry.
+ *  Superclass for objects that hold the geometric shape of a {@link Placemark}.
  */
-public interface Geometry
+public abstract class Geometry<T extends Geometry<T>>
+extends KmlObject<T>
 {
-    /**
-     *  Appends this object to a parent, using an implementation-defined element name.
-     *  Returns the appended element (to support testing).
-     */
-    Element appendAsXml(Element parent);
+    // nothing here yet
 }

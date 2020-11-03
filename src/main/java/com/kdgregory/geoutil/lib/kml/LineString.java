@@ -37,7 +37,7 @@ import com.kdgregory.geoutil.lib.shared.Point;
  *  the underlying <code>Coordinates</code>.
  */
 public class LineString
-implements Geometry
+extends Geometry<LineString>
 {
     private List<Coordinates> coordinates;
     private AltitudeMode altitudeMode;

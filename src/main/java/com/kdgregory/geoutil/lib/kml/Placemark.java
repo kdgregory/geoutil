@@ -30,7 +30,7 @@ import com.kdgregory.geoutil.lib.internal.ObjectUtils;
 public class Placemark
 extends Feature<Placemark>
 {
-    private Geometry geometry;
+    private Geometry<?> geometry;
 
 //----------------------------------------------------------------------------
 //  Accessors
@@ -41,7 +41,7 @@ extends Feature<Placemark>
      *  classes that implement geometry; if it is important to process them
      *  differently you will need to dispatch based on concrete class.
      */
-    public Geometry getGeometry()
+    public Geometry<?> getGeometry()
     {
         return geometry;
     }
@@ -50,7 +50,7 @@ extends Feature<Placemark>
     /**
      *  Updates the geometry represented by this placemark.
      */
-    public Placemark setGeometry(Geometry value)
+    public Placemark setGeometry(Geometry<?> value)
     {
         geometry = value;
         return this;
