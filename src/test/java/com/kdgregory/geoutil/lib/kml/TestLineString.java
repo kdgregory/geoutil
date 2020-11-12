@@ -45,9 +45,9 @@ public class TestLineString
     {
         Coordinates c1 = new Coordinates(12,34);
         Coordinates c2 = new Coordinates(12,34,56);
-        
+
         LineString ls = new LineString(c1, c2);
-        
+
         assertEquals("coordinates",                 Arrays.asList(c1, c2),      ls.getCoordinates());
 
         assertNull("default altitudeMode",                                      ls.getAltitudeMode());
@@ -79,14 +79,13 @@ public class TestLineString
         assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
         assertEquals("child name",                              "LineString",                       child.getNodeName());
 
-        // we care about order, so will retrieve all nested elements and access via index
-        List<Element> nested = DomUtil.getChildren(child);
+        List<Element> dataElements = DomUtil.getChildren(child);
 
-        assertEquals("number of data elements",                 1,                                  nested.size());
+        assertEquals("number of data elements",                 1,                                  dataElements.size());
 
-        assertEquals("coordinates namespace",                   "http://www.opengis.net/kml/2.2",   nested.get(0).getNamespaceURI());
-        assertEquals("coordinates name",                        "coordinates",                      nested.get(0).getNodeName());
-        assertEquals("coordinates value",                       "34.0,12.0",                        nested.get(0).getTextContent());
+        assertEquals("data element 1 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
+        assertEquals("data element 1 name",                     "coordinates",                      dataElements.get(0).getNodeName());
+        assertEquals("data element 1 value",                    "34.0,12.0",                        dataElements.get(0).getTextContent());
     }
 
 
@@ -106,26 +105,25 @@ public class TestLineString
         assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
         assertEquals("child name",                              "LineString",                       child.getNodeName());
 
-        // we care about order, so will retrieve all nested elements and access via index
-        List<Element> nested = DomUtil.getChildren(child);
+        List<Element> dataElements = DomUtil.getChildren(child);
 
-        assertEquals("number of data elements",                 4,                                  nested.size());
+        assertEquals("number of data elements",                 4,                                  dataElements.size());
 
-        assertEquals("altitudeMode namespace",                  "http://www.opengis.net/kml/2.2",   nested.get(0).getNamespaceURI());
-        assertEquals("altitudeMode name",                       "extrude",                          nested.get(0).getNodeName());
-        assertEquals("altitudeMode value",                      "1",                                nested.get(0).getTextContent());
+        assertEquals("data element 1 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
+        assertEquals("data element 1 name",                     "extrude",                          dataElements.get(0).getNodeName());
+        assertEquals("data element 1 value",                    "1",                                dataElements.get(0).getTextContent());
 
-        assertEquals("altitudeMode namespace",                  "http://www.opengis.net/kml/2.2",   nested.get(1).getNamespaceURI());
-        assertEquals("altitudeMode name",                       "tessellate",                       nested.get(1).getNodeName());
-        assertEquals("altitudeMode value",                      "0",                                nested.get(1).getTextContent());
+        assertEquals("data element 2 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
+        assertEquals("data element 2 name",                     "tessellate",                       dataElements.get(1).getNodeName());
+        assertEquals("data element 2 value",                    "0",                                dataElements.get(1).getTextContent());
 
-        assertEquals("altitudeMode namespace",                  "http://www.opengis.net/kml/2.2",   nested.get(2).getNamespaceURI());
-        assertEquals("altitudeMode name",                       "altitudeMode",                     nested.get(2).getNodeName());
-        assertEquals("altitudeMode value",                      "relativeToGround",                 nested.get(2).getTextContent());
+        assertEquals("data element 3 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(2).getNamespaceURI());
+        assertEquals("data element 3 name",                     "altitudeMode",                     dataElements.get(2).getNodeName());
+        assertEquals("data element 3 value",                    "relativeToGround",                 dataElements.get(2).getTextContent());
 
-        assertEquals("coordinates namespace",                   "http://www.opengis.net/kml/2.2",   nested.get(3).getNamespaceURI());
-        assertEquals("coordinates name",                        "coordinates",                      nested.get(3).getNodeName());
-        assertEquals("coordinates value",                       "34.0,12.0,56.0 56.0,34.0,78.0",    nested.get(3).getTextContent());
+        assertEquals("data element 4 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(3).getNamespaceURI());
+        assertEquals("data element 4 name",                     "coordinates",                      dataElements.get(3).getNodeName());
+        assertEquals("data element 4 value",                    "34.0,12.0,56.0 56.0,34.0,78.0",    dataElements.get(3).getTextContent());
     }
 
 

@@ -166,7 +166,7 @@ extends Geometry<LineString>
     }
 
 //----------------------------------------------------------------------------
-//  Other Public Methods
+//  XML conversion
 //----------------------------------------------------------------------------
 
     /**
@@ -179,8 +179,7 @@ extends Geometry<LineString>
 
         XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_EXTRUDE, extrude);
         XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_TESSELLATE, tessellate);
-        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_ALTMODE,
-                                          ObjectUtils.optInvoke(altitudeMode, AltitudeMode::name));
+        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_ALTMODE, getAltitudeModeString());
         XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_COORD, Coordinates.stringify(coordinates));
 
         return child;
@@ -214,11 +213,9 @@ extends Geometry<LineString>
             throw new IllegalArgumentException("LineString must have coordinates");
 
         LineString p = new LineString(coords);
-        p.setAltitudeMode(ObjectUtils.optInvoke(
-            XmlUtils.getChildText(elem, namespace, KmlConstants.E_GEOMETRY_ALTMODE),
-            AltitudeMode::fromString));
-        p.setExtrude(XmlUtils.getChildTextAsBoolean(elem, namespace, KmlConstants.E_GEOMETRY_EXTRUDE));
-        p.setTessellate(XmlUtils.getChildTextAsBoolean(elem, namespace, KmlConstants.E_GEOMETRY_TESSELLATE));
+        ObjectUtils.optSet(XmlUtils.getChildText(elem, namespace, KmlConstants.E_GEOMETRY_ALTMODE),             p::setAltitudeModeString);
+        ObjectUtils.optSet(XmlUtils.getChildTextAsBoolean(elem, namespace, KmlConstants.E_GEOMETRY_EXTRUDE),    p::setExtrude);
+        ObjectUtils.optSet(XmlUtils.getChildTextAsBoolean(elem, namespace, KmlConstants.E_GEOMETRY_TESSELLATE), p::setTessellate);
 
         return p;
     }

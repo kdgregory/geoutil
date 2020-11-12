@@ -73,8 +73,22 @@ extends KmlObject<Style>
     }
 
 //----------------------------------------------------------------------------
-//  Other Public Methods
+//  XML conversion
 //----------------------------------------------------------------------------
+
+    /**
+     *  Appends this style container's XML representation to the provided element.
+     */
+    @Override
+    public Element appendAsXml(Element parent)
+    {
+        Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_STYLE);
+        super.toXmlHelper(elem);
+        ObjectUtils.optSet(iconStyle, s -> s.appendAsXml(elem));
+        ObjectUtils.optSet(lineStyle, s -> s.appendAsXml(elem));
+        return elem;
+    }
+
 
     /**
      *  Creates an instance from a DOM element tree.
@@ -123,19 +137,5 @@ extends KmlObject<Style>
         }
 
         return s;
-    }
-
-
-    /**
-     *  Appends this folder's XML representation to the provided element.
-     */
-    @Override
-    public Element appendAsXml(Element parent)
-    {
-        Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_STYLE);
-        super.appendObjectXml(elem);
-        ObjectUtils.optSet(iconStyle, s -> s.appendAsXml(elem));
-        ObjectUtils.optSet(lineStyle, s -> s.appendAsXml(elem));
-        return elem;
     }
 }

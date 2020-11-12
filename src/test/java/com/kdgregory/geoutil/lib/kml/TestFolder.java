@@ -115,31 +115,28 @@ public class TestFolder
         assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
         assertEquals("child name",                              "Folder",                           child.getNodeName());
 
-        // we care about order, so will retrieve all children and access via index
         List<Element> dataElements = DomUtil.getChildren(child);
 
-        assertEquals("number of data elements",     3,                                  dataElements.size());
+        assertEquals("number of data elements",                 3,                                  dataElements.size());
 
-        assertEquals("name namespace",              "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
-        assertEquals("name name",                   "name",                             dataElements.get(0).getNodeName());
-        assertEquals("name value",                  "folder name",                      dataElements.get(0).getTextContent());
+        assertEquals("data element 1 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
+        assertEquals("data element 1 name",                     "name",                             dataElements.get(0).getNodeName());
+        assertEquals("data element 1 value",                    "folder name",                      dataElements.get(0).getTextContent());
 
-        assertEquals("feature 1 namespace",         "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
-        assertEquals("feature 1 name",              "Placemark",                        dataElements.get(1).getNodeName());
+        assertEquals("data element 2 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
+        assertEquals("data element 2 name",                     "Placemark",                        dataElements.get(1).getNodeName());
 
-        assertEquals("feature 2 namespace",         "http://www.opengis.net/kml/2.2",   dataElements.get(2).getNamespaceURI());
-        assertEquals("feature 2 name",              "Placemark",                        dataElements.get(2).getNodeName());
+        assertEquals("data element 3 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(2).getNamespaceURI());
+        assertEquals("data element 3 name",                     "Placemark",                        dataElements.get(2).getNodeName());
 
         // verify the feature contents by converting them, using name to assert correct order
 
         Feature<?> f1 = Placemark.fromXml(dataElements.get(1));
         Feature<?> f2 = Placemark.fromXml(dataElements.get(2));
 
-        assertEquals("feature 1",                   "first feature",                    f1.getName());
-        assertEquals("feature 2",                   "second feature",                   f2.getName());
+        assertEquals("feature 1",                               "first feature",                    f1.getName());
+        assertEquals("feature 2",                               "second feature",                   f2.getName());
     }
-
-    // TODO - test conversion to XML with a different geometry
 
 
     @Test
@@ -160,7 +157,6 @@ public class TestFolder
     @Test
     public void testFromXmlComplete() throws Exception
     {
-        // TODO - addition feature types
         Document dom = XmlBuilder.element("http://earth.google.com/kml/2.1", "Folder",
                             XmlBuilder.attribute("id", "uniqueId"),
                             XmlBuilder.element("http://earth.google.com/kml/2.1", "name",               XmlBuilder.text("my folder")),
@@ -209,7 +205,6 @@ public class TestFolder
 
         assertEquals("placemark name",                  "contained feature",    pm.getName());
     }
-
 
 
     @Test

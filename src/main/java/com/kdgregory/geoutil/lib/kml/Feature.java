@@ -205,16 +205,25 @@ extends KmlObject<T>
 //  XML conversion helpers
 //----------------------------------------------------------------------------
 
-    /**
-     *  Sets the fields controlled by this class from children/attributes of
-     *  the passed element.
-     */
+    @Override
+    protected void toXmlHelper(Element elem)
+    {
+        super.toXmlHelper(elem);
+
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_NAME,        getName());
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_VISIBILITY,  getVisibility());
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_DESCRIPTION, getDescription());
+        ObjectUtils.optSet(getTimestamp(), t -> t.appendAsXml(elem));
+        ObjectUtils.optSet(getTimespan(),  t -> t.appendAsXml(elem));
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_STYLEREF,    getStyleRef());
+        ObjectUtils.optSet(getStyleSelector(), s -> s.appendAsXml(elem));
+    }
+
+
     @Override
     protected void fromXmlHelper(Element elem)
     {
         super.fromXmlHelper(elem);
-
-        // FIXME - validate namespace
         for (Element child : DomUtil.getChildren(elem))
         {
             String childName = DomUtil.getLocalName(child);
@@ -245,22 +254,5 @@ extends KmlObject<T>
                 // no default; there may be other children
             }
         }
-    }
-
-
-    /**
-     *  Adds the fields controlled by this class as children/attributes of the
-     *  passed element.
-     */
-    protected void appendFeatureXml(Element elem)
-    {
-        super.appendObjectXml(elem);
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_NAME,        getName());
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_VISIBILITY,  getVisibility());
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_DESCRIPTION, getDescription());
-        ObjectUtils.optSet(getTimestamp(), t -> t.appendAsXml(elem));
-        ObjectUtils.optSet(getTimespan(),  t -> t.appendAsXml(elem));
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_FEATURE_STYLEREF,    getStyleRef());
-        ObjectUtils.optSet(getStyleSelector(), s -> s.appendAsXml(elem));
     }
 }

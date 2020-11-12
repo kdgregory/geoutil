@@ -34,7 +34,6 @@ extends KmlObject<LineStyle>
     private ColorMode colorMode;
     private Double width;
 
-
 //----------------------------------------------------------------------------
 //  Accessors
 //----------------------------------------------------------------------------
@@ -120,8 +119,25 @@ extends KmlObject<LineStyle>
     }
 
 //----------------------------------------------------------------------------
-//  Other Public Methods
+//  XML conversion
 //----------------------------------------------------------------------------
+
+    /**
+     *  Appends this style's XML representation to the provided element.
+     */
+    @Override
+    public Element appendAsXml(Element parent)
+    {
+        Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_LINESTYLE);
+        super.toXmlHelper(elem);
+
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_COLOR,    getColor());
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_MODE,     getColorModeString());
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_LINESTYLE_WIDTH,     getWidth());
+
+        return elem;
+    }
+
 
     /**
      *  Creates an instance from a DOM element tree.
@@ -151,22 +167,5 @@ extends KmlObject<LineStyle>
         ObjectUtils.optSet(XmlUtils.getChildTextAsDouble(elem, namespace, KmlConstants.E_LINESTYLE_WIDTH),  s::setWidth);
 
         return s;
-    }
-
-
-    /**
-     *  Appends this folder's XML representation to the provided element.
-     */
-    @Override
-    public Element appendAsXml(Element parent)
-    {
-        Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_LINESTYLE);
-        super.appendObjectXml(elem);
-
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_COLOR,    getColor());
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_MODE,     getColorModeString());
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_LINESTYLE_WIDTH,     getWidth());
-
-        return elem;
     }
 }

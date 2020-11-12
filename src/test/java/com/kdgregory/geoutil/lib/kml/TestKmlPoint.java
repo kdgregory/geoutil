@@ -59,6 +59,62 @@ public class TestKmlPoint
 
 
     @Test
+    public void testAppendAsXmlMinimal() throws Exception
+    {
+        KmlPoint p = new KmlPoint(12, 34);
+
+        Element parent = DomUtil.newDocument("irrelevant");
+        Element child = p.appendAsXml(parent);
+
+        assertEquals("added single child to existing parent",   1,                                  DomUtil.getChildren(parent).size());
+        assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
+        assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
+        assertEquals("child name",                              "Point",                            child.getNodeName());
+
+        List<Element> dataElements = DomUtil.getChildren(child);
+
+        assertEquals("number of data elements",                 1,                                  dataElements.size());
+
+        assertEquals("data element 1 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
+        assertEquals("data element 1 name",                     "coordinates",                      dataElements.get(0).getNodeName());
+        assertEquals("data element 1 value",                    "34.0,12.0",                        dataElements.get(0).getTextContent());
+    }
+
+
+    @Test
+    public void testAppendAsXmlComplete() throws Exception
+    {
+        KmlPoint p = new KmlPoint(12, 34, 56)
+                     .setAltitudeMode(AltitudeMode.clampToGround)
+                     .setExtrude(Boolean.TRUE);
+
+        Element parent = DomUtil.newDocument("irrelevant");
+        Element child = p.appendAsXml(parent);
+
+        assertEquals("added single child to existing parent",   1,                                  DomUtil.getChildren(parent).size());
+        assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
+        assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
+        assertEquals("child name",                              "Point",                            child.getNodeName());
+
+        List<Element> dataElements = DomUtil.getChildren(child);
+
+        assertEquals("number of data elements",                 3,                                  dataElements.size());
+
+        assertEquals("data element 1 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
+        assertEquals("data element 1 name",                     "extrude",                          dataElements.get(0).getNodeName());
+        assertEquals("data element 1 value",                    "1",                                dataElements.get(0).getTextContent());
+
+        assertEquals("data element 1 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
+        assertEquals("data element 1 name",                     "altitudeMode",                     dataElements.get(1).getNodeName());
+        assertEquals("data element 1 value",                    "clampToGround",                    dataElements.get(1).getTextContent());
+
+        assertEquals("data element 1 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(2).getNamespaceURI());
+        assertEquals("data element 1 name",                     "coordinates",                      dataElements.get(2).getNodeName());
+        assertEquals("data element 1 value",                    "34.0,12.0,56.0",                   dataElements.get(2).getTextContent());
+    }
+
+
+    @Test
     public void testFromXmlMinimal() throws Exception
     {
         Document dom = XmlBuilder.element("http://earth.google.com/kml/2.1", "Point",
@@ -106,63 +162,5 @@ public class TestKmlPoint
         {
             assertTrue("exception message (was: " + ex.getMessage() + ")", ex.getMessage().contains("SomethingElse"));
         }
-    }
-
-
-    @Test
-    public void testAppendAsXmlMinimal() throws Exception
-    {
-        KmlPoint p = new KmlPoint(12, 34);
-
-        Element parent = DomUtil.newDocument("irrelevant");
-        Element child = p.appendAsXml(parent);
-
-        assertEquals("added single child to existing parent",   1,                                  DomUtil.getChildren(parent).size());
-        assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
-        assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
-        assertEquals("child name",                              "Point",                            child.getNodeName());
-
-        // we care about order, so will retrieve all nested elements and access via index
-        List<Element> nested = DomUtil.getChildren(child);
-
-        assertEquals("number of data elements",                 1,                                  nested.size());
-
-        assertEquals("coordinates namespace",                   "http://www.opengis.net/kml/2.2",   nested.get(0).getNamespaceURI());
-        assertEquals("coordinates name",                        "coordinates",                      nested.get(0).getNodeName());
-        assertEquals("coordinates value",                       "34.0,12.0",                        nested.get(0).getTextContent());
-    }
-
-
-    @Test
-    public void testAppendAsXmlComplete() throws Exception
-    {
-        KmlPoint p = new KmlPoint(12, 34, 56)
-                     .setAltitudeMode(AltitudeMode.clampToGround)
-                     .setExtrude(Boolean.TRUE);
-
-        Element parent = DomUtil.newDocument("irrelevant");
-        Element child = p.appendAsXml(parent);
-
-        assertEquals("added single child to existing parent",   1,                                  DomUtil.getChildren(parent).size());
-        assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
-        assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
-        assertEquals("child name",                              "Point",                            child.getNodeName());
-
-        // we care about order, so will retrieve all nested elements and access via index
-        List<Element> nested = DomUtil.getChildren(child);
-
-        assertEquals("number of data elements",                 3,                                  nested.size());
-
-        assertEquals("altitudeMode namespace",                  "http://www.opengis.net/kml/2.2",   nested.get(0).getNamespaceURI());
-        assertEquals("altitudeMode name",                       "extrude",                          nested.get(0).getNodeName());
-        assertEquals("altitudeMode value",                      "1",                                nested.get(0).getTextContent());
-
-        assertEquals("altitudeMode namespace",                  "http://www.opengis.net/kml/2.2",   nested.get(1).getNamespaceURI());
-        assertEquals("altitudeMode name",                       "altitudeMode",                     nested.get(1).getNodeName());
-        assertEquals("altitudeMode value",                      "clampToGround",                    nested.get(1).getTextContent());
-
-        assertEquals("coordinates namespace",                   "http://www.opengis.net/kml/2.2",   nested.get(2).getNamespaceURI());
-        assertEquals("coordinates name",                        "coordinates",                      nested.get(2).getNodeName());
-        assertEquals("coordinates value",                       "34.0,12.0,56.0",                   nested.get(2).getTextContent());
     }
 }

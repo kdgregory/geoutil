@@ -58,6 +58,85 @@ public class TestIconStyle
 
 
     @Test
+    public void testAppendAsXmlMinimal() throws Exception
+    {
+        IconStyle s = new IconStyle();
+
+        Element parent = DomUtil.newDocument("irrelevant");
+        Element child = s.appendAsXml(parent);
+
+        assertEquals("added single child to existing parent",   1,                                  DomUtil.getChildren(parent).size());
+        assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
+        assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
+        assertEquals("child name",                              "IconStyle",                        child.getNodeName());
+
+        assertEquals("does not have ID",                        "",                                 child.getAttribute("id"));
+
+        List<Element> children = DomUtil.getChildren(child);
+
+        assertEquals("number of data elements",                 1,                                  children.size());
+
+        assertEquals("color namespace",                         "http://www.opengis.net/kml/2.2",   children.get(0).getNamespaceURI());
+        assertEquals("color name",                              "color",                            children.get(0).getNodeName());
+        assertEquals("color value",                             "00000000",                         children.get(0).getTextContent());
+    }
+
+
+    @Test
+    public void testAppendAsXmlComplete() throws Exception
+    {
+        IconStyle s = new IconStyle()
+                      .setId("somethingUnique")
+                      .setColor("12345678")
+                      .setColorMode(ColorMode.random)
+                      .setScale(1.5)
+                      .setHeading(325.0)
+                      .setHref("http://www.example.com/icon");
+
+        Element parent = DomUtil.newDocument("irrelevant");
+        Element child = s.appendAsXml(parent);
+
+        assertEquals("added single child to existing parent",   1,                                  DomUtil.getChildren(parent).size());
+        assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
+        assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
+        assertEquals("child name",                              "IconStyle",                        child.getNodeName());
+
+        assertEquals("has ID",                                  "somethingUnique",                  child.getAttribute("id"));
+
+        List<Element> dataElements = DomUtil.getChildren(child);
+
+        assertEquals("number of data elements",                 5,                                  dataElements.size());
+
+        assertEquals("data element 1 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
+        assertEquals("data element 1 name",                     "color",                            dataElements.get(0).getNodeName());
+        assertEquals("data element 1 value",                    "12345678",                         dataElements.get(0).getTextContent());
+
+        assertEquals("data element 2 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
+        assertEquals("data element 2 name",                     "colorMode",                        dataElements.get(1).getNodeName());
+        assertEquals("data element 2 value",                    "random",                           dataElements.get(1).getTextContent());
+
+        assertEquals("data element 3 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(2).getNamespaceURI());
+        assertEquals("data element 3 name",                     "scale",                            dataElements.get(2).getNodeName());
+        assertEquals("data element 3 value",                    "1.5",                              dataElements.get(2).getTextContent());
+
+        assertEquals("data element 4 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(3).getNamespaceURI());
+        assertEquals("data element 4 name",                     "heading",                          dataElements.get(3).getNodeName());
+        assertEquals("data element 4 value",                    "325.0",                            dataElements.get(3).getTextContent());
+
+        assertEquals("data element 5 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(4).getNamespaceURI());
+        assertEquals("data element 5 name",                     "Icon",                             dataElements.get(4).getNodeName());
+
+        List<Element> iconChildren = DomUtil.getChildren(dataElements.get(4));
+
+        assertEquals("Icon element has one child",              1,                                  iconChildren.size());
+
+        assertEquals("Icon element child namespace",            "http://www.opengis.net/kml/2.2",   iconChildren.get(0).getNamespaceURI());
+        assertEquals("Icon element child name",                 "href",                             iconChildren.get(0).getNodeName());
+        assertEquals("Icon element child value",                "http://www.example.com/icon",      iconChildren.get(0).getTextContent());
+    }
+
+
+    @Test
     public void testFromXmlMinimal() throws Exception
     {
         Document dom = XmlBuilder.element("http://earth.google.com/kml/2.1", "IconStyle")
@@ -113,84 +192,5 @@ public class TestIconStyle
         {
             assertTrue("exception message (was: " + ex.getMessage() + ")", ex.getMessage().contains("SomethingElse"));
         }
-    }
-
-
-    @Test
-    public void testAppendAsXmlMinimal() throws Exception
-    {
-        IconStyle s = new IconStyle();
-
-        Element parent = DomUtil.newDocument("irrelevant");
-        Element child = s.appendAsXml(parent);
-
-        assertEquals("added single child to existing parent",   1,                                  DomUtil.getChildren(parent).size());
-        assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
-        assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
-        assertEquals("child name",                              "IconStyle",                        child.getNodeName());
-
-        assertEquals("does not have ID",                        "",                                 child.getAttribute("id"));
-
-        List<Element> children = DomUtil.getChildren(child);
-
-        assertEquals("number of data elements",                 1,                                  children.size());
-
-        assertEquals("color namespace",                         "http://www.opengis.net/kml/2.2",   children.get(0).getNamespaceURI());
-        assertEquals("color name",                              "color",                            children.get(0).getNodeName());
-        assertEquals("color value",                             "00000000",                         children.get(0).getTextContent());
-    }
-
-
-    @Test
-    public void testAppendAsXmlComplete() throws Exception
-    {
-        IconStyle s = new IconStyle()
-                      .setId("somethingUnique")
-                      .setColor("12345678")
-                      .setColorMode(ColorMode.random)
-                      .setScale(1.5)
-                      .setHeading(325.0)
-                      .setHref("http://www.example.com/icon");
-
-        Element parent = DomUtil.newDocument("irrelevant");
-        Element child = s.appendAsXml(parent);
-
-        assertEquals("added single child to existing parent",   1,                                  DomUtil.getChildren(parent).size());
-        assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
-        assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
-        assertEquals("child name",                              "IconStyle",                        child.getNodeName());
-
-        assertEquals("has ID",                                  "somethingUnique",                  child.getAttribute("id"));
-
-        List<Element> children = DomUtil.getChildren(child);
-
-        assertEquals("number of data elements",                 5,                                  children.size());
-
-        assertEquals("child 1 namespace",                       "http://www.opengis.net/kml/2.2",   children.get(0).getNamespaceURI());
-        assertEquals("child 1 name",                            "color",                            children.get(0).getNodeName());
-        assertEquals("child 1 value",                           "12345678",                         children.get(0).getTextContent());
-
-        assertEquals("child 2 namespace",                       "http://www.opengis.net/kml/2.2",   children.get(1).getNamespaceURI());
-        assertEquals("child 2 name",                            "colorMode",                        children.get(1).getNodeName());
-        assertEquals("child 2 value",                           "random",                           children.get(1).getTextContent());
-
-        assertEquals("child 3 namespace",                       "http://www.opengis.net/kml/2.2",   children.get(2).getNamespaceURI());
-        assertEquals("child 3 name",                            "scale",                            children.get(2).getNodeName());
-        assertEquals("child 3 value",                           "1.5",                              children.get(2).getTextContent());
-
-        assertEquals("child 4 namespace",                       "http://www.opengis.net/kml/2.2",   children.get(3).getNamespaceURI());
-        assertEquals("child 4 name",                            "heading",                          children.get(3).getNodeName());
-        assertEquals("child 4 value",                           "325.0",                            children.get(3).getTextContent());
-
-        assertEquals("child 5 namespace",                       "http://www.opengis.net/kml/2.2",   children.get(4).getNamespaceURI());
-        assertEquals("child 5 name",                            "Icon",                             children.get(4).getNodeName());
-
-        List<Element> iconChildren = DomUtil.getChildren(children.get(4));
-
-        assertEquals("Icon element has one child",              1,                                  iconChildren.size());
-
-        assertEquals("Icon element child namespace",            "http://www.opengis.net/kml/2.2",   iconChildren.get(0).getNamespaceURI());
-        assertEquals("Icon element child name",                 "href",                             iconChildren.get(0).getNodeName());
-        assertEquals("Icon element child value",                "http://www.example.com/icon",      iconChildren.get(0).getTextContent());
     }
 }

@@ -83,10 +83,26 @@ extends Container<Document>
         return this;
     }
 
+//----------------------------------------------------------------------------
+//  XML conversion
+//----------------------------------------------------------------------------
 
-//----------------------------------------------------------------------------
-//  Other Public Methods
-//----------------------------------------------------------------------------
+    /**
+     *  Appends this folder's XML representation to the provided element.
+     */
+    @Override
+    public Element appendAsXml(Element parent)
+    {
+        Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_DOCUMENT);
+        super.toXmlHelper(elem);
+        for (Style style : sharedStyles)
+        {
+            style.appendAsXml(elem);
+        }
+        appendFeaturesAsXml(elem);
+        return elem;
+    }
+
 
     /**
      *  Creates an instance from a DOM element tree.
@@ -103,28 +119,11 @@ extends Container<Document>
     {
         if (! KmlConstants.E_DOCUMENT.equals(DomUtil.getLocalName(elem)))
         {
-            throw new IllegalArgumentException("incorrect element name: " + DomUtil.getLocalName(elem));
+            throw new IllegalArgumentException("expected element named Document, was: " + DomUtil.getLocalName(elem));
         }
 
         Document f = new Document();
         f.fromXmlHelper(elem);
         return f;
-    }
-
-
-    /**
-     *  Appends this folder's XML representation to the provided element.
-     */
-    @Override
-    public Element appendAsXml(Element parent)
-    {
-        Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_DOCUMENT);
-        appendFeatureXml(elem);
-        for (Style style : sharedStyles)
-        {
-            style.appendAsXml(elem);
-        }
-        appendFeaturesAsXml(elem);
-        return elem;
     }
 }

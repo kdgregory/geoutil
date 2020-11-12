@@ -85,7 +85,6 @@ public class TestKmlFile
                                 XmlBuilder.element("http://earth.google.com/kml/2.1", "description", XmlBuilder.text("document description"))))
                        .toDOM().getDocumentElement();
 
-        // we have two things named Document, so need to jump through hools to ensure that we have the right one
         KmlFile file = KmlFile.fromXml(root.getOwnerDocument());
 
         List<Feature<?>> features = file.getFeatures();

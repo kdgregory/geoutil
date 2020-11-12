@@ -93,19 +93,19 @@ public class TestStyle
         assertEquals("child name",                              "Style",                            child.getNodeName());
         assertEquals("child ID",                                "uniqueId",                         child.getAttribute("id"));
 
-        List<Element> children = DomUtil.getChildren(child);
+        List<Element> dataElements = DomUtil.getChildren(child);
 
-        assertEquals("number of style elements",                2,                                  children.size());
+        assertEquals("number of data elements",                2,                                  dataElements.size());
 
-        assertEquals("element 1 namespace",                     "http://www.opengis.net/kml/2.2",   children.get(0).getNamespaceURI());
-        assertEquals("element 1 name",                          "IconStyle",                        children.get(0).getNodeName());
-        assertEquals("element 1 color",                         "87654321",                         XmlUtils.getChildText(children.get(0), "http://www.opengis.net/kml/2.2", "color"));
-        assertEquals("element 1 heading",                       "178.0",                            XmlUtils.getChildText(children.get(0), "http://www.opengis.net/kml/2.2", "heading"));
+        assertEquals("data element 1 namespace",               "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
+        assertEquals("data element 1 name",                    "IconStyle",                        dataElements.get(0).getNodeName());
+        assertEquals("data element 1 color",                   "87654321",                         XmlUtils.getChildText(dataElements.get(0), "http://www.opengis.net/kml/2.2", "color"));
+        assertEquals("data element 1 heading",                 "178.0",                            XmlUtils.getChildText(dataElements.get(0), "http://www.opengis.net/kml/2.2", "heading"));
 
-        assertEquals("element 2 namespace",                     "http://www.opengis.net/kml/2.2",   children.get(1).getNamespaceURI());
-        assertEquals("element 2 name",                          "LineStyle",                        children.get(1).getNodeName());
-        assertEquals("element 2 color",                         "12345678",                         XmlUtils.getChildText(children.get(1), "http://www.opengis.net/kml/2.2", "color"));
-        assertEquals("element 2 width",                         "12.0",                             XmlUtils.getChildText(children.get(1), "http://www.opengis.net/kml/2.2", "width"));
+        assertEquals("data element 2 namespace",               "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
+        assertEquals("data element 2 name",                    "LineStyle",                        dataElements.get(1).getNodeName());
+        assertEquals("data element 2 color",                   "12345678",                         XmlUtils.getChildText(dataElements.get(1), "http://www.opengis.net/kml/2.2", "color"));
+        assertEquals("data element 2 width",                   "12.0",                             XmlUtils.getChildText(dataElements.get(1), "http://www.opengis.net/kml/2.2", "width"));
     }
 
 

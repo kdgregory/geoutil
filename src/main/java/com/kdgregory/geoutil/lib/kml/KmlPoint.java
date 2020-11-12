@@ -112,7 +112,7 @@ extends Geometry<KmlPoint>
         return this;
     }
 
-    
+
     /**
      *  Gets the extrude flag, if it is set; null otherwise.
      */
@@ -132,8 +132,24 @@ extends Geometry<KmlPoint>
     }
 
 //----------------------------------------------------------------------------
-//  Other Public Methods
+//  XML Conversion
 //----------------------------------------------------------------------------
+
+    /**
+     *  Appends this point's XML representation to the provided element.
+     */
+    @Override
+    public Element appendAsXml(Element parent)
+    {
+        Element child = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_POINT);
+
+        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_EXTRUDE, getExtrude());
+        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_ALTMODE, getAltitudeModeString());
+        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_COORD,   getCoordinates());
+
+        return child;
+    }
+
 
     /**
      *  Creates an instance from an element tree following the description in
@@ -162,21 +178,5 @@ extends Geometry<KmlPoint>
         ObjectUtils.optSet(XmlUtils.getChildTextAsBoolean(elem, namespace, KmlConstants.E_GEOMETRY_EXTRUDE), p::setExtrude);
 
         return p;
-    }
-
-
-    /**
-     *  Appends this point's XML representation to the provided element.
-     */
-    @Override
-    public Element appendAsXml(Element parent)
-    {
-        Element child = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_POINT);
-
-        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_EXTRUDE, getExtrude());
-        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_ALTMODE, getAltitudeModeString());
-        XmlUtils.optAppendDataElement(child, KmlConstants.NAMESPACE, KmlConstants.E_GEOMETRY_COORD,   getCoordinates());
-
-        return child;
     }
 }

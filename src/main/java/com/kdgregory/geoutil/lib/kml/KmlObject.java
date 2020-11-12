@@ -49,39 +49,38 @@ public abstract class KmlObject<T extends KmlObject<T>>
         id = value;
         return (T)this;
     }
-    
+
 //----------------------------------------------------------------------------
 //  Abstract methods
 //----------------------------------------------------------------------------
-    
+
     /**
      *  Serializes this object to XML and appends it to an existing DOM tree.
      */
     public abstract Element appendAsXml(Element parent);
 
 //----------------------------------------------------------------------------
-//  Helpers for subclasses
+//  XML conversion helpers
 //----------------------------------------------------------------------------
 
     /**
-     *  Sets the fields controlled by this class from children/attributes of
-     *  the passed element.
+     *  Appends fields from this class and its ancestors to the passed object.
+     *  Subclasses should call before appending their own fields.
      */
-    protected void fromXmlHelper(Element elem)
+    protected void toXmlHelper(Element elem)
     {
-        setId(StringUtil.trimToNull(elem.getAttribute(KmlConstants.A_OBJECT_ID)));
+        if (!StringUtil.isEmpty(id))
+        {
+            elem.setAttribute(KmlConstants.A_OBJECT_ID, id);
+        }
     }
 
 
     /**
-     *  Adds the fields controlled by this class as children/attributes of the
-     *  passed element.
+     *  Extracts the fields managed by this class from the passed element.
      */
-    protected void appendObjectXml(Element elem)
+    protected void fromXmlHelper(Element elem)
     {
-        if (! StringUtil.isEmpty(id))
-        {
-            elem.setAttribute(KmlConstants.A_OBJECT_ID, id);
-        }
+        setId(StringUtil.trimToNull(elem.getAttribute(KmlConstants.A_OBJECT_ID)));
     }
 }

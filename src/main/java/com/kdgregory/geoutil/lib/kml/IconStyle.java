@@ -159,8 +159,32 @@ extends KmlObject<IconStyle>
     }
 
 //----------------------------------------------------------------------------
-//  Other Public Methods
+//  XML conversion
 //----------------------------------------------------------------------------
+
+    /**
+     *  Appends this style's XML representation to the provided element.
+     */
+    @Override
+    public Element appendAsXml(Element parent)
+    {
+        Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_ICONSTYLE);
+        super.toXmlHelper(elem);
+
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_COLOR,    getColor());
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_MODE,     getColorModeString());
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_ICONSTYLE_SCALE,     getScale());
+        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_ICONSTYLE_HEADING,   getHeading());
+
+        if (getHref() != null)
+        {
+            Element eIcon = DomUtil.appendChild(elem, KmlConstants.NAMESPACE, KmlConstants.E_ICONSTYLE_ICON);
+            XmlUtils.optAppendDataElement(eIcon, KmlConstants.NAMESPACE, KmlConstants.E_ICONSTYLE_ICON_HREF, getHref());
+        }
+
+        return elem;
+    }
+
 
     /**
      *  Creates an instance from a DOM element tree.
@@ -197,29 +221,5 @@ extends KmlObject<IconStyle>
         }
 
         return s;
-    }
-
-
-    /**
-     *  Appends this folder's XML representation to the provided element.
-     */
-    @Override
-    public Element appendAsXml(Element parent)
-    {
-        Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_ICONSTYLE);
-        super.appendObjectXml(elem);
-
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_COLOR,    getColor());
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_COLORSTYLE_MODE,     getColorModeString());
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_ICONSTYLE_SCALE,     getScale());
-        XmlUtils.optAppendDataElement(elem, KmlConstants.NAMESPACE, KmlConstants.E_ICONSTYLE_HEADING,   getHeading());
-
-        if (getHref() != null)
-        {
-            Element eIcon = DomUtil.appendChild(elem, KmlConstants.NAMESPACE, KmlConstants.E_ICONSTYLE_ICON);
-            XmlUtils.optAppendDataElement(eIcon, KmlConstants.NAMESPACE, KmlConstants.E_ICONSTYLE_ICON_HREF, getHref());
-        }
-
-        return elem;
     }
 }

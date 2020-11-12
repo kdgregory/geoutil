@@ -147,30 +147,30 @@ public class TestPlacemark
 
         assertEquals("number of data elements",                 7,                                  dataElements.size());
 
-        assertEquals("first data element namespace",            "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
-        assertEquals("first data element name",                 "name",                             dataElements.get(0).getNodeName());
-        assertEquals("first data element value",                "example",                          dataElements.get(0).getTextContent());
+        assertEquals("data element 1 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
+        assertEquals("data element 1 name",                     "name",                             dataElements.get(0).getNodeName());
+        assertEquals("data element 1 value",                    "example",                          dataElements.get(0).getTextContent());
 
-        assertEquals("second data element namespace",           "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
-        assertEquals("second data element name",                "visibility",                       dataElements.get(1).getNodeName());
-        assertEquals("second data element value",               "1",                                dataElements.get(1).getTextContent());
+        assertEquals("data element 2 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
+        assertEquals("data element 2 name",                     "visibility",                       dataElements.get(1).getNodeName());
+        assertEquals("data element 2 value",                    "1",                                dataElements.get(1).getTextContent());
 
-        assertEquals("third data element namespace",            "http://www.opengis.net/kml/2.2",   dataElements.get(2).getNamespaceURI());
-        assertEquals("third data element name",                 "description",                      dataElements.get(2).getNodeName());
-        assertEquals("third data element value",                "a description",                    dataElements.get(2).getTextContent());
+        assertEquals("data element 3 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(2).getNamespaceURI());
+        assertEquals("data element 3 name",                     "description",                      dataElements.get(2).getNodeName());
+        assertEquals("data element 3 value",                    "a description",                    dataElements.get(2).getTextContent());
 
-        assertEquals("fourth data element namespace",           "http://www.opengis.net/kml/2.2",   dataElements.get(3).getNamespaceURI());
-        assertEquals("fourth data element name",                "TimeStamp",                        dataElements.get(3).getNodeName());
+        assertEquals("data element 4 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(3).getNamespaceURI());
+        assertEquals("data element 4 name",                     "TimeStamp",                        dataElements.get(3).getNodeName());
 
-        assertEquals("fifth data element namespace",            "http://www.opengis.net/kml/2.2",   dataElements.get(4).getNamespaceURI());
-        assertEquals("fifth data element name",                 "styleUrl",                         dataElements.get(4).getNodeName());
-        assertEquals("fifth data element value",                "styleId",                          dataElements.get(4).getTextContent());
+        assertEquals("data element 5 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(4).getNamespaceURI());
+        assertEquals("data element 5 name",                     "styleUrl",                         dataElements.get(4).getNodeName());
+        assertEquals("data element 5 value",                    "styleId",                          dataElements.get(4).getTextContent());
 
-        assertEquals("sixth data element namespace",            "http://www.opengis.net/kml/2.2",   dataElements.get(5).getNamespaceURI());
-        assertEquals("sixth data element name",                 "Style",                            dataElements.get(5).getNodeName());
+        assertEquals("data element 6 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(5).getNamespaceURI());
+        assertEquals("data element 6 name",                     "Style",                            dataElements.get(5).getNodeName());
 
-        assertEquals("seventh data element namespace",          "http://www.opengis.net/kml/2.2",   dataElements.get(6).getNamespaceURI());
-        assertEquals("seventh data element name",               "Point",                            dataElements.get(6).getNodeName());
+        assertEquals("data element 7 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(6).getNamespaceURI());
+        assertEquals("data element 7 name",                     "Point",                            dataElements.get(6).getNodeName());
 
         // for nested objects, rather than verify them in the DOM, we'll try to parse and assert the expected contents
 
@@ -188,7 +188,6 @@ public class TestPlacemark
 
         assertEquals("nested point coordinates",                new Coordinates(12,34),             pp.getCoordinates());
         assertEquals("nested point extrude",                    Boolean.TRUE,                       pp.getExtrude());
-
     }
 
 
@@ -216,11 +215,11 @@ public class TestPlacemark
 
         assertEquals("number of data elements",                 2,                                  dataElements.size());
 
-        assertEquals("first data element namespace",            "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
-        assertEquals("first data element name",                 "TimeSpan",                         dataElements.get(0).getNodeName());
+        assertEquals("data element 1 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
+        assertEquals("data element 1 name",                     "TimeSpan",                         dataElements.get(0).getNodeName());
 
-        assertEquals("second data element namespace",           "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
-        assertEquals("second data element name",                "LineString",                       dataElements.get(1).getNodeName());
+        assertEquals("data element 2 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
+        assertEquals("data element 2 name",                     "LineString",                       dataElements.get(1).getNodeName());
 
         // for nested objects, rather than verify them in the DOM, we'll try to parse and assert the expected contents
 

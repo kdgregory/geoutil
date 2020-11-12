@@ -50,6 +50,70 @@ public class TestLineStyle
 
 
     @Test
+    public void testAppendAsXmlMinimal() throws Exception
+    {
+        // note that "minimal" includes default values
+
+        LineStyle s = new LineStyle();
+
+        Element parent = DomUtil.newDocument("irrelevant");
+        Element child = s.appendAsXml(parent);
+
+        assertEquals("added single child to existing parent",   1,                                  DomUtil.getChildren(parent).size());
+        assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
+        assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
+        assertEquals("child name",                              "LineStyle",                        child.getNodeName());
+
+        assertEquals("does not have ID",                        "",                                 child.getAttribute("id"));
+
+        List<Element> dataElements = DomUtil.getChildren(child);
+
+        assertEquals("number of data elements",                 1,                                  dataElements.size());
+
+        assertEquals("data element 1 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
+        assertEquals("data element 1 name",                     "color",                            dataElements.get(0).getNodeName());
+        assertEquals("data element 1 value",                    "00000000",                         dataElements.get(0).getTextContent());
+    }
+
+
+    @Test
+    public void testAppendAsXmlComplete() throws Exception
+    {
+        LineStyle s = new LineStyle()
+                      .setId("somethingUnique")
+                      .setColor("12345678")
+                      .setColorMode(ColorMode.random)
+                      .setWidth(1.5);
+
+        Element parent = DomUtil.newDocument("irrelevant");
+        Element child = s.appendAsXml(parent);
+
+        assertEquals("added single child to existing parent",   1,                                  DomUtil.getChildren(parent).size());
+        assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
+        assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
+        assertEquals("child name",                              "LineStyle",                        child.getNodeName());
+
+        assertEquals("has ID",                                  "somethingUnique",                  child.getAttribute("id"));
+
+        List<Element> dataElements = DomUtil.getChildren(child);
+
+        assertEquals("number of data elements",                 3,                                  dataElements.size());
+
+        assertEquals("data element 1 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
+        assertEquals("data element 1 name",                     "color",                            dataElements.get(0).getNodeName());
+        assertEquals("data element 1 value",                    "12345678",                         dataElements.get(0).getTextContent());
+
+        assertEquals("data element 2 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
+        assertEquals("data element 2 name",                     "colorMode",                        dataElements.get(1).getNodeName());
+        assertEquals("data element 2 value",                    "random",                           dataElements.get(1).getTextContent());
+
+        assertEquals("data element 3 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(2).getNamespaceURI());
+        assertEquals("data element 3 name",                     "width",                            dataElements.get(2).getNodeName());
+        assertEquals("data element 3 value",                    "1.5",                              dataElements.get(2).getTextContent());
+    }
+
+
+    @Test
     public void testFromXmlMinimal() throws Exception
     {
         Document dom = XmlBuilder.element("http://earth.google.com/kml/2.1", "LineStyle")
@@ -99,69 +163,5 @@ public class TestLineStyle
         {
             assertTrue("exception message (was: " + ex.getMessage() + ")", ex.getMessage().contains("SomethingElse"));
         }
-    }
-
-
-    @Test
-    public void testAppendAsXmlMinimal() throws Exception
-    {
-        // note that "minimal" includes default values
-
-        LineStyle s = new LineStyle();
-
-        Element parent = DomUtil.newDocument("irrelevant");
-        Element child = s.appendAsXml(parent);
-
-        assertEquals("added single child to existing parent",   1,                                  DomUtil.getChildren(parent).size());
-        assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
-        assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
-        assertEquals("child name",                              "LineStyle",                        child.getNodeName());
-
-        assertEquals("does not have ID",                        "",                                 child.getAttribute("id"));
-
-        List<Element> children = DomUtil.getChildren(child);
-
-        assertEquals("number of data elements",                 1,                                  children.size());
-
-        assertEquals("color namespace",                         "http://www.opengis.net/kml/2.2",   children.get(0).getNamespaceURI());
-        assertEquals("color name",                              "color",                            children.get(0).getNodeName());
-        assertEquals("color value",                             "00000000",                         children.get(0).getTextContent());
-    }
-
-
-    @Test
-    public void testAppendAsXmlComplete() throws Exception
-    {
-        LineStyle s = new LineStyle()
-                      .setId("somethingUnique")
-                      .setColor("12345678")
-                      .setColorMode(ColorMode.random)
-                      .setWidth(1.5);
-
-        Element parent = DomUtil.newDocument("irrelevant");
-        Element child = s.appendAsXml(parent);
-
-        assertEquals("added single child to existing parent",   1,                                  DomUtil.getChildren(parent).size());
-        assertSame("returned child",                            child,                              DomUtil.getChildren(parent).get(0));
-        assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
-        assertEquals("child name",                              "LineStyle",                        child.getNodeName());
-
-        assertEquals("has ID",                                  "somethingUnique",                  child.getAttribute("id"));
-
-        List<Element> children = DomUtil.getChildren(child);
-
-        assertEquals("number of data elements",                 3,                                  children.size());
-
-        assertEquals("color namespace",                         "http://www.opengis.net/kml/2.2",   children.get(0).getNamespaceURI());
-        assertEquals("color name",                              "color",                            children.get(0).getNodeName());
-        assertEquals("color value",                             "12345678",                         children.get(0).getTextContent());
-
-        assertEquals("width namespace",                         "http://www.opengis.net/kml/2.2",   children.get(1).getNamespaceURI());
-        assertEquals("width name",                              "colorMode",                        children.get(1).getNodeName());
-        assertEquals("width value",                             "random",                           children.get(1).getTextContent());
-
-        assertEquals("width namespace",                         "http://www.opengis.net/kml/2.2",   children.get(2).getNamespaceURI());
-        assertEquals("width name",                              "width",                            children.get(2).getNodeName());
-        assertEquals("width value",                             "1.5",                              children.get(2).getTextContent());
     }
 }

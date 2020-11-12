@@ -29,8 +29,21 @@ extends Container<Folder>
 {
 
 //----------------------------------------------------------------------------
-//  Other Public Methods
+//  XML conversion
 //----------------------------------------------------------------------------
+
+    /**
+     *  Appends this folder's XML representation to the provided element.
+     */
+    @Override
+    public Element appendAsXml(Element parent)
+    {
+        Element child = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_FOLDER);
+        super.toXmlHelper(child);
+        appendFeaturesAsXml(child);
+        return child;
+    }
+
 
     /**
      *  Creates an instance from a DOM element tree.
@@ -47,24 +60,11 @@ extends Container<Folder>
     {
         if (! KmlConstants.E_FOLDER.equals(DomUtil.getLocalName(elem)))
         {
-            throw new IllegalArgumentException("incorrect element name: " + DomUtil.getLocalName(elem));
+            throw new IllegalArgumentException("expected element named Folder, was: " + DomUtil.getLocalName(elem));
         }
 
         Folder f = new Folder();
         f.fromXmlHelper(elem);
         return f;
-    }
-
-
-    /**
-     *  Appends this folder's XML representation to the provided element.
-     */
-    @Override
-    public Element appendAsXml(Element parent)
-    {
-        Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_FOLDER);
-        appendFeatureXml(elem);
-        appendFeaturesAsXml(elem);
-        return elem;
     }
 }

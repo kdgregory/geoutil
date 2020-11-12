@@ -118,28 +118,27 @@ public class TestDocument
         assertEquals("child namespace",                         "http://www.opengis.net/kml/2.2",   child.getNamespaceURI());
         assertEquals("child name",                              "Document",                         child.getNodeName());
 
-        // we care about order, so will retrieve all children and access via index
         List<Element> dataElements = DomUtil.getChildren(child);
 
-        assertEquals("number of data elements",     5,                                  dataElements.size());
+        assertEquals("number of data elements",                 5,                                  dataElements.size());
 
-        assertEquals("name namespace",              "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
-        assertEquals("name name",                   "name",                             dataElements.get(0).getNodeName());
-        assertEquals("name value",                  "document name",                    dataElements.get(0).getTextContent());
+        assertEquals("data element 1 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(0).getNamespaceURI());
+        assertEquals("data element 1 name",                     "name",                             dataElements.get(0).getNodeName());
+        assertEquals("data element 1 value",                    "document name",                    dataElements.get(0).getTextContent());
 
-        assertEquals("style 1 namespace",           "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
-        assertEquals("style 1 name",                "Style",                            dataElements.get(1).getNodeName());
-        assertEquals("style 1 id",                  "style1",                           dataElements.get(1).getAttribute("id"));
+        assertEquals("data element 2 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(1).getNamespaceURI());
+        assertEquals("data element 2 name",                     "Style",                            dataElements.get(1).getNodeName());
+        assertEquals("data element 2 id",                       "style1",                           dataElements.get(1).getAttribute("id"));
 
-        assertEquals("style 2 namespace",           "http://www.opengis.net/kml/2.2",   dataElements.get(2).getNamespaceURI());
-        assertEquals("style 2 name",                "Style",                            dataElements.get(2).getNodeName());
-        assertEquals("style 2 id",                  "style2",                           dataElements.get(2).getAttribute("id"));
+        assertEquals("data element 3 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(2).getNamespaceURI());
+        assertEquals("data element 3 name",                     "Style",                            dataElements.get(2).getNodeName());
+        assertEquals("data element 3 id",                       "style2",                           dataElements.get(2).getAttribute("id"));
 
-        assertEquals("feature 1 namespace",         "http://www.opengis.net/kml/2.2",   dataElements.get(3).getNamespaceURI());
-        assertEquals("feature 1 name",              "Placemark",                        dataElements.get(3).getNodeName());
+        assertEquals("data element 4 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(3).getNamespaceURI());
+        assertEquals("data element 4 name",                     "Placemark",                        dataElements.get(3).getNodeName());
 
-        assertEquals("feature 2 namespace",         "http://www.opengis.net/kml/2.2",   dataElements.get(4).getNamespaceURI());
-        assertEquals("feature 2 name",              "Placemark",                        dataElements.get(4).getNodeName());
+        assertEquals("data element 5 namespace",                "http://www.opengis.net/kml/2.2",   dataElements.get(4).getNamespaceURI());
+        assertEquals("data element 5 name",                     "Placemark",                        dataElements.get(4).getNodeName());
 
         // verify the feature contents by converting them, using name to assert correct order
 
@@ -149,8 +148,6 @@ public class TestDocument
         assertEquals("feature 1",                   "first feature",                    f1.getName());
         assertEquals("feature 2",                   "second feature",                   f2.getName());
     }
-
-    // TODO - test conversion to XML with a different geometry
 
 
     @Test
@@ -192,8 +189,6 @@ public class TestDocument
 
         assertEquals("placemark name",      "contained feature",    pm.getName());
     }
-
-    // TODO - test alternate features
 
 
     @Test

@@ -57,16 +57,28 @@ extends Feature<Placemark>
     }
 
 //----------------------------------------------------------------------------
-//  Other Public Methods
+//  XML conversion
 //----------------------------------------------------------------------------
+
+    /**
+     *  Appends this placemark's XML representation to the provided element.
+     */
+    @Override
+    public Element appendAsXml(Element parent)
+    {
+        Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_PLACEMARK);
+        toXmlHelper(elem);
+        ObjectUtils.optSet(geometry, g -> g.appendAsXml(elem));
+        return elem;
+    }
+
 
     /**
      *  Creates an instance from an element tree following the description in
      *  https://developers.google.com/kml/documentation/kmlreference#placemark.
      *  <p>
      *  Note: since KML documents may use multiple namespaces, this operation
-     *  merely requires that the child elements have the same namespace as the
-     *  passed element.
+     *  ignores child namespace.
      *
      *  @throws IllegalArgumentException if the provided element does not have
      *          the name "Placemark", or cannot be parsed according to the KML
@@ -76,7 +88,7 @@ extends Feature<Placemark>
     {
         if (! KmlConstants.E_PLACEMARK.equals(DomUtil.getLocalName(elem)))
         {
-            throw new IllegalArgumentException("incorrect element name: " + DomUtil.getLocalName(elem));
+            throw new IllegalArgumentException("expected element named Placemark, was: " + DomUtil.getLocalName(elem));
         }
 
         Placemark pm = new Placemark();
@@ -98,18 +110,5 @@ extends Feature<Placemark>
         }
 
         return pm;
-    }
-
-
-    /**
-     *  Appends this placemark's XML representation to the provided element.
-     */
-    @Override
-    public Element appendAsXml(Element parent)
-    {
-        Element elem = DomUtil.appendChild(parent, KmlConstants.NAMESPACE, KmlConstants.E_PLACEMARK);
-        appendFeatureXml(elem);
-        ObjectUtils.optSet(geometry, g -> g.appendAsXml(elem));
-        return elem;
     }
 }
