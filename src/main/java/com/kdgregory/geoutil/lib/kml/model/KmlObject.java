@@ -22,8 +22,7 @@ import com.kdgregory.geoutil.lib.kml.KmlConstants;
 
 
 /**
- *  An abstract base class for KML entities that can have an ID. See
- *  https://developers.google.com/kml/documentation/kmlreference#object.
+ *  An abstract base class for KML entities that can have an ID.
  */
 public abstract class KmlObject<T extends KmlObject<T>>
 {

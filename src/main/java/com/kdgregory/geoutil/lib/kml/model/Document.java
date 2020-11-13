@@ -26,12 +26,11 @@ import com.kdgregory.geoutil.lib.kml.KmlConstants;
 
 /**
  *  A top-level container for other features and shared styles.
- *
- *  See https://developers.google.com/kml/documentation/kmlreference#document.
  */
 public class Document
 extends Container<Document>
 {
+
     private List<Style> sharedStyles = new ArrayList<>();
 
 //----------------------------------------------------------------------------

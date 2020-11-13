@@ -26,8 +26,6 @@ import com.kdgregory.geoutil.lib.kml.fieldtypes.ColorMode;
 
 /**
  *  Style definitions that apply to lines, including the borders of polygons.
- *  <p>
- *  See https://developers.google.com/kml/documentation/kmlreference#style.
  */
 public class LineStyle
 extends KmlObject<LineStyle>

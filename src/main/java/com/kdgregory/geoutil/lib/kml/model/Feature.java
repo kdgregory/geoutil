@@ -26,12 +26,12 @@ import com.kdgregory.geoutil.lib.kml.fieldtypes.TimeStamp;
 
 
 /**
- *  Abstract class for containers and placemarks, managing common elements.
- *  See https://developers.google.com/kml/documentation/kmlreference#feature.
+ *  Abstract superclass for containers and placemarks.
  */
 public abstract class Feature<T extends Feature<T>>
 extends KmlObject<T>
 {
+
     private String name;
     private Boolean visibility;
     private String description;

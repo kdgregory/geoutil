@@ -23,7 +23,8 @@ import com.kdgregory.geoutil.lib.kml.KmlConstants;
 
 
 /**
- *  Represents a Placemark as defined in https://developers.google.com/kml/documentation/kmlreference.
+ *  Represents an object on the map. This is a container for a {@link Geometry}
+ *  object with metadata.
  *  <p>
  *  Note that a Placemark has no required components; any and all accessors
  *  may return null.

@@ -25,8 +25,9 @@ import com.kdgregory.geoutil.lib.internal.TimestampUtils;
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
 import com.kdgregory.geoutil.lib.kml.KmlConstants;
 
+
 /**
- *  A child element of Feature that holds a point in time. It exists as a
+ *  A point in time, used as a child element of Feature. It exists as a
  *  separate object to simplify conversion to/from XML.
  *  <p>
  *  This is an immutable object; its value is set on construction. Null

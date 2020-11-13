@@ -15,7 +15,7 @@
 package com.kdgregory.geoutil.lib.kml.fieldtypes;
 
 /**
- *  The legal values for altitudeMode, used by various Geometry elements.
+ *  The legal values for altitude mode, used by various Geometry elements.
  */
 public enum AltitudeMode
 {

@@ -14,11 +14,12 @@
 
 package com.kdgregory.geoutil.lib.kml.model;
 
+
 /**
  *  Superclass for objects that hold the geometric shape of a {@link Placemark}.
  */
 public abstract class Geometry<T extends Geometry<T>>
 extends KmlObject<T>
 {
-    // nothing here yet
+    // at present this is just a marker; I may move common attributes here
 }

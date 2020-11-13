@@ -29,7 +29,7 @@ import com.kdgregory.geoutil.lib.kml.fieldtypes.Coordinates;
  *  Represents a point on the map; used as the Geometry of a Placemark.
  *  <p>
  *  This object has identity equality semantics; for manipulation, extract
- *  the underlying <code>Point</code> object.
+ *  the underlying <code>Coordinates</code>.
  */
 public class KmlPoint
 extends Geometry<KmlPoint>

@@ -21,8 +21,8 @@ import com.kdgregory.geoutil.lib.shared.Point;
 
 
 /**
- *  A subclass of Point that does not provide a timestamp, and has a string
- *  serialization format ("lon,lat[,alt]") defined by KML.
+ *  A point on the Earth, with optional altitude. Supports KML serialization
+ *  format.
  */
 public class Coordinates
 extends Point

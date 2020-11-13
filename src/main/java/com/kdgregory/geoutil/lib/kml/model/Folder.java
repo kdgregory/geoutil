@@ -23,8 +23,6 @@ import com.kdgregory.geoutil.lib.kml.KmlConstants;
 
 /**
  *  A container for other features.
- *
- *  See https://developers.google.com/kml/documentation/kmlreference#folder.
  */
 public class Folder
 extends Container<Folder>

@@ -24,8 +24,6 @@ import com.kdgregory.geoutil.lib.kml.KmlConstants;
 
 /**
  *  A container for style definitions.
- *  <p>
- *  See https://developers.google.com/kml/documentation/kmlreference#style.
  */
 public class Style
 extends KmlObject<Style>

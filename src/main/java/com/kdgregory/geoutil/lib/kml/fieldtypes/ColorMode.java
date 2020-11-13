@@ -15,7 +15,7 @@
 package com.kdgregory.geoutil.lib.kml.fieldtypes;
 
 /**
- *  The legal values for colorMode, used by various style elements.
+ *  The legal values for color mode, used by various style elements.
  */
 public enum ColorMode
 {
