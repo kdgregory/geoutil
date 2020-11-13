@@ -101,7 +101,7 @@ public class XmlUtils
         catch (NumberFormatException ex)
         {
             // trim stack trace and give a more useful message
-            throw new IllegalArgumentException("unparseable value at " + nsUri + ":" + lclName + ": " + text);
+            throw new IllegalArgumentException(nsUri + ":" + lclName + " expected double, was: " + text);
         }
     }
 
@@ -113,22 +113,14 @@ public class XmlUtils
      */
     public static Boolean getChildTextAsBoolean(Element parent, String nsUri, String childName)
     {
-        String value = getChildText(parent, nsUri, childName);
-
-        if (value == null)
-            return null;
-
-        if ("0".equals(value))
+        String text = getChildText(parent, nsUri, childName);
+        try
         {
-            return Boolean.FALSE;
+            return ObjectUtils.parseAsBoolean(text);
         }
-        else if ("1".equals(value))
+        catch (IllegalArgumentException ex)
         {
-            return Boolean.TRUE;
-        }
-        else
-        {
-            throw new IllegalArgumentException("invalid content for " + childName + ": " + value);
+            throw new IllegalArgumentException("could not parse " + childName + ": " + text);
         }
     }
 
@@ -140,14 +132,14 @@ public class XmlUtils
     {
         String value = elem.getAttribute(name);
         if (StringUtil.isEmpty(value))
-            throw new IllegalArgumentException("missing attribute: " + name);
+            throw new IllegalArgumentException(elem.getNodeName() + "missing attribute: " + name);
         try
         {
             return Double.parseDouble(value);
         }
         catch (NumberFormatException ex)
         {
-            throw new IllegalArgumentException("attribute " + name + " has unparseable value: " + value);
+            throw new IllegalArgumentException("could not parse " + name + ": " + value);
         }
     }
 

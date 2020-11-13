@@ -63,6 +63,34 @@ public class ObjectUtils
 
 
     /**
+     *  Attempts to parse a string as a Boolean: "0" and "false" are false, "1"
+     *  and "true" are true. All comparisons are case-insensitive, and passing
+     *  null or empty string returns null.
+     *
+     *  @throws IllegalArgumentException if unable to parse.
+     */
+    public static Boolean parseAsBoolean(String value)
+    {
+        if (StringUtil.isEmpty(value))
+            return null;
+
+        switch (value.toLowerCase())
+        {
+            case "true":
+            case "1":
+                return Boolean.TRUE;
+
+            case "false":
+            case "0":
+                return Boolean.FALSE;
+
+            default:
+                throw new IllegalArgumentException("unable to parse: " + value);
+        }
+    }
+
+
+    /**
      *  IFF the passed string is not null or empty, attempts to parse it as
      *  a Double and then invokes the specified setter.
      */

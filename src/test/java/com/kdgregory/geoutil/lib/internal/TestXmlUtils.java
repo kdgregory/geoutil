@@ -125,11 +125,15 @@ public class TestXmlUtils
     public void testGetChildTextAsBoolean() throws Exception
     {
         Element parent = DomUtil.newDocument("parent");
+        XmlUtils.optAppendDataElement(parent, "nsuri:something", "argle",  "true");
+        XmlUtils.optAppendDataElement(parent, "nsuri:something", "bargle", "false");
         XmlUtils.optAppendDataElement(parent, "nsuri:something", "foo", "1");
         XmlUtils.optAppendDataElement(parent, "nsuri:something", "bar", "0");
         XmlUtils.optAppendDataElement(parent, "nsuri:something", "baz", "");
         XmlUtils.optAppendDataElement(parent, "nsuri:something", "biff", "NAN");
 
+        assertEquals("parseable: true",         Boolean.TRUE,   XmlUtils.getChildTextAsBoolean(parent, "nsuri:something", "argle"));
+        assertEquals("parseable: false",        Boolean.FALSE,  XmlUtils.getChildTextAsBoolean(parent, "nsuri:something", "bargle"));
         assertEquals("parseable: true",         Boolean.TRUE,   XmlUtils.getChildTextAsBoolean(parent, "nsuri:something", "foo"));
         assertEquals("parseable: false",        Boolean.FALSE,  XmlUtils.getChildTextAsBoolean(parent, "nsuri:something", "bar"));
         assertNull("child has empty string",                    XmlUtils.getChildTextAsBoolean(parent, "nsuri:something", "baz"));

@@ -15,25 +15,22 @@
 package com.kdgregory.geoutil.util.kml;
 
 import java.io.File;
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.sf.practicalxml.DomUtil;
-import net.sf.practicalxml.ParseUtil;
-import net.sf.practicalxml.xpath.XPathWrapper;
-
-import com.kdgregory.geoutil.lib.kml.KmlBuilder;
-import com.kdgregory.geoutil.lib.shared.Point;
-import com.kdgregory.geoutil.lib.shared.PointUtil;
-import com.kdgregory.geoutil.lib.shared.SegmentUtil;
+import com.kdgregory.geoutil.lib.kml.*;
+import com.kdgregory.geoutil.lib.kml.fieldtypes.Coordinates;
+import com.kdgregory.geoutil.lib.kml.model.Document;
+import com.kdgregory.geoutil.lib.kml.model.Folder;
+import com.kdgregory.geoutil.lib.kml.model.KmlPoint;
+import com.kdgregory.geoutil.lib.kml.model.LineString;
+import com.kdgregory.geoutil.lib.kml.model.LineStyle;
+import com.kdgregory.geoutil.lib.kml.model.Placemark;
+import com.kdgregory.geoutil.lib.kml.model.Style;
+import com.kdgregory.geoutil.lib.shared.*;
 
 
 /**
@@ -48,6 +45,9 @@ import com.kdgregory.geoutil.lib.shared.SegmentUtil;
  */
 public class GarminTrackCompare
 {
+    private final static String STYLE_FASTER = "faster";
+    private final static String STYLE_SLOWER = "slower";
+
     private static Logger logger = LoggerFactory.getLogger(GarminTrackCompare.class);
 
 
@@ -56,64 +56,63 @@ public class GarminTrackCompare
     {
         logger.info("starting");
 
-        Document[] sources = new Document[2];
+        KmlFile[] sources = new KmlFile[2];
         List<Point>[] srcTracks = new List[2];
 
         for (int argidx = 0 ; argidx < 2 ; argidx++)
         {
-            String filename = argv[argidx];
-            sources[argidx] = ParseUtil.parse(new File(filename));
+            File file = new File(argv[argidx]);
+            sources[argidx] = KmlFile.parse(file);
             srcTracks[argidx] = extractTrack(sources[argidx]);
-            logger.info("extracted {} points from {}", srcTracks[argidx].size(), filename);
+            logger.info("extracted {} points from {}", srcTracks[argidx].size(), file);
         }
 
         List<Point[]> aligned = SegmentUtil.align(srcTracks[0], srcTracks[1], 50, 100);
         logger.info("after alignment: {} points", aligned.size());
 
-        KmlBuilder result = buildOutput(aligned);
+        KmlFile result = buildOutput(aligned);
 
-        String filename = argv[2];
-        result.save(new File(filename));
-        logger.info("output written to {}", filename);
+        result.write(new File(argv[2]));
+        logger.info("output written to {}", argv[2]);
     }
 
 
-    private static List<Point> extractTrack(Document dom)
+    private static List<Point> extractTrack(KmlFile kmlfile)
     throws Exception
     {
         List<Point> result = new ArrayList<>();
 
-        XPathWrapper placemarkSelect = new XPathWrapper("//ns:Folder/ns:name[text()='Track Points']/../ns:Placemark")
-                                       .bindNamespace("ns", "http://earth.google.com/kml/2.1");
-        List<Element> placemarks = placemarkSelect.evaluate(dom, Element.class);
-        for (Element ePlacemark : placemarks)
+        for (Folder folder : kmlfile.find(Folder.class, "Track Points"))
         {
-            Element eTimespan = DomUtil.getChild(ePlacemark, "TimeSpan");
-            Element eBegin = DomUtil.getChild(eTimespan, "begin");
-            String srcTimestamp = eBegin.getTextContent();
-            Instant timestamp = Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(srcTimestamp));
-
-            Element ePoint = DomUtil.getChild(ePlacemark, "Point");
-            Element eCoord = DomUtil.getChild(ePoint, "coordinates");
-            String srcCoordinates = eCoord.getTextContent();
-            String[] parsedCoordinates = srcCoordinates.split(",");
-            double lon = Double.valueOf(parsedCoordinates[0].trim());
-            double lat = Double.valueOf(parsedCoordinates[1].trim());
-
-            result.add(new Point(lat, lon, timestamp));
+            for (Placemark pm : folder.find(Placemark.class, null))
+            {
+                // these files represent the path as points, but with a timespan rather than a timestamp
+                if ((pm.getGeometry() instanceof KmlPoint) && (pm.getTimespan() != null))
+                {
+                    Coordinates coord = ((KmlPoint)pm.getGeometry()).getCoordinates();
+                    Point p = new Point(coord.getLat(), coord.getLon(), coord.getElevation(), pm.getTimespan().getBegin());
+                    result.add(p);
+                }
+            }
         }
 
         return result;
     }
 
 
-    private static KmlBuilder buildOutput(List<Point[]> pairs)
+    private static KmlFile buildOutput(List<Point[]> pairs)
     {
-        KmlBuilder builder = new KmlBuilder()
-                             .add(KmlBuilder.style("faster", KmlBuilder.lineStyle(6, "FF00FF00")))
-                             .add(KmlBuilder.style("slower", KmlBuilder.lineStyle(6, "FF0000FF")));
+        Document doc = new Document()
+                       .addSharedStyle(
+                           new Style().setId(STYLE_FASTER)
+                               .setLineStyle(
+                                   new LineStyle().setColor("FF00FF00").setWidth(6.0)))
+                       .addSharedStyle(
+                           new Style().setId(STYLE_SLOWER)
+                               .setLineStyle(
+                                   new LineStyle().setColor("FF0000FF").setWidth(6.0)));
 
-        List<Point> segment1 = new ArrayList<>(pairs.size());
+        double distance = 0 ;
         Point p1Prev = null;
         Point p2Prev = null;
         for (Point[] pair : pairs)
@@ -121,35 +120,36 @@ public class GarminTrackCompare
             Point p1 = pair[0];
             Point p2 = pair[1];
 
-            segment1.add(p1);
             if (p1Prev != null)
             {
-                appendLineSegment(builder, p1Prev, p1, p2Prev, p2);
+                distance += appendLineSegment(doc, p1Prev, p1, p2Prev, p2);
             }
 
             p1Prev = p1;
             p2Prev = p2;
         }
 
-        builder.add(KmlBuilder.description(String.format("%tF vs %tF: %.1f miles",
-                                                         p1Prev.getTimestamp(), p2Prev.getTimestamp(),
-                                                         SegmentUtil.distance(segment1) / 1609)));
+        doc.setDescription(String.format("%tF vs %tF: %.1f miles",
+                           p1Prev.getTimestampMillis(), p2Prev.getTimestampMillis(),
+                           (distance / 1609)));
 
-        return builder;
+        return new KmlFile().addFeature(doc);
     }
 
 
-    private static void appendLineSegment(KmlBuilder builder, Point p1Prev, Point p1, Point p2Prev, Point p2)
+    private static double appendLineSegment(Document doc, Point p1Prev, Point p1, Point p2Prev, Point p2)
     {
         Point start = PointUtil.midpoint(p1Prev, p2Prev);
         Point finish = PointUtil.midpoint(p1, p2);
-        double s1 = PointUtil.velocityMPH(p1Prev, p1);
-        double s2 = PointUtil.velocityMPH(p2Prev, p2);
-        String styleName = (s2 > s1) ? "faster" : "slower";
+        double v1 = PointUtil.velocityMPH(p1Prev, p1);
+        double v2 = PointUtil.velocityMPH(p2Prev, p2);
+        String styleName = (v2 > v1) ? STYLE_FASTER : STYLE_SLOWER;
 
-        builder.add(KmlBuilder.placemark(
-                        KmlBuilder.description(String.format("%.1f vs %.1f mph", s1, s2)),
-                        KmlBuilder.styleRef(styleName),
-                        KmlBuilder.lineSegment(start, finish)));
+        doc.addFeature(new Placemark()
+                       .setDescription(String.format("%.1f vs %.1f mph", v1, v2))
+                       .setStyleRef(styleName)
+                       .setGeometry(new LineString(start, finish)));
+
+        return PointUtil.pythagorean(start, finish);
     }
 }

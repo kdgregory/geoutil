@@ -63,7 +63,6 @@ public class Track
      */
     public Track(Element elem)
     {
-
         for (Element child : DomUtil.getChildren(elem))
         {
             String childNamespace = child.getNamespaceURI();

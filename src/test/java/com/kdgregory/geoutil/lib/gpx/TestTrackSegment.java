@@ -150,5 +150,4 @@ public class TestTrackSegment
         assertEquals("point 1", new Point(12, 34), seg.getPoints().get(0).getPoint());
         assertEquals("point 2", new Point(23, 45), seg.getPoints().get(1).getPoint());
     }
-
 }

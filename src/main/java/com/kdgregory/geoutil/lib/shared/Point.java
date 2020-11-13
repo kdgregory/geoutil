@@ -95,6 +95,18 @@ implements Comparable<Point>
         this(lat, lon, null, null);
     }
 
+
+    /**
+     *  Copy constructor.
+     */
+    public Point(Point p)
+    {
+        lat = p.getLat();
+        lon = p.getLon();
+        elevation = p.getElevation();
+        timestamp = p.getTimestamp();
+    }
+
 //----------------------------------------------------------------------------
 //  Accessors
 //----------------------------------------------------------------------------

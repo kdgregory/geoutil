@@ -1,0 +1,28 @@
+<html>
+<body>
+    An (incomplete) implementation of the <a href="https://developers.google.com/kml/documentation/kmlreference">KML 2.2 specification</a>.
+    <p>
+    To use, create a {@link KmlFile} instance and add features to it; when done, write it to an output file:
+    <pre>
+    KmlFile file = new KmlFile()
+                   .addFeature(new Folder()
+                               .setDescription("example file")
+                               .addFeature(new Placemark()
+                                           .setDescription("City Hall")
+                                           .setGeometry(new KmlPoint(39.9521, -75.1626))));
+    file.write(new File("myfirstproject.kml"));
+    </pre>
+    <p>
+    You can also read existing files and search for the features they contain:
+    <pre>
+    KmlFile file = KmlFile.parse(new File("garmin_track.kml"));
+    for (Folder folder : kmlfile.find(Folder.class, "Track Points"))
+    {
+        for (Placemark pm : folder.find(Placemark.class, null))
+        {
+            // do something with the placemarks
+        }
+    }
+    </pre>
+</body>
+</html>
