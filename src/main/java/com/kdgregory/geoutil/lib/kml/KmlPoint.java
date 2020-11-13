@@ -20,6 +20,8 @@ import net.sf.practicalxml.DomUtil;
 
 import com.kdgregory.geoutil.lib.internal.ObjectUtils;
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
+import com.kdgregory.geoutil.lib.kml.fieldtypes.AltitudeMode;
+import com.kdgregory.geoutil.lib.kml.fieldtypes.Coordinates;
 
 
 /**

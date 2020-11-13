@@ -26,6 +26,10 @@ import static org.junit.Assert.*;
 import net.sf.practicalxml.DomUtil;
 import net.sf.practicalxml.builder.XmlBuilder;
 
+import com.kdgregory.geoutil.lib.kml.fieldtypes.Coordinates;
+import com.kdgregory.geoutil.lib.kml.fieldtypes.TimeSpan;
+import com.kdgregory.geoutil.lib.kml.fieldtypes.TimeStamp;
+
 
 public class TestPlacemark
 {

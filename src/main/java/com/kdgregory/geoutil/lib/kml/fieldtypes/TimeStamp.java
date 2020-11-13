@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.geoutil.lib.kml;
+package com.kdgregory.geoutil.lib.kml.fieldtypes;
 
 import java.time.Instant;
 
@@ -23,6 +23,7 @@ import net.sf.practicalxml.DomUtil;
 
 import com.kdgregory.geoutil.lib.internal.TimestampUtils;
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
+import com.kdgregory.geoutil.lib.kml.KmlConstants;
 
 /**
  *  A child element of Feature that holds a point in time. It exists as a

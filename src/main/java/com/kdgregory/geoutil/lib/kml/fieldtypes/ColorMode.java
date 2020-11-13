@@ -12,30 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.geoutil.lib.kml;
+package com.kdgregory.geoutil.lib.kml.fieldtypes;
 
 /**
- *  The legal values for altitudeMode, used by various Geometry elements.
+ *  The legal values for colorMode, used by various style elements.
  */
-public enum AltitudeMode
+public enum ColorMode
 {
-    clampToGround,
-    relativeToGround,
-    absolute;
+    normal,
+    random;
 
 
     /**
      *  Attempts to match the provided string to one of these values, throwing
      *  if unable.
      */
-    public static AltitudeMode fromString(String value)
+    public static ColorMode fromString(String value)
     {
-        for (AltitudeMode mode : AltitudeMode.values())
+        for (ColorMode mode : ColorMode.values())
         {
             if (mode.name().equals(value))
                 return mode;
         }
 
-        throw new IllegalArgumentException("invalid altitudeMode: " + value);
+        throw new IllegalArgumentException("invalid colorMode: " + value);
     }
 }

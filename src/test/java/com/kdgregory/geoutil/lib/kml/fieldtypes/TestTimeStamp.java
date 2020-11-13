@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.geoutil.lib.kml;
+package com.kdgregory.geoutil.lib.kml.fieldtypes;
 
 import java.time.Instant;
 
@@ -24,6 +24,8 @@ import static org.junit.Assert.*;
 
 import net.sf.practicalxml.DomUtil;
 import net.sf.practicalxml.builder.XmlBuilder;
+
+import com.kdgregory.geoutil.lib.kml.fieldtypes.TimeStamp;
 
 
 public class TestTimeStamp

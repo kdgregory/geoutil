@@ -26,6 +26,9 @@ import static org.junit.Assert.*;
 import net.sf.practicalxml.DomUtil;
 import net.sf.practicalxml.builder.XmlBuilder;
 
+import com.kdgregory.geoutil.lib.kml.fieldtypes.AltitudeMode;
+import com.kdgregory.geoutil.lib.kml.fieldtypes.Coordinates;
+
 
 public class TestLineString
 {

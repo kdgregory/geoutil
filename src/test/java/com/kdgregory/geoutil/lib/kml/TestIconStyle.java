@@ -25,6 +25,8 @@ import static org.junit.Assert.*;
 import net.sf.practicalxml.DomUtil;
 import net.sf.practicalxml.builder.XmlBuilder;
 
+import com.kdgregory.geoutil.lib.kml.fieldtypes.ColorMode;
+
 
 public class TestIconStyle
 {

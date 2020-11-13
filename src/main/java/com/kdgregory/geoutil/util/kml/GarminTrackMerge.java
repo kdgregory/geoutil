@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.kdgregory.geoutil.lib.kml.*;
+import com.kdgregory.geoutil.lib.kml.fieldtypes.Coordinates;
 import com.kdgregory.geoutil.lib.shared.Point;
 import com.kdgregory.geoutil.lib.shared.SegmentUtil;
 
