@@ -23,13 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.kdgregory.geoutil.lib.kml.*;
 import com.kdgregory.geoutil.lib.kml.fieldtypes.Coordinates;
-import com.kdgregory.geoutil.lib.kml.model.Document;
-import com.kdgregory.geoutil.lib.kml.model.Folder;
-import com.kdgregory.geoutil.lib.kml.model.KmlPoint;
-import com.kdgregory.geoutil.lib.kml.model.LineString;
-import com.kdgregory.geoutil.lib.kml.model.LineStyle;
-import com.kdgregory.geoutil.lib.kml.model.Placemark;
-import com.kdgregory.geoutil.lib.kml.model.Style;
+import com.kdgregory.geoutil.lib.kml.model.*;
 import com.kdgregory.geoutil.lib.shared.*;
 
 

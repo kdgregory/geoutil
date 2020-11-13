@@ -29,9 +29,7 @@ import org.slf4j.LoggerFactory;
 import net.sf.kdgcommons.collections.CollectionUtil;
 
 import com.kdgregory.geoutil.lib.gpx.GpxFile;
-import com.kdgregory.geoutil.lib.gpx.GpxPoint;
-import com.kdgregory.geoutil.lib.gpx.Track;
-import com.kdgregory.geoutil.lib.gpx.TrackSegment;
+import com.kdgregory.geoutil.lib.gpx.model.*;
 
 
 /**

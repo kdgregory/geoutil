@@ -22,11 +22,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.kdgregory.geoutil.lib.gpx.GpxFile;
-import com.kdgregory.geoutil.lib.gpx.GpxPoint;
-import com.kdgregory.geoutil.lib.gpx.Track;
-import com.kdgregory.geoutil.lib.gpx.TrackSegment;
-import com.kdgregory.geoutil.lib.kml.model.*;
+import com.kdgregory.geoutil.lib.gpx.model.*;
 import com.kdgregory.geoutil.lib.kml.KmlFile;
+import com.kdgregory.geoutil.lib.kml.model.*;
 import com.kdgregory.geoutil.lib.shared.Point;
 import com.kdgregory.geoutil.lib.shared.PointUtil;
 import com.kdgregory.geoutil.lib.shared.SegmentUtil;

@@ -17,7 +17,7 @@ package com.kdgregory.geoutil.util.gpx;
 import java.io.File;
 
 import com.kdgregory.geoutil.lib.gpx.GpxFile;
-import com.kdgregory.geoutil.lib.gpx.Track;
+import com.kdgregory.geoutil.lib.gpx.model.*;
 
 
 /**

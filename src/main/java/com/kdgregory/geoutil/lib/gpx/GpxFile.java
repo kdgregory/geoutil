@@ -30,6 +30,8 @@ import net.sf.practicalxml.DomUtil;
 import net.sf.practicalxml.OutputUtil;
 import net.sf.practicalxml.ParseUtil;
 
+import com.kdgregory.geoutil.lib.gpx.model.Track;
+
 /**
  *  Top-level clsss for reading and writing GPX files, as defined by
  *  https://www.topografix.com/GPX/1/1/.

@@ -26,6 +26,8 @@ import static org.junit.Assert.*;
 import net.sf.practicalxml.DomUtil;
 import net.sf.practicalxml.builder.XmlBuilder;
 
+import com.kdgregory.geoutil.lib.gpx.model.Track;
+
 
 public class TestGpxFile
 {

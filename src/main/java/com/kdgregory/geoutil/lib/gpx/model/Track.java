@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.geoutil.lib.gpx;
+package com.kdgregory.geoutil.lib.gpx.model;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ import org.w3c.dom.Element;
 
 import net.sf.practicalxml.DomUtil;
 
+import com.kdgregory.geoutil.lib.gpx.GpxConstants;
 import com.kdgregory.geoutil.lib.internal.ObjectUtils;
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
 
