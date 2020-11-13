@@ -34,7 +34,7 @@ import com.kdgregory.geoutil.lib.kml.model.Folder;
 /**
  *  Top-level clsss for reading and writing KML files. Although this is not part
  *  the KML model, it behaves like a Container so I have chosen to implement it
- *  as one. 
+ *  as one.
  */
 public class KmlFile
 extends Container<KmlFile>

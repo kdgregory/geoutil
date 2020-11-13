@@ -35,12 +35,12 @@ import com.kdgregory.geoutil.lib.shared.SegmentUtil;
 /**
  *  Extracts the tracks from a GPX file and writes it as a series of line
  *  segments to a KML file with the same name but different extension.
- *  
+ *
  */
 public class GPXToKML
 {
     private static Logger logger = LoggerFactory.getLogger(GPXToKML.class);
-    
+
     public static void main(String[] argv)
     throws Exception
     {
@@ -49,29 +49,29 @@ public class GPXToKML
             System.err.println("invocation: GpxToKml FILENAME");
             System.exit(1);
         }
-        
+
         File file = new File(argv[0]);
         logger.info("processing file: {}", file);
         GpxFile gpx = new GpxFile(file);
-        
+
         List<Point> points = extractPoints(gpx);
         logger.debug("extracted {} points", points.size());
-        
+
         points = SegmentUtil.simplify(points, 50);
         logger.debug("after simplification, {} points remain", points.size());
-        
+
         KmlFile kml = buildOutput(points);
-        
+
         File outputFile = transformFilename(file);
         logger.info("writing to {}", outputFile);
         kml.write(outputFile);
     }
-    
-    
+
+
     private static List<Point> extractPoints(GpxFile gpx)
     {
         List<Point> result = new ArrayList<>(8192);
-        
+
         for (Track oldTrack : gpx.getTracks())
         {
             for (TrackSegment seg : oldTrack.getSegments())
@@ -83,11 +83,11 @@ public class GPXToKML
                 }
             }
         }
-        
+
         return result;
     }
-    
-    
+
+
     private static KmlFile buildOutput(List<Point> points)
     {
         Document doc = new Document()
@@ -102,7 +102,7 @@ public class GPXToKML
         {
             if (prev != null)
             {
-                double velocity = PointUtil.velocityMPH(prev, p);                
+                double velocity = PointUtil.velocityMPH(prev, p);
                 doc.addFeature(new Placemark()
                                .setDescription(String.format("%.1f mph", velocity))
                                .setStyleRef("default")
@@ -113,8 +113,8 @@ public class GPXToKML
 
         return new KmlFile().addFeature(doc);
     }
-    
-    
+
+
     private static File transformFilename(File src)
     {
         String srcName = src.getAbsolutePath();

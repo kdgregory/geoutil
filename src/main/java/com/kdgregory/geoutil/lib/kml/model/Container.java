@@ -105,7 +105,7 @@ extends Feature<T>
 //----------------------------------------------------------------------------
 //  XML conversion helpers
 //----------------------------------------------------------------------------
-    
+
     @Override
     protected void fromXmlHelper(Element elem)
     {
@@ -127,8 +127,8 @@ extends Feature<T>
             }
         }
     }
-    
-    
+
+
     @Override
     protected void toXmlHelper(Element elem)
     {
@@ -136,13 +136,13 @@ extends Feature<T>
         // why it's not here
         super.toXmlHelper(elem);
     }
-    
+
 
     /**
      *  Appends features to the provided element. This is common code for subclasses.
      */
     protected void appendFeaturesAsXml(Element elem)
-    {        
+    {
         for (Feature<?> feature : features)
         {
             feature.appendAsXml(elem);

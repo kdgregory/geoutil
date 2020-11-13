@@ -47,7 +47,7 @@ public class GarminTrackCompare
 {
     private final static String STYLE_FASTER = "faster";
     private final static String STYLE_SLOWER = "slower";
-    
+
     private static Logger logger = LoggerFactory.getLogger(GarminTrackCompare.class);
 
 
@@ -71,7 +71,7 @@ public class GarminTrackCompare
         logger.info("after alignment: {} points", aligned.size());
 
         KmlFile result = buildOutput(aligned);
-        
+
         result.write(new File(argv[2]));
         logger.info("output written to {}", argv[2]);
     }
@@ -81,7 +81,7 @@ public class GarminTrackCompare
     throws Exception
     {
         List<Point> result = new ArrayList<>();
-        
+
         for (Folder folder : kmlfile.find(Folder.class, "Track Points"))
         {
             for (Placemark pm : folder.find(Placemark.class, null))
@@ -144,12 +144,12 @@ public class GarminTrackCompare
         double v1 = PointUtil.velocityMPH(p1Prev, p1);
         double v2 = PointUtil.velocityMPH(p2Prev, p2);
         String styleName = (v2 > v1) ? STYLE_FASTER : STYLE_SLOWER;
-        
+
         doc.addFeature(new Placemark()
                        .setDescription(String.format("%.1f vs %.1f mph", v1, v2))
                        .setStyleRef(styleName)
                        .setGeometry(new LineString(start, finish)));
-        
+
         return PointUtil.pythagorean(start, finish);
     }
 }
