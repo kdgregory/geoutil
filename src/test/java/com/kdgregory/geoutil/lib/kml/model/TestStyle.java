@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.geoutil.lib.kml;
+package com.kdgregory.geoutil.lib.kml.model;
 
 import java.util.List;
 
@@ -27,6 +27,9 @@ import net.sf.practicalxml.builder.XmlBuilder;
 
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
 import com.kdgregory.geoutil.lib.kml.fieldtypes.ColorMode;
+import com.kdgregory.geoutil.lib.kml.model.IconStyle;
+import com.kdgregory.geoutil.lib.kml.model.LineStyle;
+import com.kdgregory.geoutil.lib.kml.model.Style;
 
 
 public class TestStyle

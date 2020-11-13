@@ -27,6 +27,10 @@ import net.sf.practicalxml.DomUtil;
 import net.sf.practicalxml.builder.XmlBuilder;
 
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
+import com.kdgregory.geoutil.lib.kml.model.Document;
+import com.kdgregory.geoutil.lib.kml.model.Feature;
+import com.kdgregory.geoutil.lib.kml.model.Folder;
+import com.kdgregory.geoutil.lib.kml.model.Placemark;
 
 
 public class TestKmlFile

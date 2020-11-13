@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.geoutil.lib.kml;
+package com.kdgregory.geoutil.lib.kml.model;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +28,7 @@ import net.sf.practicalxml.builder.XmlBuilder;
 
 import com.kdgregory.geoutil.lib.kml.fieldtypes.AltitudeMode;
 import com.kdgregory.geoutil.lib.kml.fieldtypes.Coordinates;
+import com.kdgregory.geoutil.lib.kml.model.LineString;
 
 
 public class TestLineString

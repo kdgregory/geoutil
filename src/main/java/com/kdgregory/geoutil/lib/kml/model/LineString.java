@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.geoutil.lib.kml;
+package com.kdgregory.geoutil.lib.kml.model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +27,7 @@ import net.sf.practicalxml.DomUtil;
 
 import com.kdgregory.geoutil.lib.internal.ObjectUtils;
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
+import com.kdgregory.geoutil.lib.kml.KmlConstants;
 import com.kdgregory.geoutil.lib.kml.fieldtypes.AltitudeMode;
 import com.kdgregory.geoutil.lib.kml.fieldtypes.Coordinates;
 import com.kdgregory.geoutil.lib.shared.Point;

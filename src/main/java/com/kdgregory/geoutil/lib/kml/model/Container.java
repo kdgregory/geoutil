@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.geoutil.lib.kml;
+package com.kdgregory.geoutil.lib.kml.model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,8 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 import net.sf.practicalxml.DomUtil;
+
+import com.kdgregory.geoutil.lib.kml.KmlConstants;
 
 
 /**

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.geoutil.lib.kml;
+package com.kdgregory.geoutil.lib.kml.model;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,6 +24,11 @@ import static org.junit.Assert.*;
 
 import net.sf.practicalxml.DomUtil;
 import net.sf.practicalxml.builder.XmlBuilder;
+
+import com.kdgregory.geoutil.lib.kml.model.Document;
+import com.kdgregory.geoutil.lib.kml.model.Feature;
+import com.kdgregory.geoutil.lib.kml.model.Placemark;
+import com.kdgregory.geoutil.lib.kml.model.Style;
 
 
 public class TestDocument

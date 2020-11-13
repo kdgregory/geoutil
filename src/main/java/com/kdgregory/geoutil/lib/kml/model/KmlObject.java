@@ -12,11 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.geoutil.lib.kml;
+package com.kdgregory.geoutil.lib.kml.model;
 
 import org.w3c.dom.Element;
 
 import net.sf.kdgcommons.lang.StringUtil;
+
+import com.kdgregory.geoutil.lib.kml.KmlConstants;
 
 
 /**

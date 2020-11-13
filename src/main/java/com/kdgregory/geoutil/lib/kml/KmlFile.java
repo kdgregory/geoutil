@@ -25,10 +25,16 @@ import net.sf.practicalxml.DomUtil;
 import net.sf.practicalxml.OutputUtil;
 import net.sf.practicalxml.ParseUtil;
 
+import com.kdgregory.geoutil.lib.kml.model.Container;
+import com.kdgregory.geoutil.lib.kml.model.Document;
+import com.kdgregory.geoutil.lib.kml.model.Feature;
+import com.kdgregory.geoutil.lib.kml.model.Folder;
+
 
 /**
- *  Top-level clsss for reading and writing KML files, as defined by
- *  https://www.topografix.com/GPX/1/1/.
+ *  Top-level clsss for reading and writing KML files. Although this is not part
+ *  the KML model, it behaves like a Container so I have chosen to implement it
+ *  as one. 
  */
 public class KmlFile
 extends Container<KmlFile>
