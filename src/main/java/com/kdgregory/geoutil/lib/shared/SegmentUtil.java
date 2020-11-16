@@ -48,6 +48,64 @@ public class SegmentUtil
 
 
     /**
+     *  Trims the past segment, removing points at the start and end that show movement
+     *  that's less than a given threshold (using Pythagorean distance).
+     *
+     *  @param  segment The source segment.
+     *  @param  minDist The minimum distance that indicates movement between two points.
+     *
+     *  @return A new list excluding points at the start and end that don't show movement.
+     *          This list may be modified by the caller.
+     */
+    public static List<Point> trim(List<? extends Point> segment, double minDist)
+    {
+        ArrayList<Point> result = new ArrayList<>();
+        if ((segment == null) || segment.isEmpty())
+            return result;
+
+        result.ensureCapacity(segment.size());
+
+        Iterator<? extends Point> startItx = segment.iterator();
+        Point prev = startItx.next();
+        while ((prev != null) && startItx.hasNext())
+        {
+            Point cur = startItx.next();
+            if (PointUtil.pythagoreanDistance(prev, cur) >= minDist)
+            {
+                result.add(prev);
+                result.add(cur);
+                break;
+            }
+            else
+            {
+                prev = cur;
+            }
+        }
+
+        while (startItx.hasNext())
+        {
+            result.add(startItx.next());
+        }
+
+        // could do this with a ListIterator, but direct indexes are simplest
+
+        int prevIdx = result.size() - 1;
+        int curIdx = prevIdx - 1;
+        while (curIdx > 0)
+        {
+            if (PointUtil.pythagoreanDistance(result.get(prevIdx), result.get(curIdx)) >= minDist)
+                break;
+            result.remove(prevIdx);
+            prevIdx = curIdx;
+            curIdx--;
+        }
+
+        return result;
+    }
+
+
+
+    /**
      *  Simplifies a segment by removing points that are less than a specified distance apart
      *  (using Pythagorean distance). The returned segment is a newly-created mutable list.
      */

@@ -42,6 +42,30 @@ public class TestSegmentUtil
 
 
     @Test
+    public void testTrim() throws Exception
+    {
+        Point p1 = new Point(39.95237, -75.16358);
+        Point p2 = new Point(39.95237, -75.16359);  // 0.9
+        Point p3 = new Point(39.95236, -75.16359);  // 1.1
+        Point p4 = new Point(39.95170, -75.16369);  // 74
+        Point p5 = new Point(39.95087, -75.16387);  // 94
+        Point p6 = new Point(39.95008, -75.16401);  // 89
+        Point p7 = new Point(39.95008, -75.16400);  // 0.9
+        Point p8 = new Point(39.95007, -75.16400);  // 1.1
+        Point p9 = new Point(39.95006, -75.16400);  // 1.1
+
+        // this is an immutable list, will throw if trim() doesn't create a new list
+        List<Point> src = Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9);
+
+        assertEquals("null",        Collections.emptyList(),                        SegmentUtil.trim(null, 10));
+        assertEquals("empty",       Collections.emptyList(),                        SegmentUtil.trim(Collections.emptyList(), 10));
+        assertEquals("1 meter",     Arrays.asList(p2, p3, p4, p5, p6, p7, p8, p9),  SegmentUtil.trim(src, 1));
+        assertEquals("10 meter",    Arrays.asList(p3, p4, p5, p6),                  SegmentUtil.trim(src, 10));
+        assertEquals("100 meter",   Collections.emptyList(),                        SegmentUtil.trim(src, 100));
+    }
+
+
+    @Test
     public void testSimplify() throws Exception
     {
         Point p1 = new Point(39.95237, -75.16358);
@@ -54,14 +78,12 @@ public class TestSegmentUtil
         Point p8 = new Point(39.94556, -75.16499);  // 157
         Point p9 = new Point(39.94467, -75.16526);  // 101
 
+        // this is an immutable list, will throw if simplify() doesn't create a new list
         List<Point> orig    = Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9);
 
         List<Point> exp100  = Arrays.asList(p1, p3, p5, p6, p7, p8, p9);
         List<Point> exp300  = Arrays.asList(p1, p5, p8);
         List<Point> exp1000 = Arrays.asList(p1);
-
-        List<Point> res0 = SegmentUtil.simplify(orig, 0);
-        assertNotSame("should not return original list", orig, res0);
 
         assertEquals("minDistance = 0",    orig,    SegmentUtil.simplify(orig, 0));
         assertEquals("minDistance = 100",  exp100,  SegmentUtil.simplify(orig, 100));
