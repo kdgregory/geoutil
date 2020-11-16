@@ -49,7 +49,7 @@ public class PointUtil
      *  Calculates the Pythagorean distance (in meters) between two points,
      *  with arbitrary base degree length.
      */
-    public static double pythagorean(double lat1, double lon1, double lat2, double lon2, double baseDegreeLength)
+    public static double pythagoreanDistance(double lat1, double lon1, double lat2, double lon2, double baseDegreeLength)
     {
         double dLat = baseDegreeLength * (lat2 - lat1);
         double dLon = correctedLongitude(baseDegreeLength * (lon2 - lon1), lat1);
@@ -60,18 +60,18 @@ public class PointUtil
     /**
      *  Calculates the Pythagorean distance (in meters) between two points on Earth.
      */
-    public static double pythagorean(double lat1, double lon1, double lat2, double lon2)
+    public static double pythagoreanDistance(double lat1, double lon1, double lat2, double lon2)
     {
-        return pythagorean(lat1, lon1, lat2, lon2, EARTH_DEGREE_LENGTH);
+        return pythagoreanDistance(lat1, lon1, lat2, lon2, EARTH_DEGREE_LENGTH);
     }
 
 
     /**
      *  Calculates the Pythagorean distance between two points on Earth.
      */
-    public static double pythagorean(Point p1, Point p2)
+    public static double pythagoreanDistance(Point p1, Point p2)
     {
-        return pythagorean(p1.getLat(), p1.getLon(), p2.getLat(), p2.getLon());
+        return pythagoreanDistance(p1.getLat(), p1.getLon(), p2.getLat(), p2.getLon());
     }
 
 
@@ -79,7 +79,7 @@ public class PointUtil
      *  Calculates the Great Circle distance between two points, with arbitrary
      *  sphere radius.
      */
-    public static double greatCircle(double lat1, double lon1, double lat2, double lon2, double radius)
+    public static double greatCircleDistance(double lat1, double lon1, double lat2, double lon2, double radius)
     {
         double lat1R = Math.toRadians(lat1);
         double lat2R = Math.toRadians(lat2);
@@ -95,18 +95,18 @@ public class PointUtil
     /**
      *  Calculates the Great Circle distance between two points on the Earth.
      */
-    public static double greatCircle(double lat1, double lon1, double lat2, double lon2)
+    public static double greatCircleDistance(double lat1, double lon1, double lat2, double lon2)
     {
-        return greatCircle(lat1, lon1, lat2, lon2, EARTH_RADIUS);
+        return greatCircleDistance(lat1, lon1, lat2, lon2, EARTH_RADIUS);
     }
 
 
     /**
      *  Calculates the Great Circle distance between two points on the Earth.
      */
-    public static double greatCircle(Point p1, Point p2)
+    public static double greatCircleDistance(Point p1, Point p2)
     {
-        return greatCircle(p1.getLat(), p1.getLon(), p2.getLat(), p2.getLon());
+        return greatCircleDistance(p1.getLat(), p1.getLon(), p2.getLat(), p2.getLon());
     }
 
 
@@ -116,7 +116,7 @@ public class PointUtil
      */
     public static double velocity(Point p1, Point p2)
     {
-        double distMeters = PointUtil.pythagorean(p1, p2);
+        double distMeters = PointUtil.pythagoreanDistance(p1, p2);
         double elapsed = (p1.getTimestampMillis() - p2.getTimestampMillis()) / 1000.0;
         return Math.abs(distMeters / elapsed);
     }

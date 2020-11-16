@@ -27,9 +27,9 @@ public class TestSegmentUtil
     @Test
     public void testPythagoreanDistance() throws Exception
     {
-        assertEquals("null segment", 0.0, SegmentUtil.distance(null), 0.0);
+        assertEquals("null segment", 0.0, SegmentUtil.pythagoreanDistance(null), 0.0);
 
-        assertEquals("empty segment", 0.0, SegmentUtil.distance(Collections.<Point>emptyList()), 0.0);
+        assertEquals("empty segment", 0.0, SegmentUtil.pythagoreanDistance(Collections.<Point>emptyList()), 0.0);
 
         List<Point> segment = Arrays.asList(
                                 new Point(45, 75),
@@ -37,7 +37,7 @@ public class TestSegmentUtil
                                 new Point(45, 77),
                                 new Point(44, 78),
                                 new Point(45, 79));
-        assertEquals("non-empty segment", 544428.8, SegmentUtil.distance(segment), 0.1);
+        assertEquals("non-empty segment", 544428.8, SegmentUtil.pythagoreanDistance(segment), 0.1);
     }
 
 

@@ -175,6 +175,6 @@ public class TrackSegment
                            .map(GpxPoint::getPoint)
                            .sorted()
                            .collect(Collectors.toList());
-        return SegmentUtil.distance(temp);
+        return SegmentUtil.pythagoreanDistance(temp);
     }
 }

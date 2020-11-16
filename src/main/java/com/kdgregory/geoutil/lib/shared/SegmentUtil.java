@@ -28,7 +28,7 @@ public class SegmentUtil
      *  Computes and sums the Pythagorean distance (in meters) between the points
      *  in a segment.
      */
-    public static double distance(List<? extends Point> segment)
+    public static double pythagoreanDistance(List<? extends Point> segment)
     {
         if ((segment == null) || segment.isEmpty())
             return 0;
@@ -39,7 +39,7 @@ public class SegmentUtil
         while (itx.hasNext())
         {
             Point cur = itx.next();
-            sum += PointUtil.pythagorean(prev, cur);
+            sum += PointUtil.pythagoreanDistance(prev, cur);
             prev = cur;
         }
 
@@ -64,7 +64,7 @@ public class SegmentUtil
         while (itx.hasNext())
         {
             Point cur = itx.next();
-            if (PointUtil.pythagorean(prev, cur) > minDistanceMeters)
+            if (PointUtil.pythagoreanDistance(prev, cur) > minDistanceMeters)
             {
                 result.add(cur);
                 prev = cur;
@@ -184,7 +184,7 @@ public class SegmentUtil
             while (hasNext())
             {
                 Point x = next();
-                if (PointUtil.pythagorean(p, x) >= minSeparation)
+                if (PointUtil.pythagoreanDistance(p, x) >= minSeparation)
                     return x;
             }
 
@@ -219,14 +219,14 @@ public class SegmentUtil
             while (hasNext())
             {
                 Point x = next();
-                double dx = PointUtil.pythagorean(p, x);
+                double dx = PointUtil.pythagoreanDistance(p, x);
                 if (dx < maxSeparation)
                 {
                     mark();
                     while (hasNext())
                     {
                         Point y = next();
-                        double dy = PointUtil.pythagorean(p, y);
+                        double dy = PointUtil.pythagoreanDistance(p, y);
                         if (dy > dx)
                         {
                             returnToMark();

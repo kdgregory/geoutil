@@ -40,14 +40,14 @@ public class TestPointUtil
     {
         // verify the base calculation: as long as this is right any values should work
 
-        double d1 = PointUtil.pythagorean(45, 75, 46, 76, 100000);
+        double d1 = PointUtil.pythagoreanDistance(45, 75, 46, 76, 100000);
         assertEquals("base calculation", 122474.5, d1, 0.1);
 
         // verify the chain of alls and base Earth degree length
 
         Point p2a = new Point(45, 75);
         Point p2b = new Point(46, 76);
-        double d2 = PointUtil.pythagorean(p2a, p2b);
+        double d2 = PointUtil.pythagoreanDistance(p2a, p2b);
         assertEquals("point calculation, on Earth", 136108.4, d2, 0.1);
     }
 
@@ -61,7 +61,7 @@ public class TestPointUtil
 
         Point p1 = new Point(-15, -15);
         Point p2 = new Point(15, 15);
-        double d = PointUtil.greatCircle(p1, p2) / 1000;
+        double d = PointUtil.greatCircleDistance(p1, p2) / 1000;
         assertEquals("calculation on Earth", 4690.0, d, 0.5);
     }
 

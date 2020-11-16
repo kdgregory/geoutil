@@ -144,6 +144,6 @@ public class GarminTrackCompare
                        .setStyleRef(styleName)
                        .setGeometry(new LineString(start, finish)));
 
-        return PointUtil.pythagorean(start, finish);
+        return PointUtil.pythagoreanDistance(start, finish);
     }
 }
