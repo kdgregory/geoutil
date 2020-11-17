@@ -14,6 +14,8 @@
 
 package com.kdgregory.geoutil.lib.shared;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -62,6 +64,48 @@ public class TestSegmentUtil
         assertEquals("1 meter",     Arrays.asList(p2, p3, p4, p5, p6, p7, p8, p9),  SegmentUtil.trim(src, 1));
         assertEquals("10 meter",    Arrays.asList(p3, p4, p5, p6),                  SegmentUtil.trim(src, 10));
         assertEquals("100 meter",   Collections.emptyList(),                        SegmentUtil.trim(src, 100));
+    }
+
+
+    @Test
+    public void testSplit() throws Exception
+    {
+        Point p1 = new Point(39.95237, -75.16358, Instant.ofEpochMilli(1000));
+        Point p2 = new Point(39.95237, -75.16359, Instant.ofEpochMilli(2000));
+        Point p3 = new Point(39.95236, -75.16359, Instant.ofEpochMilli(5000));
+        Point p4 = new Point(39.95170, -75.16369, Instant.ofEpochMilli(6000));
+        Point p5 = new Point(39.95087, -75.16387, Instant.ofEpochMilli(7000));
+
+        List<List<Point>> r1 = SegmentUtil.split(null, Duration.ofMillis(2000));
+        assertTrue("original list is null", r1.isEmpty());
+
+        List<List<Point>> r2 = SegmentUtil.split(Collections.emptyList(), Duration.ofMillis(2000));
+        assertTrue("original list is empty", r2.isEmpty());
+
+        List<List<Point>> r3 = SegmentUtil.split(Arrays.asList(p1, p2, p3, p4, p5), Duration.ofMillis(2000));
+        assertEquals("gap 2000, number of splits",  2,                          r3.size());
+        assertEquals("gap 2000, first split",       Arrays.asList(p1, p2),      r3.get(0));
+        assertEquals("gap 2000, second split",      Arrays.asList(p3, p4, p5),  r3.get(1));
+
+        List<List<Point>> r4 = SegmentUtil.split(Arrays.asList(p1, p2, p3, p4, p5), Duration.ofMillis(42000));
+        assertEquals("gap 4000, number of splits",  1,                                  r4.size());
+        assertEquals("gap 4000, first split",       Arrays.asList(p1, p2, p3, p4, p5),  r4.get(0));
+    }
+
+
+    @Test
+    public void testSplitWithNullTimestamps() throws Exception
+    {
+        Point p1 = new Point(39.95237, -75.16358, Instant.ofEpochMilli(1000));
+        Point p2 = new Point(39.95237, -75.16359, null);
+        Point p3 = new Point(39.95236, -75.16359, null);
+        Point p4 = new Point(39.95170, -75.16369, Instant.ofEpochMilli(6000));
+        Point p5 = new Point(39.95087, -75.16387, Instant.ofEpochMilli(7000));
+
+        List<List<Point>> rr = SegmentUtil.split(Arrays.asList(p1, p2, p3, p4, p5), Duration.ofMillis(2000));
+        assertEquals("number of splits",  2,                          rr.size());
+        assertEquals("first split",       Arrays.asList(p1, p2, p3),  rr.get(0));
+        assertEquals("second split",      Arrays.asList(p4, p5),      rr.get(1));
     }
 
 

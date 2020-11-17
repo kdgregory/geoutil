@@ -14,6 +14,8 @@
 
 package com.kdgregory.geoutil.lib.shared;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -103,6 +105,41 @@ public class SegmentUtil
         return result;
     }
 
+
+    /**
+     *  Splits a segment into multiple segments based on a gap in timestamp.
+     *  <p>
+     *  Points without timestamp can not be tested, so are added to the existing split.
+     *  However, the last known timestamp from the split is retained, so any subsequent
+     *  points with timestamps greater than the gap can be tested.
+     */
+    public static List<List<Point>> split(List<? extends Point> segment, Duration minGap)
+    {
+        List<List<Point>> result = new ArrayList<>();
+        if ((segment == null) || segment.isEmpty())
+            return result;
+
+        List<Point> split = new ArrayList<>();
+        result.add(split);
+
+        Instant prevTimestamp = null;
+        for (Point cur : segment)
+        {
+            if ((prevTimestamp != null) && (cur.getTimestamp() != null))
+            {
+                Duration actual = Duration.between(prevTimestamp, cur.getTimestamp());
+                if (actual.compareTo(minGap) >= 0)
+                {
+                    split = new ArrayList<>();
+                    result.add(split);
+                }
+            }
+
+            split.add(cur);
+            prevTimestamp = (cur.getTimestamp() != null) ? cur.getTimestamp() : prevTimestamp;
+        }
+        return result;
+    }
 
 
     /**
