@@ -15,13 +15,13 @@
 package com.kdgregory.geoutil.util.gpx;
 
 import java.io.File;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
-import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,44 +57,63 @@ public class GPXCleanup
         logger.info("processing file: {}", file);
         GpxFile gpx = new GpxFile(file);
 
-        Track newTrack = new Track().setName(trackName);
-        for (Track oldTrack : gpx.getTracks())
-        {
-            for (TrackSegment seg : oldTrack.getSegments())
-            {
-                logger.debug("loaded segment with {} points from track {}", seg.getPoints().size(), oldTrack.getName());
-                newTrack.addSegment(seg);
-            }
-        }
+        Track track = combineSegments(gpx, trackName);
+        TrackSegment segment = track.getSegments().get(0);
+        filterAndTrim(segment, startTimestamp, finishTimestamp);
 
-        newTrack.combineSegments();
-        TrackSegment newSeg = newTrack.getSegments().get(0);
-
-        List<GpxPoint> tmpPoints = newSeg.getPoints();
-        logger.info("combined track has {} points, from {} to {}",
-                    tmpPoints.size(),
-                    CollectionUtil.first(tmpPoints).getTimestamp(),
-                    CollectionUtil.last(tmpPoints).getTimestamp());
-
-        newSeg.sortPoints();
-        newSeg.filter(startTimestamp, finishTimestamp);
-
-        tmpPoints = newSeg.getPoints();
-
-        if (tmpPoints.size() == 0)
+        if (segment.size() == 0)
         {
             logger.warn("all points removed; not overwriting file");
             System.exit(2);
         }
 
-        logger.info("filtered track has {} points, from {} to {}",
-                    tmpPoints.size(),
-                    CollectionUtil.first(tmpPoints).getTimestamp(),
-                    CollectionUtil.last(tmpPoints).getTimestamp());
+        track.splitSegments(Duration.ofMinutes(30));
+        logger.debug("split track has {} segments", track.getSegments().size());
 
-        gpx.setTracks(Arrays.asList(newTrack));
+        gpx.setTracks(Arrays.asList(track));
         gpx.write(file);
         logger.info("file overwritten");
+    }
+
+
+    private static Track combineSegments(GpxFile gpx, String name)
+    {
+        Track track = new Track().setName(name);
+        for (Track oldTrack : gpx.getTracks())
+        {
+            for (TrackSegment seg : oldTrack.getSegments())
+            {
+                logger.debug("loaded segment with {} points from track {}", seg.getPoints().size(), oldTrack.getName());
+                track.addSegment(seg);
+            }
+        }
+
+        TrackSegment segment = track.combineSegments();
+
+        logger.info("combined track has {} points, from {} to {}",
+                    segment.size(),
+                    CollectionUtil.first(segment.getPoints()).getTimestamp(),
+                    CollectionUtil.last(segment.getPoints()).getTimestamp());
+
+        return track;
+    }
+
+
+    private static void filterAndTrim(TrackSegment segment, Instant startTimestamp, Instant finishTimestamp)
+    {
+        segment.sortPoints();
+
+        segment.filter(startTimestamp, finishTimestamp);
+        logger.info("filtered track has {} points, from {} to {}",
+                    segment.size(),
+                    CollectionUtil.first(segment.getPoints()).getTimestamp(),
+                    CollectionUtil.last(segment.getPoints()).getTimestamp());
+
+        segment.trim(25);
+        logger.info("trimmed track has {} points, from {} to {}",
+                    segment.size(),
+                    CollectionUtil.first(segment.getPoints()).getTimestamp(),
+                    CollectionUtil.last(segment.getPoints()).getTimestamp());
     }
 
 
