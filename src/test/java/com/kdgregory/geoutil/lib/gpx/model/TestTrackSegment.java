@@ -47,22 +47,12 @@ public class TestTrackSegment
         GpxPoint p3 = new GpxPoint(34,56);
 
         seg.add(p1);
-        assertEquals("after adding single point",   1,                  seg.size());
-        assertEquals("after adding single point",   Arrays.asList(p1),  seg.getPoints());
+        assertEquals("after adding single point",   1,                          seg.size());
+        assertEquals("after adding single point",   Arrays.asList(p1),          seg.getPoints());
 
         seg.addAll(Arrays.asList(p2, p3));
-        assertEquals("after adding list",   3,                          seg.size());
-        assertEquals("after adding list",   Arrays.asList(p1, p2, p3),  seg.getPoints());
-
-        try
-        {
-            seg.getPoints().add(new GpxPoint(0,0));
-            fail("returned list of points should be unmodifiable");
-        }
-        catch (UnsupportedOperationException ex)
-        {
-            // success
-        }
+        assertEquals("after adding list",           3,                          seg.size());
+        assertEquals("after adding list",           Arrays.asList(p1, p2, p3),  seg.getPoints());
 
         seg.clear();
         assertTrue("after clear, list exists and is empty", seg.getPoints().isEmpty());

@@ -86,11 +86,11 @@ public class TrackSegment
 
 
     /**
-     *  Returns the list of points, as an immutable list.
+     *  Returns the list of points in this segment.
      */
     public List<GpxPoint> getPoints()
     {
-        return Collections.unmodifiableList(points);
+        return points;
     }
 
 
@@ -169,8 +169,7 @@ public class TrackSegment
      */
     public void sortPoints()
     {
-        Collections.sort(points,
-                         (p1, p2) -> p1.getPoint().compareTo(p2.getPoint()));
+        Collections.sort(points, (p1, p2) -> p1.getPoint().compareTo(p2.getPoint()));
     }
 
 

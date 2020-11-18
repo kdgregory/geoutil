@@ -16,7 +16,6 @@ package com.kdgregory.geoutil.lib.gpx.model;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -133,13 +132,12 @@ public class Track
 
 
     /**
-     *  Returns an unmodifiable list of the segments that comprise this track.
-     *  May be empty, but will never be null. Note that the segments in this
-     *  list are modifiable.
+     *  Returns the segments that comprise this track. May be empty, but will never
+     *  be null.
      */
     public List<TrackSegment> getSegments()
     {
-        return Collections.unmodifiableList(segments);
+        return segments;
     }
 
 

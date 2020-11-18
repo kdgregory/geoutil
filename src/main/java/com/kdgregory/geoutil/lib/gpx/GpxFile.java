@@ -17,7 +17,6 @@ package com.kdgregory.geoutil.lib.gpx;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import javax.xml.transform.dom.DOMSource;
@@ -116,11 +115,11 @@ public class GpxFile
 
 
     /**
-     *  Returns all tracks in this file, as an unmodifiable list.
+     *  Returns all tracks in this file.
      */
     public List<Track> getTracks()
     {
-        return Collections.unmodifiableList(tracks);
+        return tracks;
     }
 
 
