@@ -15,6 +15,7 @@
 package com.kdgregory.geoutil.util.gpx;
 
 import java.io.File;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,10 +56,13 @@ public class GPXToKML
         List<Point> points = extractPoints(gpx);
         logger.debug("extracted {} points", points.size());
 
-        points = SegmentUtil.simplify(points, 50);
+        points = SegmentUtil.simplify(points, 25);
         logger.debug("after simplification, {} points remain", points.size());
 
-        KmlFile kml = buildOutput(points);
+        List<List<Point>> split = SegmentUtil.split(points, Duration.ofMinutes(30));
+        logger.debug("after split, {} segments", split.size());
+
+        KmlFile kml = buildOutput(split);
 
         File outputFile = transformFilename(file);
         logger.info("writing to {}", outputFile);
@@ -86,27 +90,37 @@ public class GPXToKML
     }
 
 
-    private static KmlFile buildOutput(List<Point> points)
+    private static KmlFile buildOutput(List<List<Point>> segments)
     {
         Document doc = new Document()
                        .addSharedStyle(
-                           new Style().setId("default")
+                           new Style().setId("outbound")
                                .setLineStyle(new LineStyle()
                                    .setColor("FF00FF00")
+                                   .setWidth(6.0)))
+                       .addSharedStyle(
+                           new Style().setId("return")
+                               .setLineStyle(new LineStyle()
+                                   .setColor("FF0000FF")
                                    .setWidth(6.0)));
 
-        Point prev = null;
-        for (Point p : points)
+        String curStyle = "outbound";
+        for (List<Point> segment : segments)
         {
-            if (prev != null)
+            Point prev = null;
+            for (Point p : segment)
             {
-                double velocity = PointUtil.velocityMPH(prev, p);
-                doc.addFeature(new Placemark()
-                               .setDescription(String.format("%.1f mph", velocity))
-                               .setStyleRef("default")
-                               .setGeometry(new LineString(prev, p)));
+                if (prev != null)
+                {
+                    double velocity = PointUtil.velocityMPH(prev, p);
+                    doc.addFeature(new Placemark()
+                                   .setDescription(String.format("%.1f mph", velocity))
+                                   .setStyleRef(curStyle)
+                                   .setGeometry(new LineString(prev, p)));
+                }
+                prev = p;
             }
-            prev = p;
+            curStyle = "return";
         }
 
         return new KmlFile().addFeature(doc);
