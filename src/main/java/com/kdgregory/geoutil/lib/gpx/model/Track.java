@@ -14,8 +14,10 @@
 
 package com.kdgregory.geoutil.lib.gpx.model;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -27,6 +29,8 @@ import net.sf.practicalxml.DomUtil;
 import com.kdgregory.geoutil.lib.gpx.GpxConstants;
 import com.kdgregory.geoutil.lib.internal.ObjectUtils;
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
+import com.kdgregory.geoutil.lib.shared.Point;
+import com.kdgregory.geoutil.lib.shared.SegmentUtil;
 
 
 /**
@@ -232,4 +236,37 @@ public class Track
         segments.add(result);
         return result;
     }
+
+
+    /**
+     *  Splits (or re-splits) segments based on a gap in time greater than <code>maxGap</code>.
+     */
+    public void splitSegments(Duration maxGap)
+    {
+        List<Point> corePoints = new ArrayList<>();
+        IdentityHashMap<Point,GpxPoint> coreLookup = new IdentityHashMap<>();
+
+        for (TrackSegment seg : segments)
+        {
+            for (GpxPoint point : seg.getPoints())
+            {
+                Point corePoint = point.getPoint();
+                corePoints.add(corePoint);
+                coreLookup.put(corePoint, point);
+            }
+        }
+
+        segments.clear();
+
+        for (List<Point> split : SegmentUtil.split(corePoints, maxGap))
+        {
+            TrackSegment seg = new TrackSegment();
+            for (Point corePoint : split)
+            {
+                seg.add(coreLookup.get(corePoint));
+            }
+            segments.add(seg);
+        }
+    }
+
 }

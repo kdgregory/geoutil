@@ -14,6 +14,7 @@
 
 package com.kdgregory.geoutil.lib.gpx.model;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
@@ -109,6 +110,26 @@ public class TestTrack
                      track.getSegments().get(0).getPoints());
     }
 
+
+    @Test
+    public void testSplit() throws Exception
+    {
+        GpxPoint p1 = new GpxPoint(12,35).setTimestampMillis(1000);
+        GpxPoint p2 = new GpxPoint(12,36).setTimestampMillis(2000);
+        GpxPoint p3 = new GpxPoint(12,37).setTimestampMillis(5000);
+        GpxPoint p4 = new GpxPoint(12,38).setTimestampMillis(6000);
+        GpxPoint p5 = new GpxPoint(12,39).setTimestampMillis(7000);
+
+        // note that first segment includes gap
+        Track track = new Track().addSegment(new TrackSegment().addAll(Arrays.asList(p1, p2, p3)))
+                                 .addSegment(new TrackSegment().addAll(Arrays.asList(p4, p5)));
+
+        track.splitSegments(Duration.ofMillis(1500));
+
+        assertEquals("number of resulting segments",    2,                          track.getSegments().size());
+        assertEquals("first segment",                   Arrays.asList(p1, p2),      track.getSegments().get(0).getPoints());
+        assertEquals("second segment",                  Arrays.asList(p3, p4, p5),  track.getSegments().get(1).getPoints());
+    }
 
 
     @Test
