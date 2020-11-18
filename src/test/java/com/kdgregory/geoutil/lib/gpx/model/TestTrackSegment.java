@@ -38,18 +38,21 @@ public class TestTrackSegment
     {
         TrackSegment seg = new TrackSegment();
 
-        assertTrue("after construction, list exists and is empty", seg.getPoints().isEmpty());
-        assertTrue("after construction, segment reports empty",    seg.isEmpty());
+        assertTrue("after construction, list exists and is empty",      seg.getPoints().isEmpty());
+        assertTrue("after construction, segment reports empty",         seg.isEmpty());
+        assertEquals("after construction, size() returns 0",        0,  seg.size());
 
         GpxPoint p1 = new GpxPoint(12,34);
         GpxPoint p2 = new GpxPoint(23,45);
         GpxPoint p3 = new GpxPoint(34,56);
 
         seg.add(p1);
-        assertEquals("after adding single point", Arrays.asList(p1), seg.getPoints());
+        assertEquals("after adding single point",   1,                  seg.size());
+        assertEquals("after adding single point",   Arrays.asList(p1),  seg.getPoints());
 
         seg.addAll(Arrays.asList(p2, p3));
-        assertEquals("after adding list", Arrays.asList(p1, p2, p3), seg.getPoints());
+        assertEquals("after adding list",   3,                          seg.size());
+        assertEquals("after adding list",   Arrays.asList(p1, p2, p3),  seg.getPoints());
 
         try
         {

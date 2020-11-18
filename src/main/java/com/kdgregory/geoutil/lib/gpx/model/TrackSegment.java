@@ -77,6 +77,15 @@ public class TrackSegment
 
 
     /**
+     *  Returns the number of points in this segment.
+     */
+    public int size()
+    {
+        return points.size();
+    }
+
+
+    /**
      *  Returns the list of points, as an immutable list.
      */
     public List<GpxPoint> getPoints()
