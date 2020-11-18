@@ -219,16 +219,17 @@ public class Track
 
 
     /**
-     *  Combines all existing segments into a single segment.
+     *  Combines all existing segments into a single segment, returning it.
      */
-    public void combineSegments()
+    public TrackSegment combineSegments()
     {
-        TrackSegment seg = new TrackSegment();
+        TrackSegment result = new TrackSegment();
         for (TrackSegment old : segments)
         {
-            seg.addAll(old.getPoints());
+            result.addAll(old.getPoints());
         }
         segments.clear();
-        segments.add(seg);
+        segments.add(result);
+        return result;
     }
 }
