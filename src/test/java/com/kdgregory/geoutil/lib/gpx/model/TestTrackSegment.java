@@ -93,6 +93,27 @@ public class TestTrackSegment
     }
 
 
+    @Test
+    public void testTrim() throws Exception
+    {
+        // the list of values is copied from TestSegmentUtil, so is longer than needed
+
+        GpxPoint p1 = new GpxPoint(39.95237, -75.16358);
+        GpxPoint p2 = new GpxPoint(39.95237, -75.16359);  // 0.9
+        GpxPoint p3 = new GpxPoint(39.95236, -75.16359);  // 1.1
+        GpxPoint p4 = new GpxPoint(39.95170, -75.16369);  // 74
+        GpxPoint p5 = new GpxPoint(39.95087, -75.16387);  // 94
+        GpxPoint p6 = new GpxPoint(39.95008, -75.16401);  // 89
+        GpxPoint p7 = new GpxPoint(39.95008, -75.16400);  // 0.9
+        GpxPoint p8 = new GpxPoint(39.95007, -75.16400);  // 1.1
+        GpxPoint p9 = new GpxPoint(39.95006, -75.16400);  // 1.1
+
+        TrackSegment seg = new TrackSegment().addAll(Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9));
+        seg.trim(10);
+
+        assertEquals("after trim()", Arrays.asList(p3, p4, p5, p6), seg.getPoints());
+    }
+
 
     @Test
     public void testConvertToXml() throws Exception

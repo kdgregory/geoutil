@@ -18,6 +18,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -160,6 +161,32 @@ public class TrackSegment
     public void filter(Instant start, Instant finish)
     {
         filter(p -> p.isBetween(start, finish));
+    }
+
+
+    /**
+     *  Trims points off the beginning and end of the segment that don't show
+     *  movement (<code>minSeparation</code> meters between points).
+     */
+    public void trim(double minSeparation)
+    {
+        List<Point> corePoints = new ArrayList<>();
+        IdentityHashMap<Point,GpxPoint> coreLookup = new IdentityHashMap<>();
+
+        for (GpxPoint point : points)
+        {
+            Point corePoint = point.getPoint();
+            corePoints.add(corePoint);
+            coreLookup.put(corePoint, point);
+        }
+
+        corePoints = SegmentUtil.trim(corePoints, minSeparation);
+
+        points.clear();
+        for (Point corePoint : corePoints)
+        {
+            points.add(coreLookup.get(corePoint));
+        }
     }
 
 
