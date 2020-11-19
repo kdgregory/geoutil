@@ -39,31 +39,6 @@ public class TrackSegment
 {
     private List<GpxPoint> points = new ArrayList<>();
 
-
-    /**
-     *  Base constructor.
-     */
-    public TrackSegment()
-    {
-        // nothing happening here
-    }
-
-
-    /**
-     *  Constructs an instance from an XML node tree structured as a trksegType
-     *  per https://www.topografix.com/GPX/1/1/.
-     *
-     *  Does not validate the provided element's name or namespace, or whether
-     *  it contains unexpected content.
-     */
-    public TrackSegment(Element elem)
-    {
-        for (Element ePoint : DomUtil.getChildren(elem, GpxConstants.NAMESPACE, GpxConstants.E_TRKPOINT))
-        {
-            add(new GpxPoint(ePoint));
-        }
-    }
-
 //----------------------------------------------------------------------------
 //  Accessors
 //----------------------------------------------------------------------------
@@ -124,7 +99,7 @@ public class TrackSegment
     }
 
 //----------------------------------------------------------------------------
-//  Other Public Methods
+//  XML conversion
 //----------------------------------------------------------------------------
 
     /**
@@ -142,6 +117,26 @@ public class TrackSegment
         }
     }
 
+
+    /**
+     *  Parses a segment from its XML representation.
+     *
+     *  Does not validate the provided element's name or namespace, or whether
+     *  it contains unexpected content.
+     */
+    public static TrackSegment fromXml(Element elem)
+    {
+        TrackSegment segment = new TrackSegment();
+        for (Element ePoint : DomUtil.getChildren(elem, GpxConstants.NAMESPACE, GpxConstants.E_TRKPOINT))
+        {
+            segment.add(GpxPoint.fromXml(ePoint));
+        }
+        return segment;
+    }
+
+//----------------------------------------------------------------------------
+//  Other public methods
+//----------------------------------------------------------------------------
 
     /**
      *  Filters all points in this segment, using a Java8 predicate.

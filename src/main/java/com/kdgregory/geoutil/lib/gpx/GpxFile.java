@@ -69,7 +69,7 @@ public class GpxFile
 
         for (Element eTrack : DomUtil.getChildren(eGpx, GpxConstants.NAMESPACE, GpxConstants.E_TRK))
         {
-            addTrack(new Track(eTrack));
+            addTrack(Track.fromXml(eTrack));
         }
     }
 

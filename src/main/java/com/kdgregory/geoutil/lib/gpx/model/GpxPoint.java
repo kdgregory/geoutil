@@ -58,57 +58,6 @@ public class GpxPoint
         point = new Point(lat,lon);
     }
 
-
-    /**
-     *  Constructs an instance from an XML node tree structured as a wptType
-     *  per https://www.topografix.com/GPX/1/1/.
-     *
-     *  Does not validate the provided element's name or namespace, or whether
-     *  it contains unexpected content.
-     */
-    public GpxPoint(Element elem)
-    {
-        point = new Point(XmlUtils.getAttributeAsDouble(elem, GpxConstants.A_WPT_LAT),
-                          XmlUtils.getAttributeAsDouble(elem, GpxConstants.A_WPT_LON));
-
-        for (Element child : DomUtil.getChildren(elem))
-        {
-            String childNamespace = child.getNamespaceURI();
-            String childName = DomUtil.getLocalName(child);
-            String childText = child.getTextContent();
-
-            if (! GpxConstants.NAMESPACE.equals(childNamespace))
-                throw new IllegalArgumentException("invalid namespace: " + childNamespace);
-
-            switch (childName)
-            {
-                case GpxConstants.E_WPT_ELEVATION:
-                    ObjectUtils.optSetDouble(childText, this::setElevation);
-                    break;
-                case GpxConstants.E_WPT_TIMESTAMP:
-                    ObjectUtils.optSetString(childText, this::setTimestampString);
-                    break;
-                case GpxConstants.E_WPT_VARIANCE:
-                    ObjectUtils.optSetDouble(childText, this::setMagneticVariance);
-                    break;
-                case GpxConstants.E_WPT_GEOID_HEIGHT:
-                    ObjectUtils.optSetDouble(childText, this::setGeoidHeight);
-                    break;
-                case GpxConstants.E_WPT_NAME:
-                    ObjectUtils.optSetString(childText, this::setName);
-                    break;
-                case GpxConstants.E_WPT_COMMENT:
-                    ObjectUtils.optSetString(childText, this::setComment);
-                    break;
-                case GpxConstants.E_WPT_DESCRIPTION:
-                    ObjectUtils.optSetString(childText, this::setDescription);
-                    break;
-                default:
-                    throw new IllegalArgumentException("unsupported element: " + childName);
-            }
-        }
-    }
-
 //----------------------------------------------------------------------------
 //  Accessors
 //----------------------------------------------------------------------------
@@ -348,7 +297,7 @@ public class GpxPoint
     }
 
 //----------------------------------------------------------------------------
-//  Other Public Methods
+//  XML conversion
 //----------------------------------------------------------------------------
 
     /**
@@ -378,6 +327,60 @@ public class GpxPoint
         return elem;
     }
 
+
+    /**
+     *  Parses the <code>wptType</code> XML representation.
+     *
+     *  Does not validate the provided element's name or namespace, or whether
+     *  it contains unexpected content.
+     */
+    public static GpxPoint fromXml(Element elem)
+    {
+        GpxPoint gpxPoint = new GpxPoint(XmlUtils.getAttributeAsDouble(elem, GpxConstants.A_WPT_LAT),
+                                         XmlUtils.getAttributeAsDouble(elem, GpxConstants.A_WPT_LON));
+
+        for (Element child : DomUtil.getChildren(elem))
+        {
+            String childNamespace = child.getNamespaceURI();
+            String childName = DomUtil.getLocalName(child);
+            String childText = child.getTextContent();
+
+            if (! GpxConstants.NAMESPACE.equals(childNamespace))
+                throw new IllegalArgumentException("invalid namespace: " + childNamespace);
+
+            switch (childName)
+            {
+                case GpxConstants.E_WPT_ELEVATION:
+                    ObjectUtils.optSetDouble(childText, gpxPoint::setElevation);
+                    break;
+                case GpxConstants.E_WPT_TIMESTAMP:
+                    ObjectUtils.optSetString(childText, gpxPoint::setTimestampString);
+                    break;
+                case GpxConstants.E_WPT_VARIANCE:
+                    ObjectUtils.optSetDouble(childText, gpxPoint::setMagneticVariance);
+                    break;
+                case GpxConstants.E_WPT_GEOID_HEIGHT:
+                    ObjectUtils.optSetDouble(childText, gpxPoint::setGeoidHeight);
+                    break;
+                case GpxConstants.E_WPT_NAME:
+                    ObjectUtils.optSetString(childText, gpxPoint::setName);
+                    break;
+                case GpxConstants.E_WPT_COMMENT:
+                    ObjectUtils.optSetString(childText, gpxPoint::setComment);
+                    break;
+                case GpxConstants.E_WPT_DESCRIPTION:
+                    ObjectUtils.optSetString(childText, gpxPoint::setDescription);
+                    break;
+                default:
+                    throw new IllegalArgumentException("unsupported element: " + childName);
+            }
+        }
+        return gpxPoint;
+    }
+
+//----------------------------------------------------------------------------
+//  Other public methods
+//----------------------------------------------------------------------------
 
     /**
      *  Determines whether this point is in an inclusive range of timestamps.

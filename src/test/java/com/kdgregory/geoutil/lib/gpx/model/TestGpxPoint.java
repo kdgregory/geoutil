@@ -214,7 +214,7 @@ public class TestGpxPoint
                             XmlBuilder.attribute("lon", "34.0"))
                        .toDOM();
 
-        GpxPoint p = new GpxPoint(dom.getDocumentElement());
+        GpxPoint p = GpxPoint.fromXml(dom.getDocumentElement());
 
         assertEquals("latitude",  12.0, p.getLat(), 0.0);
         assertEquals("longitude", 34.0, p.getLon(), 0.0);
@@ -236,7 +236,7 @@ public class TestGpxPoint
                             XmlBuilder.element("http://www.topografix.com/GPX/1/1", "desc",         XmlBuilder.text("a description")))
                        .toDOM();
 
-        GpxPoint p = new GpxPoint(dom.getDocumentElement());
+        GpxPoint p = GpxPoint.fromXml(dom.getDocumentElement());
 
         assertEquals("latitude",            12.0,                                   p.getLat(), 0.0);
         assertEquals("longitude",           34.0,                                   p.getLon(), 0.0);

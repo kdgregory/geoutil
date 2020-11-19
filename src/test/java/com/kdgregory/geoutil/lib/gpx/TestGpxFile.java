@@ -100,7 +100,7 @@ public class TestGpxFile
 
         assertEquals("child 1 namespace",       "http://www.topografix.com/GPX/1/1",    DomUtil.getChildren(eGpx).get(0).getNamespaceURI());
         assertEquals("child 1 name",            "trk",                                  DomUtil.getChildren(eGpx).get(0).getNodeName());
-        assertEquals("child 1 description",     "some track",                           new Track(DomUtil.getChildren(eGpx).get(0)).getDescription());
+        assertEquals("child 1 description",     "some track",                           Track.fromXml(DomUtil.getChildren(eGpx).get(0)).getDescription());
     }
 
 

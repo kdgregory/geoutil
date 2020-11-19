@@ -141,8 +141,8 @@ public class TestTrackSegment
         assertEquals("track segment namespace",     "http://www.topografix.com/GPX/1/1",    eSeg.getNamespaceURI());
         assertEquals("track segment name",          "trkseg",                               eSeg.getNodeName());
         assertEquals("track segment child count",   2,                                      DomUtil.getChildren(eSeg).size());
-        assertEquals("first child",                 new Point(12,34),                       new GpxPoint(DomUtil.getChildren(eSeg).get(0)).getPoint());
-        assertEquals("second child",                new Point(23,45),                       new GpxPoint(DomUtil.getChildren(eSeg).get(1)).getPoint());
+        assertEquals("first child",                 new Point(12,34),                       GpxPoint.fromXml(DomUtil.getChildren(eSeg).get(0)).getPoint());
+        assertEquals("second child",                new Point(23,45),                       GpxPoint.fromXml(DomUtil.getChildren(eSeg).get(1)).getPoint());
     }
 
 
@@ -161,7 +161,7 @@ public class TestTrackSegment
         // note: we assume that the points in the segment have been properly converted if
         //       there aren't any errors and the underlying Point was properly constructed
 
-        TrackSegment seg = new TrackSegment(dom.getDocumentElement());
+        TrackSegment seg = TrackSegment.fromXml(dom.getDocumentElement());
         assertEquals("number of points", 2, seg.getPoints().size());
         assertEquals("point 1", new Point(12, 34), seg.getPoints().get(0).getPoint());
         assertEquals("point 2", new Point(23, 45), seg.getPoints().get(1).getPoint());

@@ -151,7 +151,7 @@ public class TestTrack
                                     XmlBuilder.attribute("lon", "78.0"))))
                        .toDOM();
 
-        Track track = new Track(dom.getDocumentElement());
+        Track track = Track.fromXml(dom.getDocumentElement());
 
         // note: we verify that GpxPoints were properly parsed by looking at underlying Point equality
 
@@ -204,10 +204,10 @@ public class TestTrack
 
         assertEquals("child 3 namespace",   "http://www.topografix.com/GPX/1/1",    children.get(2).getNamespaceURI());
         assertEquals("child 3 name",        "trkseg",                               children.get(2).getNodeName());
-        assertEquals("child 3 #/children",   2,                                     new TrackSegment(children.get(2)).getPoints().size());
+        assertEquals("child 3 #/children",   2,                                     TrackSegment.fromXml(children.get(2)).getPoints().size());
 
         assertEquals("child 4 namespace",   "http://www.topografix.com/GPX/1/1",    children.get(3).getNamespaceURI());
         assertEquals("child 4 value",       "trkseg",                               children.get(3).getNodeName());
-        assertEquals("child 4 #/children",  1,                                      new TrackSegment(children.get(3)).getPoints().size());
+        assertEquals("child 4 #/children",  1,                                      TrackSegment.fromXml(children.get(3)).getPoints().size());
     }
 }

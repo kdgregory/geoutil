@@ -48,51 +48,6 @@ public class Track
     private String description;
     private List<TrackSegment> segments = new ArrayList<>();
 
-
-    /**
-     *  Base constructor.
-     */
-    public Track()
-    {
-        // nothing here
-    }
-
-
-    /**
-     *  Constructs an instance from an XML node tree structured as a trkType
-     *  per https://www.topografix.com/GPX/1/1/.
-     *
-     *  Does not validate the provided element's name or namespace, or whether
-     *  it contains unexpected content.
-     */
-    public Track(Element elem)
-    {
-        for (Element child : DomUtil.getChildren(elem))
-        {
-            String childNamespace = child.getNamespaceURI();
-            String childName = DomUtil.getLocalName(child);
-
-            if (! GpxConstants.NAMESPACE.equals(childNamespace))
-                throw new IllegalArgumentException("invalid namespace: " + childNamespace);
-
-
-            switch (childName)
-            {
-                case GpxConstants.E_TRK_NAME:
-                    ObjectUtils.optSetString(child.getTextContent(), this::setName);
-                    break;
-                case GpxConstants.E_TRK_DESCRIPTION:
-                    ObjectUtils.optSetString(child.getTextContent(), this::setDescription);
-                    break;
-                case GpxConstants.E_TRKSEG:
-                    addSegment(new TrackSegment(child));
-                    break;
-                default:
-                    throw new IllegalArgumentException("unsupported element: " + childName);
-            }
-        }
-    }
-
 //----------------------------------------------------------------------------
 // Accessors
 //----------------------------------------------------------------------------
@@ -174,7 +129,7 @@ public class Track
     }
 
 //----------------------------------------------------------------------------
-//  Other Public Methods
+//  XML conversion
 //----------------------------------------------------------------------------
 
     /**
@@ -198,6 +153,46 @@ public class Track
         return elem;
     }
 
+
+    /**
+     *  Parses a track from its XML representation.
+     *
+     *  Does not validate the provided element's name or namespace, or whether
+     *  it contains unexpected content.
+     */
+    public static Track fromXml(Element elem)
+    {
+        Track track = new Track();
+        for (Element child : DomUtil.getChildren(elem))
+        {
+            String childNamespace = child.getNamespaceURI();
+            String childName = DomUtil.getLocalName(child);
+
+            if (! GpxConstants.NAMESPACE.equals(childNamespace))
+                throw new IllegalArgumentException("invalid namespace: " + childNamespace);
+
+
+            switch (childName)
+            {
+                case GpxConstants.E_TRK_NAME:
+                    ObjectUtils.optSetString(child.getTextContent(), track::setName);
+                    break;
+                case GpxConstants.E_TRK_DESCRIPTION:
+                    ObjectUtils.optSetString(child.getTextContent(), track::setDescription);
+                    break;
+                case GpxConstants.E_TRKSEG:
+                    track.addSegment(TrackSegment.fromXml(child));
+                    break;
+                default:
+                    throw new IllegalArgumentException("unsupported element: " + childName);
+            }
+        }
+        return track;
+    }
+
+//----------------------------------------------------------------------------
+//  Other public methods
+//----------------------------------------------------------------------------
 
     /**
      *  Filters the points of all segments in this track, using a Java8 predicate.
