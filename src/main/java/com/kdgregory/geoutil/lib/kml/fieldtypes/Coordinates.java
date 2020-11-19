@@ -17,7 +17,7 @@ package com.kdgregory.geoutil.lib.kml.fieldtypes;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.kdgregory.geoutil.lib.shared.Point;
+import com.kdgregory.geoutil.lib.core.Point;
 
 
 /**

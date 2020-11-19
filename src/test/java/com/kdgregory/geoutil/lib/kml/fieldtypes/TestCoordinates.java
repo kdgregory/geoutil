@@ -20,8 +20,8 @@ import java.util.List;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
+import com.kdgregory.geoutil.lib.core.Point;
 import com.kdgregory.geoutil.lib.kml.fieldtypes.Coordinates;
-import com.kdgregory.geoutil.lib.shared.Point;
 
 
 public class TestCoordinates

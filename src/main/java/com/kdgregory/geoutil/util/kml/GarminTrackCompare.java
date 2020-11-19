@@ -21,10 +21,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.kdgregory.geoutil.lib.core.*;
 import com.kdgregory.geoutil.lib.kml.*;
 import com.kdgregory.geoutil.lib.kml.fieldtypes.Coordinates;
 import com.kdgregory.geoutil.lib.kml.model.*;
-import com.kdgregory.geoutil.lib.shared.*;
 
 
 /**

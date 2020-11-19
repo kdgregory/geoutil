@@ -12,10 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.geoutil.lib.shared;
+package com.kdgregory.geoutil.lib.core;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+
+import com.kdgregory.geoutil.lib.core.Point;
+import com.kdgregory.geoutil.lib.core.PointUtil;
 
 
 public class TestPointUtil

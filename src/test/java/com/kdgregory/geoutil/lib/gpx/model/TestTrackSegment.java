@@ -26,9 +26,9 @@ import static org.junit.Assert.*;
 import net.sf.practicalxml.DomUtil;
 import net.sf.practicalxml.builder.XmlBuilder;
 
+import com.kdgregory.geoutil.lib.core.Point;
 import com.kdgregory.geoutil.lib.gpx.model.GpxPoint;
 import com.kdgregory.geoutil.lib.gpx.model.TrackSegment;
-import com.kdgregory.geoutil.lib.shared.Point;
 
 
 public class TestTrackSegment

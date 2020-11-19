@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package com.kdgregory.geoutil.lib.shared;
+package com.kdgregory.geoutil.lib.core;
 
 import java.time.Instant;
 
@@ -21,6 +21,8 @@ import static org.junit.Assert.*;
 
 import net.sf.kdgcommons.test.NumericAsserts;
 import net.sf.kdgcommons.test.StringAsserts;
+
+import com.kdgregory.geoutil.lib.core.Point;
 
 
 public class TestPoint

@@ -20,11 +20,11 @@ import org.w3c.dom.Element;
 
 import net.sf.practicalxml.DomUtil;
 
+import com.kdgregory.geoutil.lib.core.Point;
 import com.kdgregory.geoutil.lib.gpx.GpxConstants;
 import com.kdgregory.geoutil.lib.internal.ObjectUtils;
 import com.kdgregory.geoutil.lib.internal.TimestampUtils;
 import com.kdgregory.geoutil.lib.internal.XmlUtils;
-import com.kdgregory.geoutil.lib.shared.Point;
 
 
 /**
