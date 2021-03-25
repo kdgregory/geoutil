@@ -22,6 +22,9 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.sf.kdgcommons.collections.CollectionUtil;
+import net.sf.kdgcommons.tuple.Tuple2;
+
 import com.kdgregory.geoutil.lib.core.Point;
 import com.kdgregory.geoutil.lib.core.PointUtil;
 import com.kdgregory.geoutil.lib.core.SegmentUtil;
@@ -40,6 +43,11 @@ public class GPXToKML
 {
     private static Logger logger = LoggerFactory.getLogger(GPXToKML.class);
 
+    public final static String  STYLENAME_OUTBOUND = "outbound";
+    public final static String  STYLENAME_RETURN   = "return";
+
+
+
     public static void main(String[] argv)
     throws Exception
     {
@@ -51,18 +59,9 @@ public class GPXToKML
 
         File file = new File(argv[0]);
         logger.info("processing file: {}", file);
+
         GpxFile gpx = new GpxFile(file);
-
-        List<Point> points = extractPoints(gpx);
-        logger.debug("extracted {} points", points.size());
-
-        points = SegmentUtil.simplify(points, 25);
-        logger.debug("after simplification, {} points remain", points.size());
-
-        List<List<Point>> split = SegmentUtil.split(points, Duration.ofMinutes(30));
-        logger.debug("after split, {} segments", split.size());
-
-        KmlFile kml = buildOutput(split);
+        KmlFile kml = process(gpx);
 
         File outputFile = transformFilename(file);
         logger.info("writing to {}", outputFile);
@@ -70,9 +69,18 @@ public class GPXToKML
     }
 
 
-    private static List<Point> extractPoints(GpxFile gpx)
+    protected static KmlFile process(GpxFile gpx)
     {
-        List<Point> result = new ArrayList<>(8192);
+        List<Point> points = extractPoints(gpx);
+        List<List<Point>> segments = simplifyAndSplit(points);
+        List<Tuple2<String,List<Point>>> namedSegments = assignSegmentsToStyle(segments);
+        return buildOutput(namedSegments);
+    }
+
+
+    protected static List<Point> extractPoints(GpxFile gpx)
+    {
+        List<Point> points = new ArrayList<>(8192);
 
         for (Track oldTrack : gpx.getTracks())
         {
@@ -81,34 +89,77 @@ public class GPXToKML
                 logger.debug("loading segment with {} points from track {}", seg.getPoints().size(), oldTrack.getName());
                 for (GpxPoint point : seg.getPoints())
                 {
-                    result.add(point.getPoint());
+                    points.add(point.getPoint());
                 }
             }
         }
 
-        return result;
+        logger.debug("extracted {} points", points.size());
+        return points;
     }
 
 
-    private static KmlFile buildOutput(List<List<Point>> segments)
+    protected static List<List<Point>> simplifyAndSplit(List<Point> points)
+    {
+        points = SegmentUtil.simplify(points, 25);
+        logger.debug("after simplification, {} points remain", points.size());
+
+        List<List<Point>> segments = SegmentUtil.split(points, Duration.ofMinutes(30));
+        logger.debug("after split, {} segments", segments.size());
+
+        return segments;
+    }
+
+
+    protected static List<Tuple2<String,List<Point>>> assignSegmentsToStyle(List<List<Point>> segments)
+    {
+        List<Tuple2<String,List<Point>>> out = new ArrayList<>();
+        List<Tuple2<String,List<Point>>> back = new ArrayList<>();
+
+        int startIdx = 0;
+        int endIdx = segments.size();
+        double outDist = 0.0;
+        double backDist = 0.0;
+
+        while (startIdx < endIdx)
+        {
+            if (outDist <= backDist)
+            {
+                List<Point> segment = segments.get(startIdx++);
+                out.add(new Tuple2<>(STYLENAME_OUTBOUND, segment));
+                outDist += SegmentUtil.pythagoreanDistance(segment);
+            }
+            else
+            {
+                List<Point> segment = segments.get(--endIdx);
+                back.add(0, new Tuple2<>(STYLENAME_RETURN, segment));
+                backDist += SegmentUtil.pythagoreanDistance(segment);
+            }
+        }
+
+        return CollectionUtil.combine(out, back);
+    }
+
+
+    protected static KmlFile buildOutput(List<Tuple2<String,List<Point>>> namedSegments)
     {
         Document doc = new Document()
                        .addSharedStyle(
-                           new Style().setId("outbound")
+                           new Style().setId(STYLENAME_OUTBOUND)
                                .setLineStyle(new LineStyle()
                                    .setColor("FF00FF00")
                                    .setWidth(6.0)))
                        .addSharedStyle(
-                           new Style().setId("return")
+                           new Style().setId(STYLENAME_RETURN)
                                .setLineStyle(new LineStyle()
                                    .setColor("FF0000FF")
                                    .setWidth(6.0)));
 
-        String curStyle = "outbound";
-        for (List<Point> segment : segments)
+        for (Tuple2<String,List<Point>> namedSegment : namedSegments)
         {
             Point prev = null;
-            for (Point p : segment)
+            String curStyle = namedSegment.get0();
+            for (Point p : namedSegment.get1())
             {
                 if (prev != null)
                 {
@@ -120,7 +171,6 @@ public class GPXToKML
                 }
                 prev = p;
             }
-            curStyle = "return";
         }
 
         return new KmlFile().addFeature(doc);
