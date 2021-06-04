@@ -371,6 +371,9 @@ public class GpxPoint
                 case GpxConstants.E_WPT_DESCRIPTION:
                     ObjectUtils.optSetString(childText, gpxPoint::setDescription);
                     break;
+                case GpxConstants.E_WPT_EXTENSIONS:
+                    // not supported at this time, but it appears in Garmin files so we have to ignore
+                    break;
                 default:
                     throw new IllegalArgumentException("unsupported element: " + childName);
             }

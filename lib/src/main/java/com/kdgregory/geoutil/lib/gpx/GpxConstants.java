@@ -77,4 +77,7 @@ public class GpxConstants
 
     /** wptType data field: description */
     public final static String E_WPT_DESCRIPTION        = "desc";
+
+    /** wptType data field: extensions */
+    public final static String E_WPT_EXTENSIONS         = "extensions";
 }

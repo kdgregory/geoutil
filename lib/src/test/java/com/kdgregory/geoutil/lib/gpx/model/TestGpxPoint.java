@@ -246,6 +246,33 @@ public class TestGpxPoint
         assertEquals("geoid height",        Double.valueOf(101.0),                  p.getGeoidHeight());
         assertEquals("name",                "testing",                              p.getName());
         assertEquals("comment",             "test comment",                         p.getComment());
-        assertEquals("description",         "a description",                         p.getDescription());
+        assertEquals("description",         "a description",                        p.getDescription());
+    }
+
+
+    @Test
+    public void testConvertFromXmlWithExtensions() throws Exception
+    {
+        Document dom = XmlBuilder.element("bogus",
+                            XmlBuilder.attribute("lat", "12.0"),
+                            XmlBuilder.attribute("lon", "34.0"),
+                            XmlBuilder.element("http://www.topografix.com/GPX/1/1", "ele",                                  XmlBuilder.text("123.0")),
+                            XmlBuilder.element("http://www.topografix.com/GPX/1/1", "time",                                 XmlBuilder.text("2019-12-28T15:43:48Z")),
+                            XmlBuilder.element("http://www.topografix.com/GPX/1/1", "extensions",
+                                XmlBuilder.element("http://www.garmin.com/xmlschemas/TrackPointExtension/v2", "TrackPointExtension",
+                                    XmlBuilder.element("http://www.garmin.com/xmlschemas/TrackPointExtension/v2", "speed",  XmlBuilder.text("17")),
+                                    XmlBuilder.element("http://www.garmin.com/xmlschemas/TrackPointExtension/v2", "course", XmlBuilder.text("45")))),
+                            XmlBuilder.element("http://www.topografix.com/GPX/1/1", "desc",                                 XmlBuilder.text("a description")))
+                       .toDOM();
+
+        // at this point the goal is just to convert without throwing and without losing anything
+
+        GpxPoint p = GpxPoint.fromXml(dom.getDocumentElement());
+
+        assertEquals("latitude",            12.0,                                   p.getLat(), 0.0);
+        assertEquals("longitude",           34.0,                                   p.getLon(), 0.0);
+        assertEquals("elevation",           Double.valueOf(123.0),                  p.getElevation());
+        assertEquals("timestamp",           Instant.ofEpochMilli(1577547828000L),   p.getTimestamp());
+        assertEquals("description",         "a description",                        p.getDescription());
     }
 }
