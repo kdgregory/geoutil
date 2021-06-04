@@ -33,13 +33,14 @@ import com.kdgregory.geoutil.lib.gpx.model.*;
 
 
 /**
- *  Removes all points from a GPX file that don't match a specific date (expressed
- *  as a local date in the format YYYY-MM-DD), combines all track segments into a
- *  single track, and sets the name of that track.
- *  <p>
- *  Invocation:
- *
- *      GPXCleanup FILENAME DESIRED_DATE NAME
+ *  Removes all points from a GPX file that aren't within a specified date range
+ *  (expressed as a local date in the format YYYY-MM-DD), combines all track
+ *  segments into a single track, and sets the name of that track.
+ *  <pre>
+ *  GPXCleanup FILENAME TRACK_NAME DESIRED_START_DATE [DESIRED_END_DATE]
+ *  </pre>
+ *  If <code>DESIRED_END_DATE</code> is omitted, then it is assumed to be the same
+ *  as <code>DESIRED_START_DATE</code>.
  */
 public class GPXCleanup
 {
@@ -50,9 +51,11 @@ public class GPXCleanup
     throws Exception
     {
         File file = new File(argv[0]);
-        Instant startTimestamp = parseProvidedDate(argv[1]);
-        Instant finishTimestamp = ChronoUnit.DAYS.addTo(startTimestamp, 1).minusMillis(1);
-        String trackName = argv[2];
+        String trackName = argv[1];
+        Instant startTimestamp = parseProvidedDate(argv[2]);
+        Instant finishTimestamp = (argv.length == 3)
+                                ? ChronoUnit.DAYS.addTo(startTimestamp, 1).minusMillis(1)
+                                : ChronoUnit.DAYS.addTo(parseProvidedDate(argv[3]), 1).minusMillis(1);
 
         logger.info("processing file: {}", file);
         GpxFile gpx = new GpxFile(file);
