@@ -43,6 +43,9 @@ public class GpxConstants
     /** trkType data field: name */
     public final static String  E_TRK_DESCRIPTION       = "desc";
 
+    /** trkType data field: type */
+    public final static String  E_TRK_TYPE              = "type";
+
 
     /** container: track segment */
     public final static String  E_TRKSEG                = "trkseg";

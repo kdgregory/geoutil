@@ -36,8 +36,7 @@ import com.kdgregory.geoutil.lib.internal.XmlUtils;
 /**
  *  Represents a track: a named collection of segments containing points.
  *  <p>
- *  All setter methods return the track object, as a convenience for
- *  chaining calls.
+ *  All setter methods return the track object, as a convenience for chained calls.
  *  <p>
  *  Tracks have identity equality semantics: there's no good reason to be
  *  comparing tracks or using them as keys in a map.
@@ -46,6 +45,7 @@ public class Track
 {
     private String name;
     private String description;
+    private String type;
     private List<TrackSegment> segments = new ArrayList<>();
 
 //----------------------------------------------------------------------------
@@ -86,6 +86,25 @@ public class Track
     public Track setDescription(String value)
     {
         description = value;
+        return this;
+    }
+
+
+    /**
+     *  Returns the type of this track. May be null.
+     */
+    public String getType()
+    {
+        return type;
+    }
+
+
+    /**
+     *  Sets the type of this track.
+     */
+    public Track setType(String value)
+    {
+        type = value;
         return this;
     }
 
@@ -144,6 +163,7 @@ public class Track
 
         XmlUtils.optAppendDataElement(elem, GpxConstants.NAMESPACE, GpxConstants.E_TRK_NAME,          getName());
         XmlUtils.optAppendDataElement(elem, GpxConstants.NAMESPACE, GpxConstants.E_TRK_DESCRIPTION,   getDescription());
+        XmlUtils.optAppendDataElement(elem, GpxConstants.NAMESPACE, GpxConstants.E_TRK_TYPE,          getType());
 
         for (TrackSegment seg : segments)
         {
@@ -171,7 +191,6 @@ public class Track
             if (! GpxConstants.NAMESPACE.equals(childNamespace))
                 throw new IllegalArgumentException("invalid namespace: " + childNamespace);
 
-
             switch (childName)
             {
                 case GpxConstants.E_TRK_NAME:
@@ -179,6 +198,9 @@ public class Track
                     break;
                 case GpxConstants.E_TRK_DESCRIPTION:
                     ObjectUtils.optSetString(child.getTextContent(), track::setDescription);
+                    break;
+                case GpxConstants.E_TRK_TYPE:
+                    ObjectUtils.optSetString(child.getTextContent(), track::setType);
                     break;
                 case GpxConstants.E_TRKSEG:
                     track.addSegment(TrackSegment.fromXml(child));

@@ -48,6 +48,9 @@ public class TestTrack
         track.setDescription("this is something");
         assertEquals("description", "this is something", track.getDescription());
 
+        track.setType("hiking");
+        assertEquals("type", "hiking", track.getType());
+
         assertEquals("after construction", Collections.emptyList(), track.getSegments());
 
         TrackSegment segment = new TrackSegment();
@@ -138,6 +141,7 @@ public class TestTrack
         Document dom = XmlBuilder.element("bogus",
                             XmlBuilder.element("http://www.topografix.com/GPX/1/1", "name",         XmlBuilder.text("example")),
                             XmlBuilder.element("http://www.topografix.com/GPX/1/1", "desc",         XmlBuilder.text("a description")),
+                            XmlBuilder.element("http://www.topografix.com/GPX/1/1", "type",         XmlBuilder.text("hiking")),
                             XmlBuilder.element("http://www.topografix.com/GPX/1/1", "trkseg",
                                 XmlBuilder.element("http://www.topografix.com/GPX/1/1", "trkpt",
                                     XmlBuilder.attribute("lat", "12.0"),
@@ -157,6 +161,7 @@ public class TestTrack
 
         assertEquals("name",                "example",          track.getName());
         assertEquals("description",         "a description",    track.getDescription());
+        assertEquals("type",                "hiking",           track.getType());
         assertEquals("segment 1 point 1",   new Point(12,34),   track.getSegments().get(0).getPoints().get(0).getPoint());
         assertEquals("segment 1 point 2",   new Point(23,45),   track.getSegments().get(0).getPoints().get(1).getPoint());
         assertEquals("segment 2 point 1",   new Point(56,78),   track.getSegments().get(1).getPoints().get(0).getPoint());
@@ -176,6 +181,7 @@ public class TestTrack
         Track track = new Track()
                       .setName("example")
                       .setDescription("this is something")
+                      .setType("hiking")
                       .addSegment(s1)
                       .addSegment(s2);
 
@@ -189,7 +195,7 @@ public class TestTrack
         assertEquals("track name",          "trk",                                  eTrack.getNodeName());
 
         List<Element> children = DomUtil.getChildren(eTrack);
-        assertEquals("nmber of children", 4, children.size());
+        assertEquals("nmber of children", 5, children.size());
 
         // note: we'll assume that if the track segments have the correct number of children, then they have
         //       the correct child content
@@ -203,11 +209,34 @@ public class TestTrack
         assertEquals("child 2 value",       "this is something",                    children.get(1).getTextContent());
 
         assertEquals("child 3 namespace",   "http://www.topografix.com/GPX/1/1",    children.get(2).getNamespaceURI());
-        assertEquals("child 3 name",        "trkseg",                               children.get(2).getNodeName());
-        assertEquals("child 3 #/children",   2,                                     TrackSegment.fromXml(children.get(2)).getPoints().size());
+        assertEquals("child 3 name",        "type",                                 children.get(2).getNodeName());
+        assertEquals("child 3 value",       "hiking",                               children.get(2).getTextContent());
 
         assertEquals("child 4 namespace",   "http://www.topografix.com/GPX/1/1",    children.get(3).getNamespaceURI());
-        assertEquals("child 4 value",       "trkseg",                               children.get(3).getNodeName());
-        assertEquals("child 4 #/children",  1,                                      TrackSegment.fromXml(children.get(3)).getPoints().size());
+        assertEquals("child 4 name",        "trkseg",                               children.get(3).getNodeName());
+        assertEquals("child 4 #/children",   2,                                     TrackSegment.fromXml(children.get(3)).getPoints().size());
+
+        assertEquals("child 5 namespace",   "http://www.topografix.com/GPX/1/1",    children.get(4).getNamespaceURI());
+        assertEquals("child 5 value",       "trkseg",                               children.get(4).getNodeName());
+        assertEquals("child 5 #/children",  1,                                      TrackSegment.fromXml(children.get(4)).getPoints().size());
+    }
+
+
+    @Test
+    public void testConvertToXmlMinimal() throws Exception
+    {
+        Track track = new Track();
+
+        Element root = DomUtil.newDocument("irrelevant");
+        track.appendAsXml(root);
+
+        assertEquals("added single child to root", 1, DomUtil.getChildren(root).size());
+
+        Element eTrack = DomUtil.getChildren(root).get(0);
+        assertEquals("track namespace",     "http://www.topografix.com/GPX/1/1",    eTrack.getNamespaceURI());
+        assertEquals("track name",          "trk",                                  eTrack.getNodeName());
+
+        List<Element> children = DomUtil.getChildren(eTrack);
+        assertEquals("nmber of children", 0, children.size());
     }
 }
