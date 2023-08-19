@@ -70,6 +70,9 @@ public class GPXCleanup
             System.exit(2);
         }
 
+        int distanceInMiles = (int)(segment.distance() * 0.0006213712 + 0.5);
+        logger.debug("track length: {} miles", distanceInMiles);
+
         track.splitSegments(Duration.ofMinutes(30));
         logger.debug("split track has {} segments", track.getSegments().size());
 
