@@ -14,11 +14,37 @@
 
 package com.kdgregory.geoutil.lib.fit.messages;
 
+import java.nio.ByteBuffer;
+
 
 /**
- *  The base structure of a FIT message.
+ *  Common superclass for FIT records, providing generic header and field functions.
  */
-public class AbstractFITMessage
+public abstract class AbstractFITMessage
 {
-
+    private ByteBuffer buf;
+    
+    
+    /**
+     *  Creates a record instance given a slice of a parent buffer.
+     */
+    public AbstractFITMessage(ByteBuffer slice)
+    {
+        buf = slice;
+    }
+    
+    
+//----------------------------------------------------------------------------
+//  Public methods
+//----------------------------------------------------------------------------
+    
+    
+//----------------------------------------------------------------------------
+//  Record Header
+//----------------------------------------------------------------------------
+    
+    /**
+     *  Determines whether this is a definition message or a data message.
+     */
+    public boolean isDefinition
 }

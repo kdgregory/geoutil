@@ -19,8 +19,12 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel.MapMode;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.sf.kdgcommons.buffer.BufferUtil;
+
+import com.kdgregory.geoutil.lib.fit.messages.AbstractFITMessage;
 
 
 /**
@@ -30,6 +34,25 @@ public class FITFile
 {
     ByteBuffer fileBuf;
     FileHeader fileHeader;
+    List<AbstractFITMessage> messages;    
+    
+    
+    /**
+     *  Constructs an instance from a buffer.
+     */
+    public FITFile(ByteBuffer buf)
+    {
+        fileBuf = buf.duplicate();
+        
+        fileBuf.position(0);
+        ByteBuffer headerBuf = fileBuf.slice();
+        headerBuf.order(ByteOrder.LITTLE_ENDIAN);
+        fileHeader = new FileHeader(headerBuf);
+        if (!fileHeader.isFIT())
+            throw new IllegalArgumentException("not a FIT file");
+        
+        messages = new ArrayList<>();
+    }
     
     
     /**
@@ -38,14 +61,7 @@ public class FITFile
     public FITFile(File file)
     throws IOException
     {
-        fileBuf = BufferUtil.map(file, 0, file.length(), MapMode.READ_ONLY);
-        
-        fileBuf.position(0);
-        ByteBuffer headerBuf = fileBuf.slice();
-        headerBuf.order(ByteOrder.LITTLE_ENDIAN);
-        fileHeader = new FileHeader(headerBuf);
-        if (!fileHeader.isFIT())
-            throw new IllegalArgumentException("not a FIT file");
+        this(BufferUtil.map(file, 0, file.length(), MapMode.READ_ONLY));
     }
         
 //----------------------------------------------------------------------------
