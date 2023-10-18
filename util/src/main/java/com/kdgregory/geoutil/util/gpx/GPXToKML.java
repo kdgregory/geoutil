@@ -164,8 +164,12 @@ public class GPXToKML
                 if (prev != null)
                 {
                     double velocity = PointUtil.velocityMPH(prev, p);
+                    double elevation = p.getElevationOrZero() * 39.37 / 12;
+                    String description = String.format("%s: lat %.4f, lon %.4f, ele %.0f feet, %.1f mph", 
+                                                       String.valueOf(p.getTimestamp()), 
+                                                       p.getLat(), p.getLon(), elevation, velocity);
                     doc.addFeature(new Placemark()
-                                   .setDescription(String.format("%.1f mph", velocity))
+                                   .setDescription(description)
                                    .setStyleRef(curStyle)
                                    .setGeometry(new LineString(prev, p)));
                 }
